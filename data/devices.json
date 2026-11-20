@@ -1,0 +1,42 @@
+[
+  {
+    "id": "iphone-15",
+    "name": "iPhone 15",
+    "type": "phone",
+    "width": 393,
+    "height": 852,
+    "pixelRatio": 3
+  },
+  {
+    "id": "pixel-8",
+    "name": "Pixel 8",
+    "type": "phone",
+    "width": 412,
+    "height": 915,
+    "pixelRatio": 2.625
+  },
+  {
+    "id": "ipad-air",
+    "name": "iPad Air 11\"",
+    "type": "tablet",
+    "width": 820,
+    "height": 1180,
+    "pixelRatio": 2
+  },
+  {
+    "id": "galaxy-tab-s9",
+    "name": "Galaxy Tab S9",
+    "type": "tablet",
+    "width": 800,
+    "height": 1280,
+    "pixelRatio": 2
+  },
+  {
+    "id": "macbook-air-13",
+    "name": "MacBook Air 13\"",
+    "type": "laptop",
+    "width": 1470,
+    "height": 956,
+    "pixelRatio": 2
+  }
+]
