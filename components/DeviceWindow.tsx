@@ -19,7 +19,7 @@ const MIN_OUTER_WIDTH = 300;
 const OVERLAY_GAP = 6;
 const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
 /** Narrowest title bar, so its controls always fit. */
-const MIN_BAR_WIDTH = 220;
+const MIN_BAR_WIDTH = 320;
 const KEY_STEP = 15;
 
 interface Props {
@@ -193,7 +193,9 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           <span class="grip" aria-hidden="true">
             ⋮⋮
           </span>
-          <span class="size">{device.name}</span>
+          <span class="size">
+            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
+          </span>
         </button>
         <button
           type="button"
