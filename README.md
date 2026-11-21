@@ -2,7 +2,7 @@
 
 Device Lab is a Chrome extension for seeing your site on phones, tablets and laptops without
 leaving the page. Click the toolbar icon and the current page opens in floating device windows,
-with a side panel on the right to pick the device, rotate and more, so you can check layouts at
+with a slim icon bar on the right edge of the page to pick the device, rotate and more, so you can check layouts at
 real device sizes side by side.
 
 > Status: project setup only. No features are built yet.
@@ -29,15 +29,14 @@ real device sizes side by side.
 
 ```
 entrypoints/            WXT entrypoints; each file becomes part of the extension
-  background.ts         Service worker: toolbar icon click (opens the side panel, injects the
-                        content script, header rules), screenshots later
+  background.ts         Service worker: toolbar icon click (injects the content script, header
+                        rules), screenshots later
   content/
     index.tsx           Content script: mounts device windows in a Shadow DOM
     style.css           Styles for the device windows
-  sidepanel/            Side panel page (index.html, main.tsx, style.css)
-components/             Preact UI components (DeviceWindow, SidePanel, DevicePicker, ScreenshotMenu)
-lib/                    Non-UI logic: device list, window manager, typed messages, storage,
-                        panel bridge (lets the side panel control the windows)
+components/             Preact UI components (DeviceWindow, Sidebar icon bar, DevicePicker flyout,
+                        ScreenshotMenu, Icons)
+lib/                    Non-UI logic: device list, window manager, typed messages, storage
 data/
   devices.json          Device definitions (5 samples for now)
 public/icon/            Extension icons (16, 32, 48, 128 px), copied as-is into the build
@@ -55,7 +54,6 @@ eslint.config.js        ESLint flat config
 | `scripting`                           | Injects the content script on demand (it is never declared in the manifest).                                                                                                                      |
 | `storage`                             | Remembers the last used device.                                                                                                                                                                   |
 | `declarativeNetRequestWithHostAccess` | Removes `X-Frame-Options` / CSP from sub-frame requests of the current page's host, in that tab only, so the page can load inside the device windows. The rule is removed when the windows close. |
-| `sidePanel`                           | Shows the controls in Chrome's side panel (Chrome 116 or newer).                                                                                                                                  |
 
 ## Setup
 

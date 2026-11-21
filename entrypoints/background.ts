@@ -1,4 +1,4 @@
-// Background service worker: toolbar icon click opens the side panel and injects the content UI.
+// Background service worker: toolbar icon click adds the header rule and injects the content UI.
 import type { Browser } from 'wxt/browser';
 import type { RuntimeMessage } from '@/lib/messages';
 
@@ -57,26 +57,13 @@ async function activate(tab: Browser.tabs.Tab): Promise<boolean> {
 
 export default defineBackground(() => {
   browser.action.onClicked.addListener((tab) => {
-    // Must come first: opening the side panel needs the click's user gesture.
-    if (tab.windowId !== undefined) {
-      void browser.sidePanel.open({ windowId: tab.windowId }).catch(() => {});
-    }
     void activate(tab);
   });
 
-  browser.runtime.onMessage.addListener((message: RuntimeMessage, sender, sendResponse) => {
+  browser.runtime.onMessage.addListener((message: RuntimeMessage, sender) => {
     if (message.type === 'close' && sender.tab?.id !== undefined) {
       void removeFrameRule(sender.tab.id);
-    } else if (message.type === 'activate-tab') {
-      // The URL is only readable while activeTab is granted for that tab.
-      browser.tabs
-        .get(message.tabId)
-        .then(activate)
-        .then((ok) => sendResponse({ ok }))
-        .catch(() => sendResponse({ ok: false }));
-      return true; // keep the channel open for the async response
     }
-    return false;
   });
 
   browser.tabs.onRemoved.addListener((tabId) => {

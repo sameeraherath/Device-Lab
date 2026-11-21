@@ -3,8 +3,8 @@ import { render } from 'preact';
 import { useLayoutEffect, useReducer } from 'preact/hooks';
 import css from './style.css?inline';
 import { DeviceWindow } from '@/components/DeviceWindow';
+import { Sidebar } from '@/components/Sidebar';
 import { sendMessage } from '@/lib/messages';
-import { installPanelBridge } from '@/lib/panelBridge';
 import { getLastDeviceId } from '@/lib/storage';
 import {
   getWindows,
@@ -28,6 +28,7 @@ function App({ pageUrl }: { pageUrl: string }) {
       {windows.map((win) => (
         <DeviceWindow key={win.id} win={win} pageUrl={pageUrl} />
       ))}
+      <Sidebar windows={windows} />
     </>
   );
 }
@@ -38,7 +39,7 @@ export default defineContentScript({
   main() {
     const w = window as unknown as Record<string, Handle | undefined>;
     // A repeat toolbar click re-runs this script: just bring the windows forward.
-    // New windows are opened from the side panel.
+    // New windows are opened from the icon bar.
     const existing = w[HANDLE_KEY];
     if (existing) {
       existing.raise();
@@ -60,11 +61,8 @@ export default defineContentScript({
     };
     window.addEventListener('resize', onResize);
 
-    const removeBridge = installPanelBridge();
-
     const teardown = () => {
       setOnEmpty(undefined);
-      removeBridge();
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(frame);
       render(null, mount);
@@ -79,7 +77,6 @@ export default defineContentScript({
     render(<App pageUrl={location.href} />, mount);
     void getLastDeviceId().then((id) => {
       if (getWindows().length === 0 && w[HANDLE_KEY]) open(id);
-      sendMessage({ type: 'content-ready' });
     });
   },
 });

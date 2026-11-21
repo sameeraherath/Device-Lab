@@ -1,7 +1,14 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useRef, useState } from 'preact/hooks';
 import { getDevice } from '@/lib/devices';
-import { bringToFront, clamp, close, update, type DeviceWindowState } from '@/lib/windowManager';
+import {
+  BAR_WIDTH,
+  bringToFront,
+  clamp,
+  close,
+  update,
+  type DeviceWindowState,
+} from '@/lib/windowManager';
 
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
@@ -22,13 +29,15 @@ export function DeviceWindow({ win, pageUrl }: Props) {
 
   // The iframe keeps its real CSS size (so media queries see the device width);
   // the whole screen is scaled down with the `scale` property to fit the viewport.
+  // Windows never extend under the icon bar on the right.
+  const viewW = window.innerWidth - BAR_WIDTH;
   const innerW = win.rotated ? device.height : device.width;
   const innerH = win.rotated ? device.width : device.height;
   const scale = Math.max(
     0.1,
     Math.min(
       1,
-      (window.innerWidth - 2 * MARGIN) / innerW,
+      (viewW - 2 * MARGIN) / innerW,
       (window.innerHeight - TITLEBAR_HEIGHT - 2 * MARGIN) / innerH,
     ),
   );
@@ -37,11 +46,11 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const outerW = Math.max(screenW, MIN_OUTER_WIDTH);
   const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : screenH);
 
-  const x = clamp(win.x, 0, window.innerWidth - outerW);
+  const x = clamp(win.x, 0, viewW - outerW);
   const y = clamp(win.y, 0, window.innerHeight - outerH);
 
   const clampPos = (px: number, py: number) => ({
-    x: clamp(px, 0, window.innerWidth - outerW),
+    x: clamp(px, 0, viewW - outerW),
     y: clamp(py, 0, window.innerHeight - outerH),
   });
 

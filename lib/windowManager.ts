@@ -13,6 +13,8 @@ export interface DeviceWindowState {
 }
 
 export const MAX_WINDOWS = 3;
+/** Width reserved on the right edge for the icon bar. */
+export const BAR_WIDTH = 48;
 const CASCADE_OFFSET = 32;
 const MARGIN = 16;
 
@@ -87,6 +89,11 @@ export function open(deviceId: string = lastDeviceId): boolean {
 /** Closes one window; the others are not touched. */
 export function close(id: number) {
   setWindows(windows.filter((w) => w.id !== id));
+}
+
+/** Closes every window (and so tears the UI down). */
+export function closeAll() {
+  setWindows([]);
 }
 
 export function update(id: number, patch: Partial<Omit<DeviceWindowState, 'id'>>) {

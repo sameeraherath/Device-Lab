@@ -29,12 +29,6 @@ export default defineConfig({
         128: '/icon/128.png',
       },
     },
-    permissions: [
-      'activeTab',
-      'scripting',
-      'storage',
-      'declarativeNetRequestWithHostAccess',
-      'sidePanel',
-    ],
+    permissions: ['activeTab', 'scripting', 'storage', 'declarativeNetRequestWithHostAccess'],
   },
 });
