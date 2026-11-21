@@ -218,7 +218,6 @@
   background: var(--frame-color);
   /* Deep, soft depth: contact, near, mid and far shadow layers. */
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 6px 12px rgba(0, 0, 0, 0.25),
     0 20px 40px rgba(0, 0, 0, 0.3),
@@ -235,19 +234,27 @@
     linear-gradient(var(--frame-color), var(--frame-color)) padding-box,
     linear-gradient(
         180deg in oklab,
-        var(--rim-light) 0%,
-        var(--rim-dark) 28%,
-        var(--rim-dark) 72%,
-        color-mix(in oklab, var(--rim-light) 55%, var(--rim-dark)) 100%
+        color-mix(in oklab, var(--rim-light) 80%, var(--rim-dark)),
+        var(--rim-dark) 50%,
+        color-mix(in oklab, var(--rim-light) 45%, var(--rim-dark))
       )
       border-box;
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    inset 0 0 0 1px color-mix(in oklab, var(--rim-highlight) 55%, transparent),
+    0 0 0 1px rgba(0, 0, 0, 0.3),
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 6px 12px rgba(0, 0, 0, 0.25),
     0 20px 40px rgba(0, 0, 0, 0.3),
     0 40px 80px rgba(0, 0, 0, 0.25);
+}
+
+/* Continuous (squircle-like) corners, as on real devices, where the browser supports them. */
+@supports (corner-shape: superellipse(1.5)) {
+  .lid,
+  .lid::before,
+  .screen,
+  .screen::after {
+    corner-shape: superellipse(1.5);
+  }
 }
 
 /* Hardware buttons stick out just past the rim, in the same dark metal. */
@@ -255,9 +262,7 @@
   position: absolute;
   background: linear-gradient(in oklab, var(--rim-light), var(--rim-dark));
   border-radius: 2px;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, var(--rim-highlight) 40%, transparent),
-    0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .screen {
@@ -273,9 +278,8 @@
   inset: 0;
   z-index: 5;
   border-radius: inherit;
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
-    inset 0 0 4px 1px rgba(0, 0, 0, 0.3);
+  /* A hairline only: a darker ring or blur shows as a grey fringe on light pages. */
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
 
