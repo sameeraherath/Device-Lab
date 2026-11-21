@@ -1,5 +1,13 @@
 // Tracks open device windows, their z-order (focus/stacking) and the last used device.
-import { DEFAULT_DEVICE_ID } from './devices';
+import {
+  DEFAULT_DEVICE_ID,
+  FIRST_DEVICE_ID,
+  canRotate,
+  getDevice,
+  hasDevice,
+  setCustomDevices,
+  type Device,
+} from './devices';
 import { setLastDeviceId } from './storage';
 
 export interface DeviceWindowState {
@@ -47,10 +55,12 @@ export function setOnEmpty(cb: (() => void) | undefined) {
   onEmpty = cb;
 }
 
-/** Tells subscribers the viewport changed, so windows re-scale and re-clamp. */
+/** Tells subscribers to re-render (viewport resized, or the device list changed). */
 export function notifyResize() {
   emit();
 }
+
+export const refresh = notifyResize;
 
 export function getWindows(): readonly DeviceWindowState[] {
   return windows;
@@ -100,8 +110,35 @@ export function update(id: number, patch: Partial<Omit<DeviceWindowState, 'id'>>
   if (patch.deviceId) {
     lastDeviceId = patch.deviceId;
     void setLastDeviceId(patch.deviceId);
+    // Laptops, desktops and smart displays cannot be rotated.
+    if (!canRotate(getDevice(patch.deviceId))) patch = { ...patch, rotated: false };
   }
   setWindows(windows.map((w) => (w.id === id ? { ...w, ...patch } : w)));
+}
+
+/** Moves every window using `oldId` to `newId` (used when a custom device is deleted). */
+export function replaceDevice(oldId: string, newId: string) {
+  if (!windows.some((w) => w.deviceId === oldId)) return;
+  if (lastDeviceId === oldId) lastDeviceId = newId;
+  setWindows(
+    windows.map((w) =>
+      w.deviceId === oldId
+        ? { ...w, deviceId: newId, rotated: canRotate(getDevice(newId)) ? w.rotated : false }
+        : w,
+    ),
+  );
+}
+
+/**
+ * Installs a new custom-device list. Windows using a device that no longer exists
+ * (deleted here or in another tab) switch to the first device.
+ */
+export function applyCustomDevices(list: readonly Device[]) {
+  setCustomDevices(list);
+  if (!hasDevice(lastDeviceId)) lastDeviceId = FIRST_DEVICE_ID;
+  const missing = new Set(windows.map((w) => w.deviceId).filter((id) => !hasDevice(id)));
+  missing.forEach((id) => replaceDevice(id, FIRST_DEVICE_ID));
+  emit();
 }
 
 export function bringToFront(id: number) {

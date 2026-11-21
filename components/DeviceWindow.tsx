@@ -1,6 +1,7 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useRef, useState } from 'preact/hooks';
-import { getDevice } from '@/lib/devices';
+import { frameLayout, getDevice } from '@/lib/devices';
+import { DeviceFrame } from './DeviceFrame';
 import {
   BAR_WIDTH,
   bringToFront,
@@ -13,6 +14,8 @@ import {
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
 const MIN_OUTER_WIDTH = 300;
+/** Space between the title bar and the device. */
+const GAP = 8;
 const KEY_STEP = 15;
 
 interface Props {
@@ -28,23 +31,24 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const [announcement, setAnnouncement] = useState('');
 
   // The iframe keeps its real CSS size (so media queries see the device width);
-  // the whole screen is scaled down with the `scale` property to fit the viewport.
+  // the whole framed device is scaled down with the `scale` property to fit the viewport.
   // Windows never extend under the icon bar on the right.
   const viewW = window.innerWidth - BAR_WIDTH;
-  const innerW = win.rotated ? device.height : device.width;
-  const innerH = win.rotated ? device.width : device.height;
+  const layout = frameLayout(device, win.rotated);
+  const innerW = layout.screenW;
+  const innerH = layout.screenH;
   const scale = Math.max(
     0.1,
     Math.min(
       1,
-      (viewW - 2 * MARGIN) / innerW,
-      (window.innerHeight - TITLEBAR_HEIGHT - 2 * MARGIN) / innerH,
+      (viewW - 2 * MARGIN) / layout.width,
+      (window.innerHeight - TITLEBAR_HEIGHT - GAP - 2 * MARGIN) / layout.height,
     ),
   );
-  const screenW = innerW * scale;
-  const screenH = innerH * scale;
-  const outerW = Math.max(screenW, MIN_OUTER_WIDTH);
-  const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : screenH);
+  const deviceW = layout.width * scale;
+  const deviceH = layout.height * scale;
+  const outerW = Math.max(deviceW, MIN_OUTER_WIDTH);
+  const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : GAP + deviceH);
 
   const x = clamp(win.x, 0, viewW - outerW);
   const y = clamp(win.y, 0, window.innerHeight - outerH);
@@ -125,7 +129,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
             ⋮⋮
           </span>
           <span class="size">
-            {device.name} · {innerW}×{innerH} · {Math.round(scale * 100)}%
+            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
           </span>
         </button>
         <button
@@ -148,10 +152,15 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         </button>
       </div>
       {!win.minimized && (
-        <div class="screen-box" style={{ width: `${screenW}px`, height: `${screenH}px` }}>
-          <div class="screen" style={{ width: `${innerW}px`, height: `${innerH}px`, scale: scale }}>
-            {/* Not rendered while minimized, so the page and its memory are released. */}
-            <iframe class="frame" src={pageUrl} title={`${device.name} preview`} />
+        <div class="device-box" style={{ width: `${deviceW}px`, height: `${deviceH}px` }}>
+          <div
+            class="device-scale"
+            style={{ width: `${layout.width}px`, height: `${layout.height}px`, scale }}
+          >
+            <DeviceFrame device={device} rotated={win.rotated}>
+              {/* Not rendered while minimized, so the page and its memory are released. */}
+              <iframe class="frame" src={pageUrl} title={`${device.name} preview`} />
+            </DeviceFrame>
           </div>
         </div>
       )}

@@ -10,8 +10,14 @@ real device sizes side by side.
 ## Planned features
 
 - **Floating device windows**: open the current page in one or more draggable windows sized like real devices.
-- **Switch device**: change the device of any open window from a device list.
-- **Rotate**: flip a window between portrait and landscape.
+- **Switch device**: change the device of any open window from a searchable list of 55 devices
+  (phones, foldables, tablets, laptops & desktops, smart displays).
+- **Device frames**: each device is drawn with CSS only (bezels, island / notch / punch-hole cutouts,
+  laptop deck, monitor stand), from frame presets in `data/devices.json`.
+- **Custom devices**: add up to 20 of your own (name, size, DPR, type, frame on/off); they are saved
+  in `chrome.storage.local`.
+- **Rotate**: flip phones, foldables and tablets between portrait and landscape (the cutout moves
+  to the left edge). Laptops, desktops and smart displays do not rotate.
 - **Screenshots**: capture a window with the device frame, or just the screen content without it.
 
 ## Tech stack
@@ -38,7 +44,7 @@ components/             Preact UI components (DeviceWindow, Sidebar icon bar, De
                         ScreenshotMenu, Icons)
 lib/                    Non-UI logic: device list, window manager, typed messages, storage
 data/
-  devices.json          Device definitions (5 samples for now)
+  devices.json          Device list (name, CSS size, DPR, group) and the CSS frame presets
 public/icon/            Extension icons (16, 32, 48, 128 px), copied as-is into the build
 wxt.config.ts           WXT and manifest configuration
 eslint.config.js        ESLint flat config
@@ -90,6 +96,24 @@ Use this to try a production build in your normal Chrome profile:
 
 After rebuilding, click the reload button on the extension's card.
 
+## Device data
+
+`data/devices.json` has two parts:
+
+- `frames`: named presets (`iphone-island`, `iphone-notch`, `iphone-home`, `android-punch`,
+  `feature-phone`, `foldable`, `dual-screen`, `tablet`, `laptop`, `laptop-notch`, `desktop`,
+  `smart-display`, `simple-phone`) with `radius`, `bezel`, optional `bezelTop` / `bezelBottom`,
+  `screenRadius`, `color`, and optional `cutout`, `homeButton`, `base` and `stand`. Lengths are CSS
+  px at device scale.
+- `devices`: `id`, `name`, `group`, `width`, `height` (CSS px; portrait for phones, foldables and
+  tablets, landscape for computers and displays), `dpr`, `frame` and an optional `note`.
+
+**DPR is shown, not emulated.** An iframe always renders at the host screen's `devicePixelRatio`, so
+the listed DPR is informational (and for screenshots later). The user agent is not changed either.
+
 ## Roadmap
 
--
+- Verify the Galaxy S26 viewport on a real device (currently marked "not measured").
+- User-agent and DPR emulation for sites that sniff the device.
+- Screenshots with and without the device frame.
+- Studio (coming soon).
