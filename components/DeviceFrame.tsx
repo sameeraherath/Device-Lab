@@ -1,6 +1,8 @@
-// Draws a device frame (bezels, cutout, home button, laptop base, monitor stand) with CSS only.
+// Draws a device with CSS only: metal rim, bezel, cutout, side buttons, status bar, bottom bar,
+// home button, laptop base and monitor stand.
 import type { ComponentChildren } from 'preact';
 import { canRotate, frameLayout, getFrame, type Device } from '@/lib/devices';
+import { BottomBar, StatusBar } from './DeviceChrome';
 
 const px = (n: number) => `${n}px`;
 
@@ -13,9 +15,9 @@ interface Props {
 export function DeviceFrame({ device, rotated, children }: Props) {
   const frame = getFrame(device);
   const layout = frameLayout(device, rotated);
-  const { screenW, screenH, bezel } = layout;
+  const { screenW, screenH, bezel, statusH } = layout;
 
-  // "Show frame" off: just the screen.
+  // "Show frame" off: just the page at the device size.
   if (!frame) {
     return (
       <div
@@ -31,6 +33,10 @@ export function DeviceFrame({ device, rotated, children }: Props) {
   }
 
   const turned = rotated && canRotate(device);
+  const rim = frame.rim ? (frame.rimWidth ?? 2) : 0;
+  // Absolutely positioned parts of the lid are measured from inside the rim.
+  const inL = bezel.l - rim;
+  const inT = bezel.t - rim;
 
   // Cutout: centred on the top edge in portrait; on the left edge, vertically centred, when rotated.
   let cutoutStyle: Record<string, string> | null = null;
@@ -41,15 +47,15 @@ export function DeviceFrame({ device, rotated, children }: Props) {
       c.shape === 'notch' ? (turned ? `0 ${px(r)} ${px(r)} 0` : `0 0 ${px(r)} ${px(r)}`) : '999px';
     cutoutStyle = turned
       ? {
-          left: px(bezel.l + c.offset),
-          top: px(bezel.t + (screenH - c.width) / 2),
+          left: px(inL + c.offset),
+          top: px(inT + (screenH - c.width) / 2),
           width: px(c.height),
           height: px(c.width),
           borderRadius: radius,
         }
       : {
-          left: px(bezel.l + (screenW - c.width) / 2),
-          top: px(bezel.t + c.offset),
+          left: px(inL + (screenW - c.width) / 2),
+          top: px(inT + c.offset),
           width: px(c.width),
           height: px(c.height),
           borderRadius: radius,
@@ -63,17 +69,29 @@ export function DeviceFrame({ device, rotated, children }: Props) {
     const d = Math.round(Math.min(56, chin * 0.6));
     homeStyle = turned
       ? {
-          left: px(bezel.l + screenW + (bezel.r - d) / 2),
-          top: px(bezel.t + (screenH - d) / 2),
+          left: px(inL + screenW + (bezel.r - d) / 2),
+          top: px(inT + (screenH - d) / 2),
           width: px(d),
           height: px(d),
         }
       : {
-          left: px(bezel.l + (screenW - d) / 2),
-          top: px(bezel.t + screenH + (bezel.b - d) / 2),
+          left: px(inL + (screenW - d) / 2),
+          top: px(inT + screenH + (bezel.b - d) / 2),
           width: px(d),
           height: px(d),
         };
+  }
+
+  const lidStyle: Record<string, string> = {
+    width: px(layout.lidW),
+    height: px(layout.lidH),
+    padding: `${px(bezel.t - rim)} ${px(bezel.r - rim)} ${px(bezel.b - rim)} ${px(bezel.l - rim)}`,
+    borderRadius: px(frame.radius),
+    borderWidth: px(rim),
+  };
+  if (frame.rim) {
+    lidStyle['--rim-light'] = frame.rim[0];
+    lidStyle['--rim-dark'] = frame.rim[1];
   }
 
   return (
@@ -85,25 +103,38 @@ export function DeviceFrame({ device, rotated, children }: Props) {
         width: px(layout.width),
         height: px(layout.height),
         '--frame-color': frame.color,
+        '--rim-light': frame.rim?.[0] ?? frame.color,
+        '--rim-dark': frame.rim?.[1] ?? frame.color,
       }}
     >
-      <div
-        class="lid"
-        style={{
-          width: px(layout.lidW),
-          height: px(layout.lidH),
-          padding: `${px(bezel.t)} ${px(bezel.r)} ${px(bezel.b)} ${px(bezel.l)}`,
-          borderRadius: px(frame.radius),
-        }}
-      >
-        <div
-          class="screen"
-          style={{ width: px(screenW), height: px(screenH), borderRadius: px(frame.screenRadius) }}
-        >
-          {children}
+      <div class="lid-wrap" style={{ padding: px(layout.pad) }}>
+        {layout.buttons.map((b, i) => (
+          <div
+            key={i}
+            class="hw-button"
+            style={{ left: px(b.x), top: px(b.y), width: px(b.w), height: px(b.h) }}
+          />
+        ))}
+        <div class={`lid${frame.rim ? ' has-rim' : ''}`} style={lidStyle}>
+          <div
+            class="screen"
+            style={{
+              width: px(screenW),
+              height: px(screenH),
+              borderRadius: px(frame.screenRadius),
+            }}
+          >
+            <StatusBar kind={frame.statusBar ?? 'none'} height={statusH} />
+            <div class="viewport" style={{ height: px(screenH - statusH) }}>
+              {children}
+              <BottomBar kind={frame.bottomBar ?? 'none'} rotated={turned} />
+            </div>
+          </div>
+          {cutoutStyle && (
+            <div class="cutout" data-shape={frame.cutout?.shape} style={cutoutStyle} />
+          )}
+          {homeStyle && <div class="home-button" style={homeStyle} />}
         </div>
-        {cutoutStyle && <div class="cutout" data-shape={frame.cutout?.shape} style={cutoutStyle} />}
-        {homeStyle && <div class="home-button" style={homeStyle} />}
       </div>
       {frame.base && (
         <div class="base" style={{ width: px(layout.baseW), height: px(layout.baseH) }} />

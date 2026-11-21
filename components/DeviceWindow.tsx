@@ -1,6 +1,6 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
-import { useRef, useState } from 'preact/hooks';
-import { frameLayout, getDevice } from '@/lib/devices';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { canRotate, frameLayout, getDevice } from '@/lib/devices';
 import { DeviceFrame } from './DeviceFrame';
 import {
   BAR_WIDTH,
@@ -29,6 +29,31 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const drag = useRef<{ offsetX: number; offsetY: number; x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Touch devices (phones, foldables, tablets) have no desktop scrollbar. Hide it inside our
+  // own framed copy of the page; only possible while the frame is same-origin, so best effort.
+  const hideScrollbar = canRotate(device);
+  const syncScrollbar = () => {
+    let doc: Document | null;
+    try {
+      doc = iframeRef.current?.contentDocument ?? null;
+    } catch {
+      return;
+    }
+    if (!doc?.documentElement) return;
+    const id = 'device-lab-no-scrollbar';
+    const existing = doc.getElementById(id);
+    if (hideScrollbar && !existing) {
+      const style = doc.createElement('style');
+      style.id = id;
+      style.textContent = 'html{scrollbar-width:none}html::-webkit-scrollbar{display:none}';
+      (doc.head ?? doc.documentElement).append(style);
+    } else if (!hideScrollbar && existing) {
+      existing.remove();
+    }
+  };
+  useEffect(syncScrollbar, [hideScrollbar, win.minimized]);
 
   // The iframe keeps its real CSS size (so media queries see the device width);
   // the whole framed device is scaled down with the `scale` property to fit the viewport.
@@ -159,7 +184,13 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           >
             <DeviceFrame device={device} rotated={win.rotated}>
               {/* Not rendered while minimized, so the page and its memory are released. */}
-              <iframe class="frame" src={pageUrl} title={`${device.name} preview`} />
+              <iframe
+                ref={iframeRef}
+                class="frame"
+                src={pageUrl}
+                title={`${device.name} preview`}
+                onLoad={syncScrollbar}
+              />
             </DeviceFrame>
           </div>
         </div>

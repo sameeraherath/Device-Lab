@@ -13,16 +13,36 @@ export interface Cutout {
   offset: number;
 }
 
+export type StatusBarKind =
+  'ios-island' | 'ios-notch' | 'ios-classic' | 'android' | 'tablet' | 'none';
+export type BottomBarKind = 'safari' | 'gesture' | 'none';
+
+/** A hardware button on the frame edge; a negative `start` is measured from the far end. */
+export interface HardwareButton {
+  side: 'left' | 'right' | 'top';
+  start: number;
+  length: number;
+}
+
 /** All lengths are CSS px at device scale (before the window's fit-to-viewport scale). */
 export interface FramePreset {
   radius: number;
+  /** Total bezel thickness, including the metal rim. */
   bezel: number;
   bezelTop?: number;
   bezelBottom?: number;
   screenRadius: number;
+  /** Bezel (glass border) colour. */
   color: string;
+  /** Metal rim gradient [light, dark] and its width. */
+  rim?: [string, string];
+  rimWidth?: number;
   cutout?: Cutout;
   homeButton?: boolean;
+  buttons?: HardwareButton[];
+  statusBar?: StatusBarKind;
+  statusBarHeight?: number;
+  bottomBar?: BottomBarKind;
   /** Laptop deck or smart-display base under the lid; overhang may be negative (narrower). */
   base?: { height: number; overhang: number };
   /** Desktop monitor stand. */
@@ -50,7 +70,8 @@ interface DeviceData {
   devices: Device[];
 }
 
-const data = raw as DeviceData;
+// Shape is guaranteed by the generator that writes devices.json.
+const data = raw as unknown as DeviceData;
 export const FRAME_PRESETS = data.frames;
 export const builtInDevices: readonly Device[] = data.devices;
 
@@ -110,10 +131,29 @@ export function getFrame(device: Device): FramePreset | null {
   return FRAME_PRESETS[device.frame] ?? null;
 }
 
+/** How far hardware buttons stick out of the frame. */
+export const BUTTON_DEPTH = 3;
+
+export interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 export interface FrameLayout {
-  /** Screen (iframe) size in CSS px. */
+  /** Screen size in CSS px (the listed device size, after rotation). */
   screenW: number;
   screenH: number;
+  /** Status bar height reserved at the top of the screen (0 when rotated or none). */
+  statusH: number;
+  /** The page viewport: the screen minus the status bar. */
+  viewportW: number;
+  viewportH: number;
+  /** Space around the lid for hardware buttons. */
+  pad: number;
+  /** Hardware buttons, in the coordinates of the lid wrapper (lid plus `pad`). */
+  buttons: Rect[];
   /** Bezels around the screen, after rotation. */
   bezel: { t: number; r: number; b: number; l: number };
   /** The lid: screen plus bezels. */
@@ -140,6 +180,11 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
     return {
       screenW,
       screenH,
+      statusH: 0,
+      viewportW: screenW,
+      viewportH: screenH,
+      pad: 0,
+      buttons: [],
       bezel,
       lidW: screenW,
       lidH: screenH,
@@ -158,10 +203,47 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
     : { t: top, r: frame.bezel, b: bottom, l: frame.bezel };
   const lidW = screenW + bezel.l + bezel.r;
   const lidH = screenH + bezel.t + bezel.b;
+  // Landscape phones hide the status bar.
+  const statusH = turned ? 0 : (frame.statusBarHeight ?? 0);
+
+  // Buttons are laid out on the portrait lid, then turned with it (top edge -> left edge).
+  const pad = frame.buttons?.length ? BUTTON_DEPTH : 0;
+  const portraitW = (turned ? lidH : lidW) + 2 * pad;
+  const portraitLidW = turned ? lidH : lidW;
+  const portraitLidH = turned ? lidW : lidH;
+  const buttons = (frame.buttons ?? []).map((b): Rect => {
+    const along = b.side === 'top' ? portraitLidW : portraitLidH;
+    const start = pad + (b.start >= 0 ? b.start : along + b.start - b.length);
+    const rect: Rect =
+      b.side === 'left'
+        ? { x: 0, y: start, w: pad + 1, h: b.length }
+        : b.side === 'right'
+          ? { x: pad + portraitLidW - 1, y: start, w: pad + 1, h: b.length }
+          : { x: start, y: 0, w: b.length, h: pad + 1 };
+    // Quarter turn counter-clockwise: (x, y) -> (y, W - x).
+    return turned ? { x: rect.y, y: portraitW - rect.x - rect.w, w: rect.h, h: rect.w } : rect;
+  });
+
   const baseW = frame.base ? lidW + 2 * frame.base.overhang : 0;
   const baseH = frame.base?.height ?? 0;
   const standH = frame.stand ? frame.stand.neck + frame.stand.footHeight : 0;
-  const width = Math.max(lidW, baseW, frame.stand?.foot ?? 0);
-  const height = lidH + baseH + standH;
-  return { screenW, screenH, bezel, lidW, lidH, baseW, baseH, standH, width, height };
+  const width = Math.max(lidW + 2 * pad, baseW, frame.stand?.foot ?? 0);
+  const height = lidH + 2 * pad + baseH + standH;
+  return {
+    screenW,
+    screenH,
+    statusH,
+    viewportW: screenW,
+    viewportH: screenH - statusH,
+    pad,
+    buttons,
+    bezel,
+    lidW,
+    lidH,
+    baseW,
+    baseH,
+    standH,
+    width,
+    height,
+  };
 }

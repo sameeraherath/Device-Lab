@@ -4,25 +4,85 @@
       "radius": 60,
       "bezel": 12,
       "screenRadius": 48,
-      "color": "#1d1d1f",
+      "color": "#0b0b0c",
+      "rim": [
+        "#dcd7cf",
+        "#8e8a83"
+      ],
+      "rimWidth": 3,
       "cutout": {
         "shape": "island",
         "width": 124,
         "height": 36,
         "offset": 11
-      }
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 150,
+          "length": 30
+        },
+        {
+          "side": "left",
+          "start": 215,
+          "length": 60
+        },
+        {
+          "side": "left",
+          "start": 290,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 240,
+          "length": 95
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 54,
+      "bottomBar": "safari"
     },
     "iphone-notch": {
       "radius": 56,
       "bezel": 12,
       "screenRadius": 44,
-      "color": "#1d1d1f",
+      "color": "#0b0b0c",
+      "rim": [
+        "#e6e6e8",
+        "#a3a3a8"
+      ],
+      "rimWidth": 3,
       "cutout": {
         "shape": "notch",
         "width": 162,
         "height": 32,
         "offset": 0
-      }
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 150,
+          "length": 30
+        },
+        {
+          "side": "left",
+          "start": 215,
+          "length": 60
+        },
+        {
+          "side": "left",
+          "start": 290,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 240,
+          "length": 95
+        }
+      ],
+      "statusBar": "ios-notch",
+      "statusBarHeight": 47,
+      "bottomBar": "safari"
     },
     "iphone-home": {
       "radius": 54,
@@ -30,20 +90,70 @@
       "bezelTop": 96,
       "bezelBottom": 96,
       "screenRadius": 2,
-      "color": "#1d1d1f",
-      "homeButton": true
+      "color": "#0b0b0c",
+      "rim": [
+        "#e6e6e8",
+        "#a3a3a8"
+      ],
+      "rimWidth": 3,
+      "homeButton": true,
+      "buttons": [
+        {
+          "side": "left",
+          "start": 100,
+          "length": 26
+        },
+        {
+          "side": "left",
+          "start": 160,
+          "length": 50
+        },
+        {
+          "side": "left",
+          "start": 225,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 160,
+          "length": 60
+        }
+      ],
+      "statusBar": "ios-classic",
+      "statusBarHeight": 20,
+      "bottomBar": "none"
     },
     "android-punch": {
       "radius": 42,
       "bezel": 10,
       "screenRadius": 32,
-      "color": "#202124",
+      "color": "#0e0f10",
+      "rim": [
+        "#6a6d72",
+        "#2a2c2f"
+      ],
+      "rimWidth": 2,
       "cutout": {
         "shape": "punch",
-        "width": 22,
-        "height": 22,
-        "offset": 12
-      }
+        "width": 20,
+        "height": 20,
+        "offset": 6
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 200,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 280,
+          "length": 100
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture"
     },
     "feature-phone": {
       "radius": 26,
@@ -51,19 +161,46 @@
       "bezelTop": 44,
       "bezelBottom": 140,
       "screenRadius": 2,
-      "color": "#2b2b2e"
+      "color": "#2b2b2e",
+      "rim": [
+        "#6a6d72",
+        "#2a2c2f"
+      ],
+      "rimWidth": 2,
+      "statusBar": "none",
+      "bottomBar": "none"
     },
     "foldable": {
       "radius": 30,
       "bezel": 9,
       "screenRadius": 20,
-      "color": "#26262a",
+      "color": "#0e0f10",
+      "rim": [
+        "#6a6d72",
+        "#2a2c2f"
+      ],
+      "rimWidth": 2,
       "cutout": {
         "shape": "punch",
         "width": 18,
         "height": 18,
-        "offset": 10
-      }
+        "offset": 7
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 200,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 280,
+          "length": 90
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture"
     },
     "dual-screen": {
       "radius": 20,
@@ -71,20 +208,65 @@
       "bezelTop": 40,
       "bezelBottom": 40,
       "screenRadius": 4,
-      "color": "#cfd1d4"
+      "color": "#cfd1d4",
+      "rim": [
+        "#e6e6e8",
+        "#a3a3a8"
+      ],
+      "rimWidth": 2,
+      "buttons": [
+        {
+          "side": "right",
+          "start": 120,
+          "length": 50
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture"
     },
     "tablet": {
       "radius": 34,
       "bezel": 20,
       "screenRadius": 18,
-      "color": "#2b2b2e"
+      "color": "#0e0f10",
+      "rim": [
+        "#9a9da2",
+        "#4a4c50"
+      ],
+      "rimWidth": 2,
+      "buttons": [
+        {
+          "side": "top",
+          "start": -150,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 90,
+          "length": 70
+        },
+        {
+          "side": "right",
+          "start": 170,
+          "length": 70
+        }
+      ],
+      "statusBar": "tablet",
+      "statusBarHeight": 24,
+      "bottomBar": "gesture"
     },
     "laptop": {
       "radius": 14,
       "bezel": 14,
       "bezelTop": 24,
       "screenRadius": 4,
-      "color": "#2a2b2e",
+      "color": "#0e0f10",
+      "rim": [
+        "#cfd1d4",
+        "#8d9094"
+      ],
+      "rimWidth": 2,
       "base": {
         "height": 18,
         "overhang": 64
@@ -95,7 +277,12 @@
       "bezel": 12,
       "bezelTop": 14,
       "screenRadius": 10,
-      "color": "#2a2b2e",
+      "color": "#0e0f10",
+      "rim": [
+        "#cfd1d4",
+        "#8d9094"
+      ],
+      "rimWidth": 2,
       "cutout": {
         "shape": "notch",
         "width": 190,
@@ -133,7 +320,15 @@
       "radius": 42,
       "bezel": 10,
       "screenRadius": 30,
-      "color": "#202124"
+      "color": "#0e0f10",
+      "rim": [
+        "#6a6d72",
+        "#2a2c2f"
+      ],
+      "rimWidth": 2,
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture"
     }
   },
   "devices": [
