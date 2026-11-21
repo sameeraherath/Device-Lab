@@ -2,6 +2,18 @@
 import raw from '@/data/devices.json';
 
 export type DeviceGroup = 'custom' | 'phones' | 'foldables' | 'tablets' | 'computers' | 'displays';
+/** How the picker sections devices (phones are split by maker). */
+export type DeviceFamily =
+  | 'custom'
+  | 'iphone'
+  | 'pixel'
+  | 'samsung'
+  | 'moto'
+  | 'other-phones'
+  | 'foldables'
+  | 'tablets'
+  | 'computers'
+  | 'displays';
 /** Frame style for a custom device. */
 export type CustomType = 'phone' | 'tablet' | 'laptop' | 'desktop';
 
@@ -55,6 +67,7 @@ export interface Device {
   id: string;
   name: string;
   group: DeviceGroup;
+  family: DeviceFamily;
   /** CSS px as listed (portrait for phones/foldables/tablets, landscape for computers/displays). */
   width: number;
   height: number;
@@ -77,9 +90,13 @@ const data = raw as unknown as DeviceData;
 export const FRAME_PRESETS = data.frames;
 export const builtInDevices: readonly Device[] = data.devices;
 
-export const GROUPS: { id: DeviceGroup; label: string }[] = [
+export const FAMILIES: { id: DeviceFamily; label: string }[] = [
   { id: 'custom', label: 'Custom' },
-  { id: 'phones', label: 'Phones' },
+  { id: 'iphone', label: 'iPhone' },
+  { id: 'pixel', label: 'Google Pixel' },
+  { id: 'samsung', label: 'Samsung Galaxy' },
+  { id: 'moto', label: 'Motorola' },
+  { id: 'other-phones', label: 'Other phones' },
   { id: 'foldables', label: 'Foldables' },
   { id: 'tablets', label: 'Tablets' },
   { id: 'computers', label: 'Laptops & Desktops' },

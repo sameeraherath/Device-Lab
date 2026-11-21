@@ -10,8 +10,10 @@ real device sizes side by side.
 ## Planned features
 
 - **Floating device windows**: open the current page in one or more draggable windows sized like real devices.
-- **Switch device**: change the device of any open window from a searchable list of 55 devices
-  (phones, foldables, tablets, laptops & desktops, smart displays).
+- **Switch device**: choose from a gallery of 55 devices opened from the icon bar: search, filter
+  chips (iPhone, Android, Foldables, Tablets, Laptops & desktops, Displays, Custom), sections by
+  maker (iPhone, Google Pixel, Samsung Galaxy, Motorola, ...), a small drawing of each device, and a
+  Recent row with the last four you used. Arrow keys move around the grid.
 - **Device frames**: each device is drawn with CSS only (bezels, island / notch / punch-hole cutouts,
   laptop deck, monitor stand), from frame presets in `data/devices.json`.
 - **Feels like the real device**: a status bar (time, signal, Wi-Fi, battery, in the page's
@@ -117,7 +119,7 @@ After rebuilding, click the reload button on the extension's card.
   `smart-display`, `simple-phone`) with `radius`, `bezel`, optional `bezelTop` / `bezelBottom`,
   `screenRadius`, `color`, and optional `cutout`, `homeButton`, `base` and `stand`. Lengths are CSS
   px at device scale.
-- `devices`: `id`, `name`, `group`, `width`, `height` (CSS px; portrait for phones, foldables and
+- `devices`: `id`, `name`, `group`, `family` (how the picker sections it), `width`, `height` (CSS px; portrait for phones, foldables and
   tablets, landscape for computers and displays), `dpr`, `frame` and an optional `note`.
 
 **DPR is shown, not emulated.** An iframe always renders at the host screen's `devicePixelRatio`, so

@@ -44,6 +44,7 @@ function toDevice(id: string, input: CustomDeviceInput): Device {
     id,
     name: input.name.trim(),
     group: 'custom',
+    family: 'custom',
     width: input.width,
     height: input.height,
     dpr: input.dpr,

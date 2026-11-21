@@ -1,4 +1,4 @@
-// Typed wrappers around browser.storage.local: the last used device and the Focus mode setting.
+// Typed wrappers around browser.storage.local: last used device, recent devices and Focus mode.
 const LAST_DEVICE_KEY = 'lastDeviceId';
 
 export async function getLastDeviceId(): Promise<string | undefined> {
@@ -37,4 +37,29 @@ export async function setStageOn(on: boolean): Promise<void> {
   } catch {
     // Storage is a convenience only; ignore failures.
   }
+}
+
+const RECENT_KEY = 'recentDevices';
+export const RECENT_LIMIT = 4;
+
+/** The most recently chosen device ids, newest first. */
+export async function getRecentDevices(): Promise<string[]> {
+  try {
+    const result = await browser.storage.local.get(RECENT_KEY);
+    const value = result[RECENT_KEY];
+    return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Puts a device first in the recent list (no duplicates, at most RECENT_LIMIT); returns the list. */
+export async function pushRecentDevice(id: string): Promise<string[]> {
+  const next = [id, ...(await getRecentDevices()).filter((v) => v !== id)].slice(0, RECENT_LIMIT);
+  try {
+    await browser.storage.local.set({ [RECENT_KEY]: next });
+  } catch {
+    // Storage is a convenience only; ignore failures.
+  }
+  return next;
 }
