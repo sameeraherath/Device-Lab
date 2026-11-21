@@ -171,6 +171,21 @@ export interface FrameLayout {
   height: number;
 }
 
+/**
+ * Screen corner radii that nest inside the frame: the frame radius minus the bezel on each side,
+ * per axis, so the bezel is equally thick all the way round every corner. Uneven bezels (a tall
+ * chin or forehead) give elliptical or square corners, like the real devices.
+ * Returns a CSS `border-radius` value: "TL TR BR BL / TL TR BR BL" (horizontal / vertical).
+ */
+export function screenCornerRadii(
+  frame: FramePreset,
+  bezel: { t: number; r: number; b: number; l: number },
+): string {
+  const nest = (side: number) => `${Math.max(0, frame.radius - side)}px`;
+  const [l, r, t, b] = [nest(bezel.l), nest(bezel.r), nest(bezel.t), nest(bezel.b)];
+  return `${l} ${r} ${r} ${l} / ${t} ${t} ${b} ${b}`;
+}
+
 /** Computes the size of every part of a device for the given rotation. */
 export function frameLayout(device: Device, rotated: boolean): FrameLayout {
   const turned = rotated && canRotate(device);

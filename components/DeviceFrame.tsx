@@ -1,7 +1,7 @@
 // Draws a device with CSS only: metal rim, bezel, cutout, side buttons, status bar, bottom bar,
 // home button, laptop base and monitor stand.
 import type { ComponentChildren } from 'preact';
-import { canRotate, frameLayout, getFrame, type Device } from '@/lib/devices';
+import { canRotate, frameLayout, getFrame, screenCornerRadii, type Device } from '@/lib/devices';
 import { BottomBar, StatusBar } from './DeviceChrome';
 import type { DragProps } from './dragProps';
 
@@ -126,7 +126,7 @@ export function DeviceFrame({ device, rotated, dragProps, children }: Props) {
             style={{
               width: px(screenW),
               height: px(screenH),
-              borderRadius: px(frame.screenRadius),
+              borderRadius: screenCornerRadii(frame, bezel),
             }}
           >
             <StatusBar kind={frame.statusBar ?? 'none'} height={statusH} dragProps={dragProps} />
