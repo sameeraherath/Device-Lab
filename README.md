@@ -21,6 +21,9 @@ real device sizes side by side.
   appears when you hover over the device or click into it, and hides when you click elsewhere.
   Like a real phone, the page starts below the status bar, so the viewport height is the screen
   height minus the status bar (the width is unchanged).
+- **Drag the device itself**: grab the frame, the side buttons, the status bar, the laptop base or
+  the monitor stand and drag (the page inside the screen stays fully interactive, so it cannot be a
+  drag surface). The title bar handle and its arrow keys still work too.
 - **Focus mode** (off by default): a button in the icon bar puts a calm dark stage behind the devices,
   hiding the page behind them so you can concentrate on the device. The choice is remembered.
 - **Custom devices**: add up to 20 of your own (name, size, DPR, type, frame on/off); they are saved

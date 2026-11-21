@@ -3,16 +3,19 @@
 import type { ComponentChildren } from 'preact';
 import { canRotate, frameLayout, getFrame, type Device } from '@/lib/devices';
 import { BottomBar, StatusBar } from './DeviceChrome';
+import type { DragProps } from './dragProps';
 
 const px = (n: number) => `${n}px`;
 
 interface Props {
   device: Device;
   rotated: boolean;
+  /** Pointer handlers that make the device body (frame, buttons, base, stand) draggable. */
+  dragProps?: DragProps;
   children: ComponentChildren;
 }
 
-export function DeviceFrame({ device, rotated, children }: Props) {
+export function DeviceFrame({ device, rotated, dragProps, children }: Props) {
   const frame = getFrame(device);
   const layout = frameLayout(device, rotated);
   const { screenW, screenH, bezel, statusH } = layout;
@@ -112,11 +115,12 @@ export function DeviceFrame({ device, rotated, children }: Props) {
         {layout.buttons.map((b, i) => (
           <div
             key={i}
-            class="hw-button"
+            class="hw-button grab"
             style={{ left: px(b.x), top: px(b.y), width: px(b.w), height: px(b.h) }}
+            {...dragProps}
           />
         ))}
-        <div class={`lid${frame.rim ? ' has-rim' : ''}`} style={lidStyle}>
+        <div class={`lid grab${frame.rim ? ' has-rim' : ''}`} style={lidStyle} {...dragProps}>
           <div
             class="screen"
             style={{
@@ -125,7 +129,7 @@ export function DeviceFrame({ device, rotated, children }: Props) {
               borderRadius: px(frame.screenRadius),
             }}
           >
-            <StatusBar kind={frame.statusBar ?? 'none'} height={statusH} />
+            <StatusBar kind={frame.statusBar ?? 'none'} height={statusH} dragProps={dragProps} />
             <div class="viewport" style={{ height: px(screenH - statusH) }}>
               {children}
               <BottomBar kind={frame.bottomBar ?? 'none'} rotated={turned} />
@@ -138,17 +142,23 @@ export function DeviceFrame({ device, rotated, children }: Props) {
         </div>
       </div>
       {frame.base && (
-        <div class="base" style={{ width: px(layout.baseW), height: px(layout.baseH) }} />
+        <div
+          class="base grab"
+          style={{ width: px(layout.baseW), height: px(layout.baseH) }}
+          {...dragProps}
+        />
       )}
       {frame.stand && (
         <div class="stand" style={{ height: px(layout.standH) }}>
           <div
-            class="neck"
+            class="neck grab"
             style={{ width: px(frame.stand.neckWidth), height: px(frame.stand.neck) }}
+            {...dragProps}
           />
           <div
-            class="foot"
+            class="foot grab"
             style={{ width: px(frame.stand.foot), height: px(frame.stand.footHeight) }}
+            {...dragProps}
           />
         </div>
       )}
