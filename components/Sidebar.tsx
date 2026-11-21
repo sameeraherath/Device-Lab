@@ -114,6 +114,20 @@ export function Sidebar({ windows }: Props) {
       </button>
       <span class="sep" role="separator" aria-orientation="horizontal" />
       <ScreenshotMenu />
+      <span class="sep" role="separator" aria-orientation="horizontal" />
+      <button
+        type="button"
+        class="tool"
+        data-tool
+        aria-label="Studio (coming soon)"
+        aria-disabled="true"
+        title="Studio (coming soon)"
+      >
+        <Icon name="studio" />
+        <span class="badge" aria-hidden="true">
+          Soon
+        </span>
+      </button>
       <p class="visually-hidden" role="status">
         {status}
       </p>

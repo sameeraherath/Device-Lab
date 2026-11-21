@@ -175,8 +175,31 @@
 }
 
 .tool[aria-disabled='true'] {
-  opacity: 0.4;
   cursor: default;
+}
+
+/* Dim only the icon, so a badge on a disabled tool stays fully visible. */
+.tool[aria-disabled='true'] svg {
+  opacity: 0.4;
+}
+
+.tool {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: #1e8e3e;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  pointer-events: none;
 }
 
 .tool[aria-expanded='true'] {
