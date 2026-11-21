@@ -1,5 +1,13 @@
 // Tracks open device windows, their z-order (focus/stacking) and the last used device.
-import { DEFAULT_DEVICE_ID, canRotate, getDevice } from './devices';
+import {
+  DEFAULT_DEVICE_ID,
+  FIRST_DEVICE_ID,
+  canRotate,
+  getDevice,
+  hasDevice,
+  setCustomDevices,
+  type Device,
+} from './devices';
 import { setLastDeviceId } from './storage';
 
 export interface DeviceWindowState {
@@ -119,6 +127,18 @@ export function replaceDevice(oldId: string, newId: string) {
         : w,
     ),
   );
+}
+
+/**
+ * Installs a new custom-device list. Windows using a device that no longer exists
+ * (deleted here or in another tab) switch to the first device.
+ */
+export function applyCustomDevices(list: readonly Device[]) {
+  setCustomDevices(list);
+  if (!hasDevice(lastDeviceId)) lastDeviceId = FIRST_DEVICE_ID;
+  const missing = new Set(windows.map((w) => w.deviceId).filter((id) => !hasDevice(id)));
+  missing.forEach((id) => replaceDevice(id, FIRST_DEVICE_ID));
+  emit();
 }
 
 export function bringToFront(id: number) {

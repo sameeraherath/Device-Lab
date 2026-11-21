@@ -507,3 +507,144 @@
     outline: 2px solid Highlight;
   }
 }
+
+/* ---- Custom device dialog (native modal <dialog>) ---- */
+.custom-dialog {
+  inline-size: min(380px, calc(100vw - 32px));
+  max-block-size: calc(100vh - 32px);
+  padding: 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #202124;
+  color: #e8eaed;
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Both rules are needed so scrolling over the backdrop or inside the dialog never scrolls the page. */
+.custom-dialog:modal {
+  overscroll-behavior: contain;
+}
+
+.custom-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.custom-dialog h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.custom-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.field > span {
+  color: #c4c7c5;
+}
+
+.field small,
+.help {
+  color: #9aa0a6;
+  font-size: 11px;
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.custom-dialog input:not([type='checkbox']),
+.custom-dialog select {
+  min-block-size: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: #2b2c30;
+  color: inherit;
+  font: inherit;
+}
+
+/* Only mark fields invalid after the user has interacted with them. */
+.custom-dialog input:user-invalid {
+  border-color: #f28b82;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switch input {
+  inline-size: 18px;
+  block-size: 18px;
+  accent-color: #8ab4f8;
+}
+
+.form-error {
+  min-block-size: 1.4em;
+  margin: 0;
+  color: #f28b82;
+}
+
+.dialog-text {
+  margin: 0 0 6px;
+  color: #c4c7c5;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-btn {
+  min-block-size: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dialog-btn.primary {
+  border-color: transparent;
+  background: #8ab4f8;
+  color: #0b1d3a;
+}
+
+.dialog-btn.danger {
+  border-color: transparent;
+  background: #f28b82;
+  color: #3c0d0a;
+}
+
+.dialog-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.custom-dialog :is(input, select, button):focus-visible {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 1px;
+}

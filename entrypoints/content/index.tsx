@@ -6,8 +6,10 @@ import { DeviceWindow } from '@/components/DeviceWindow';
 import { Sidebar } from '@/components/Sidebar';
 import { sendMessage } from '@/lib/messages';
 import { hasDevice } from '@/lib/devices';
+import { loadCustomDevices, watchCustomDevices } from '@/lib/customDevices';
 import { getLastDeviceId } from '@/lib/storage';
 import {
+  applyCustomDevices,
   getWindows,
   notifyResize,
   open,
@@ -62,8 +64,12 @@ export default defineContentScript({
     };
     window.addEventListener('resize', onResize);
 
+    // Custom devices edited in another tab show up here live (event-driven, only while mounted).
+    const stopWatching = watchCustomDevices(applyCustomDevices);
+
     const teardown = () => {
       setOnEmpty(undefined);
+      stopWatching();
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(frame);
       render(null, mount);
@@ -76,7 +82,8 @@ export default defineContentScript({
     w[HANDLE_KEY] = { raise: raiseTop };
 
     render(<App pageUrl={location.href} />, mount);
-    void getLastDeviceId().then((id) => {
+    void Promise.all([getLastDeviceId(), loadCustomDevices()]).then(([id, custom]) => {
+      applyCustomDevices(custom);
       // A stored device that no longer exists falls back to the default.
       if (getWindows().length === 0 && w[HANDLE_KEY]) open(hasDevice(id) ? id : undefined);
     });

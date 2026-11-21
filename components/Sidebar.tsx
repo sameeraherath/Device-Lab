@@ -1,7 +1,9 @@
 // Slim translucent icon bar on the right edge; controls the focused (top) device window.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { canRotate, getDevice } from '@/lib/devices';
+import { CUSTOM_LIMIT } from '@/lib/customDevices';
+import { canRotate, getCustomDevices, getDevice } from '@/lib/devices';
 import { MAX_WINDOWS, closeAll, open, update, type DeviceWindowState } from '@/lib/windowManager';
+import { CustomDeviceDialog, type DialogMode } from './CustomDeviceDialog';
 import { DevicePicker } from './DevicePicker';
 import { Icon } from './Icons';
 import { ScreenshotMenu } from './ScreenshotMenu';
@@ -13,6 +15,7 @@ interface Props {
 export function Sidebar({ windows }: Props) {
   const barRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState('');
+  const [dialog, setDialog] = useState<DialogMode | null>(null);
   const selected = windows.reduce<DeviceWindowState | undefined>(
     (top, w) => (!top || w.z > top.z ? w : top),
     undefined,
@@ -86,6 +89,10 @@ export function Sidebar({ windows }: Props) {
           update(selected.id, { deviceId });
           setStatus(`Device set to ${getDevice(deviceId).name}`);
         }}
+        onAdd={() => setDialog({ kind: 'add' })}
+        canAdd={getCustomDevices().length < CUSTOM_LIMIT}
+        onEdit={(device) => setDialog({ kind: 'edit', device })}
+        onDelete={(device) => setDialog({ kind: 'delete', device })}
       />
       <button
         type="button"
@@ -131,6 +138,16 @@ export function Sidebar({ windows }: Props) {
           Soon
         </span>
       </button>
+      <CustomDeviceDialog
+        mode={dialog}
+        onClose={() => setDialog(null)}
+        onSaved={(device, added) => {
+          // A newly added device is applied to the focused window right away.
+          if (added) update(selected.id, { deviceId: device.id });
+          setStatus(added ? `Added ${device.name}` : `Saved ${device.name}`);
+        }}
+        fallbackFocus={() => barRef.current?.querySelector<HTMLElement>('#device-trigger') ?? null}
+      />
       <p class="visually-hidden" role="status">
         {status}
       </p>
