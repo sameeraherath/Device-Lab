@@ -234,6 +234,23 @@
   background: #fff;
 }
 
+/* Glass edge: the screen looks set into the bezel. An overlay, because the iframe covers .screen. */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
+    inset 0 0 4px 1px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.screen.bare::after {
+  display: none;
+}
+
 .screen.bare {
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.2),
@@ -327,19 +344,19 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  inline-size: calc(100% - 28px);
-  block-size: 46px;
-  padding: 0 14px;
+  inline-size: calc(100% - 40px);
+  block-size: 38px;
+  padding: 0 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.62);
   backdrop-filter: blur(14px) saturate(1.6);
   color: #111;
   font:
-    500 15px/1 system-ui,
+    500 14px/1 system-ui,
     sans-serif;
   box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.12),
-    0 4px 14px rgba(0, 0, 0, 0.18);
+    0 0 0 0.5px rgba(0, 0, 0, 0.1),
+    0 3px 10px rgba(0, 0, 0, 0.14);
 }
 
 .pill-domain {
@@ -349,8 +366,8 @@
 }
 
 .pill-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
