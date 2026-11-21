@@ -122,6 +122,30 @@
   align-items: center;
 }
 
+/*
+ * Title bar: a pill floating above the device. It is hidden until the pointer is over the
+ * window (device or bar), or until something in the window has focus (you tabbed to a control,
+ * or clicked into the device: `data-engaged`, set from script because :focus-within does not
+ * reach into an iframe), so it stays while you work in the device and goes away when you click
+ * elsewhere. A minimized window keeps it in the flow, always visible.
+ */
+.window:not([data-minimized]) .titlebar {
+  position: absolute;
+  inset: auto 0 calc(100% + 6px);
+  opacity: 0;
+}
+
+.window:not([data-minimized]):is(:hover, :focus-within, [data-engaged]) .titlebar,
+.window:not([data-minimized]) .titlebar:has(.handle.dragging) {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .window:not([data-minimized]) .titlebar {
+    transition: opacity 0.12s;
+  }
+}
+
 /* ---- Focus mode: a calm, opaque dark stage that hides the page behind the windows ---- */
 .stage {
   position: fixed;
@@ -146,40 +170,69 @@
   background: var(--frame-color);
   /* Deep, soft depth: contact, near, mid and far shadow layers. */
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
     0 1px 2px rgba(0, 0, 0, 0.35),
     0 6px 12px rgba(0, 0, 0, 0.25),
     0 20px 40px rgba(0, 0, 0, 0.3),
     0 40px 80px rgba(0, 0, 0, 0.25);
 }
 
-/* Metal rim: a gradient in the border box around the black bezel (keeps the rounded corners). */
+/*
+ * Refined metal frame, from the outside in: a 1px dark outer edge, the metal band (a soft,
+ * low-contrast gradient with a faint sheen near the top), a 1px highlight line just inside
+ * the band, then the black glass bezel.
+ */
 .lid.has-rim {
   background:
     linear-gradient(var(--frame-color), var(--frame-color)) padding-box,
     linear-gradient(
-        145deg in oklab,
-        var(--rim-light),
-        var(--rim-dark) 30%,
-        var(--rim-light) 55%,
-        var(--rim-dark) 80%,
-        var(--rim-light)
+        180deg in oklab,
+        var(--rim-light) 0%,
+        var(--rim-dark) 28%,
+        var(--rim-dark) 72%,
+        color-mix(in oklab, var(--rim-light) 55%, var(--rim-dark)) 100%
       )
       border-box;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px color-mix(in oklab, var(--rim-highlight) 55%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 40px 80px rgba(0, 0, 0, 0.25);
 }
 
-/* Hardware buttons stick out just past the rim. */
+/* Hardware buttons stick out just past the rim, in the same dark metal. */
 .hw-button {
   position: absolute;
   background: linear-gradient(in oklab, var(--rim-light), var(--rim-dark));
   border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--rim-highlight) 40%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .screen {
   position: relative;
   overflow: clip;
   background: #fff;
+}
+
+/* Glass edge: the screen looks set into the bezel. An overlay, because the iframe covers .screen. */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
+    inset 0 0 4px 1px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.screen.bare::after {
+  display: none;
 }
 
 .screen.bare {
@@ -275,19 +328,19 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  inline-size: calc(100% - 28px);
-  block-size: 46px;
-  padding: 0 14px;
+  inline-size: calc(100% - 40px);
+  block-size: 38px;
+  padding: 0 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.62);
   backdrop-filter: blur(14px) saturate(1.6);
   color: #111;
   font:
-    500 15px/1 system-ui,
+    500 14px/1 system-ui,
     sans-serif;
   box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.12),
-    0 4px 14px rgba(0, 0, 0, 0.18);
+    0 0 0 0.5px rgba(0, 0, 0, 0.1),
+    0 3px 10px rgba(0, 0, 0, 0.14);
 }
 
 .pill-domain {
@@ -297,8 +350,8 @@
 }
 
 .pill-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -333,6 +386,76 @@
   background: #000;
   /* Clicks land on the page around it, as on a real device. */
   pointer-events: none;
+}
+
+/* Cutout details. Portrait first; rotated (cutout on the left edge) turns them a quarter turn. */
+.cutout::before,
+.cutout::after {
+  content: '';
+  position: absolute;
+}
+
+/* Island: a camera lens near its right end (the end that moves to the top when rotated). */
+.cutout[data-shape='island']::after {
+  right: 12px;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2c3d6e 0, #0a1022 45%, #000 72%);
+  box-shadow:
+    0 0 0 1.5px #111,
+    inset 0 0 0 1px rgba(120, 150, 255, 0.12);
+}
+
+.device[data-rotated] .cutout[data-shape='island']::after {
+  right: auto;
+  top: 12px;
+  left: 50%;
+  translate: -50% 0;
+}
+
+/* Punch hole: a thin lens ring. */
+.cutout[data-shape='punch']::after {
+  inset: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #1b2644, #000 62%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Notch: a speaker slit in the middle and a lens dot beside it. */
+.cutout[data-shape='notch']::before {
+  left: 50%;
+  top: 9px;
+  width: 46px;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 3px;
+  background: #1b1b1e;
+}
+
+.cutout[data-shape='notch']::after {
+  left: calc(50% + 40px);
+  top: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #26335a, #05070f 65%);
+  box-shadow: 0 0 0 1px #111;
+}
+
+.device[data-rotated] .cutout[data-shape='notch']::before {
+  left: 9px;
+  top: 50%;
+  width: 5px;
+  height: 46px;
+  translate: 0 -50%;
+}
+
+.device[data-rotated] .cutout[data-shape='notch']::after {
+  left: 7px;
+  top: calc(50% - 40px);
 }
 
 .home-button {

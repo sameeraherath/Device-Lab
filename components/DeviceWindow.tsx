@@ -13,9 +13,13 @@ import {
 
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
+/** Width of a minimized window (just its title bar). */
 const MIN_OUTER_WIDTH = 300;
-/** Space between the title bar and the device. */
-const GAP = 8;
+/** The title bar floats this far above the device, so it needs room above the window. */
+const OVERLAY_GAP = 6;
+const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
+/** Narrowest title bar, so its controls always fit. */
+const MIN_BAR_WIDTH = 220;
 const KEY_STEP = 15;
 
 interface Props {
@@ -30,6 +34,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  // True while the framed page has focus (you clicked inside the device), so the title bar stays.
+  const [engaged, setEngaged] = useState(false);
 
   // Touch devices (phones, foldables, tablets) have no desktop scrollbar. Hide it inside our
   // own framed copy of the page; only possible while the frame is same-origin, so best effort.
@@ -55,6 +61,25 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   };
   useEffect(syncScrollbar, [hideScrollbar, win.minimized]);
 
+  // CSS :focus-within does not reach into an iframe, so track it here. When focus moves into the
+  // framed page, our window gets `blur` and the iframe becomes the active element (this also works
+  // when the frame is cross-origin); when focus comes back, the window gets `focus`.
+  useEffect(() => {
+    const root = rootRef.current?.getRootNode() as ShadowRoot | undefined;
+    const check = () =>
+      setEngaged(!!iframeRef.current && root?.activeElement === iframeRef.current);
+    window.addEventListener('blur', check);
+    window.addEventListener('focus', check);
+    root?.addEventListener('focusin', check);
+    check();
+    return () => {
+      window.removeEventListener('blur', check);
+      window.removeEventListener('focus', check);
+      root?.removeEventListener('focusin', check);
+      setEngaged(false);
+    };
+  }, [win.minimized]);
+
   // The iframe keeps its real CSS size (so media queries see the device width);
   // the whole framed device is scaled down with the `scale` property to fit the viewport.
   // Windows never extend under the icon bar on the right.
@@ -67,20 +92,22 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     Math.min(
       1,
       (viewW - 2 * MARGIN) / layout.width,
-      (window.innerHeight - TITLEBAR_HEIGHT - GAP - 2 * MARGIN) / layout.height,
+      (window.innerHeight - OVERLAY_SPACE - MARGIN) / layout.height,
     ),
   );
   const deviceW = layout.width * scale;
   const deviceH = layout.height * scale;
-  const outerW = Math.max(deviceW, MIN_OUTER_WIDTH);
-  const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : GAP + deviceH);
+  const outerW = Math.max(deviceW, win.minimized ? MIN_OUTER_WIDTH : MIN_BAR_WIDTH);
+  // Minimized: only the title bar is left, in the flow. Otherwise the bar floats above the device.
+  const outerH = win.minimized ? TITLEBAR_HEIGHT : deviceH;
+  const minY = win.minimized ? 0 : OVERLAY_SPACE;
 
   const x = clamp(win.x, 0, viewW - outerW);
-  const y = clamp(win.y, 0, window.innerHeight - outerH);
+  const y = clamp(win.y, minY, window.innerHeight - outerH);
 
   const clampPos = (px: number, py: number) => ({
     x: clamp(px, 0, viewW - outerW),
-    y: clamp(py, 0, window.innerHeight - outerH),
+    y: clamp(py, minY, window.innerHeight - outerH),
   });
 
   const announce = (text: string) => {
@@ -135,6 +162,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     <div
       ref={rootRef}
       class="window"
+      data-minimized={win.minimized ? 'true' : undefined}
+      data-engaged={engaged ? 'true' : undefined}
       style={{ left: `${x}px`, top: `${y}px`, width: `${outerW}px`, zIndex: win.z }}
       onFocusIn={() => bringToFront(win.id)}
       onPointerDown={() => bringToFront(win.id)}
@@ -143,8 +172,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         <button
           type="button"
           class={`handle${dragging ? ' dragging' : ''}`}
-          aria-label={`Move ${device.name} window. Use arrow keys to move.`}
-          title="Drag or use arrow keys to move"
+          aria-label={`Move ${device.name} window, ${innerW}×${innerH}. Use arrow keys to move.`}
+          title={`${device.name} · ${innerW}×${innerH} @${device.dpr} · ${Math.round(scale * 100)}% — drag or use arrow keys to move`}
           onPointerDown={onHandlePointerDown}
           onPointerMove={onHandlePointerMove}
           onLostPointerCapture={onHandleLostCapture}
@@ -153,9 +182,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           <span class="grip" aria-hidden="true">
             ⋮⋮
           </span>
-          <span class="size">
-            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
-          </span>
+          <span class="size">{device.name}</span>
         </button>
         <button
           type="button"

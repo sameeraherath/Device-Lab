@@ -5,7 +5,7 @@
       "bezel": 12,
       "screenRadius": 48,
       "color": "#0b0b0c",
-      "rim": ["#dcd7cf", "#8e8a83"],
+      "rim": ["#41444b", "#1c1e22"],
       "rimWidth": 3,
       "cutout": {
         "shape": "island",
@@ -37,14 +37,15 @@
       ],
       "statusBar": "ios-island",
       "statusBarHeight": 54,
-      "bottomBar": "safari"
+      "bottomBar": "safari",
+      "rimHighlight": "#7a7e88"
     },
     "iphone-notch": {
       "radius": 56,
       "bezel": 12,
       "screenRadius": 44,
       "color": "#0b0b0c",
-      "rim": ["#e6e6e8", "#a3a3a8"],
+      "rim": ["#4a4d53", "#222428"],
       "rimWidth": 3,
       "cutout": {
         "shape": "notch",
@@ -76,7 +77,8 @@
       ],
       "statusBar": "ios-notch",
       "statusBarHeight": 47,
-      "bottomBar": "safari"
+      "bottomBar": "safari",
+      "rimHighlight": "#80848c"
     },
     "iphone-home": {
       "radius": 54,
@@ -85,7 +87,7 @@
       "bezelBottom": 96,
       "screenRadius": 2,
       "color": "#0b0b0c",
-      "rim": ["#e6e6e8", "#a3a3a8"],
+      "rim": ["#55585e", "#2a2c30"],
       "rimWidth": 3,
       "homeButton": true,
       "buttons": [
@@ -112,14 +114,15 @@
       ],
       "statusBar": "ios-classic",
       "statusBarHeight": 20,
-      "bottomBar": "none"
+      "bottomBar": "none",
+      "rimHighlight": "#8a8e96"
     },
     "android-punch": {
       "radius": 42,
       "bezel": 10,
       "screenRadius": 32,
       "color": "#0e0f10",
-      "rim": ["#6a6d72", "#2a2c2f"],
+      "rim": ["#3a3c40", "#18191b"],
       "rimWidth": 2,
       "cutout": {
         "shape": "punch",
@@ -141,7 +144,8 @@
       ],
       "statusBar": "android",
       "statusBarHeight": 28,
-      "bottomBar": "gesture"
+      "bottomBar": "gesture",
+      "rimHighlight": "#6c6f75"
     },
     "feature-phone": {
       "radius": 26,
@@ -150,17 +154,18 @@
       "bezelBottom": 140,
       "screenRadius": 2,
       "color": "#2b2b2e",
-      "rim": ["#6a6d72", "#2a2c2f"],
+      "rim": ["#3a3c40", "#18191b"],
       "rimWidth": 2,
       "statusBar": "none",
-      "bottomBar": "none"
+      "bottomBar": "none",
+      "rimHighlight": "#6c6f75"
     },
     "foldable": {
       "radius": 30,
       "bezel": 9,
       "screenRadius": 20,
       "color": "#0e0f10",
-      "rim": ["#6a6d72", "#2a2c2f"],
+      "rim": ["#3a3c40", "#18191b"],
       "rimWidth": 2,
       "cutout": {
         "shape": "punch",
@@ -182,7 +187,8 @@
       ],
       "statusBar": "android",
       "statusBarHeight": 28,
-      "bottomBar": "gesture"
+      "bottomBar": "gesture",
+      "rimHighlight": "#6c6f75"
     },
     "dual-screen": {
       "radius": 20,
@@ -191,7 +197,7 @@
       "bezelBottom": 40,
       "screenRadius": 4,
       "color": "#cfd1d4",
-      "rim": ["#e6e6e8", "#a3a3a8"],
+      "rim": ["#bfc1c4", "#8f9195"],
       "rimWidth": 2,
       "buttons": [
         {
@@ -202,14 +208,15 @@
       ],
       "statusBar": "android",
       "statusBarHeight": 28,
-      "bottomBar": "gesture"
+      "bottomBar": "gesture",
+      "rimHighlight": "#e4e5e7"
     },
     "tablet": {
       "radius": 34,
       "bezel": 20,
       "screenRadius": 18,
       "color": "#0e0f10",
-      "rim": ["#9a9da2", "#4a4c50"],
+      "rim": ["#4b4e54", "#24262a"],
       "rimWidth": 2,
       "buttons": [
         {
@@ -230,7 +237,8 @@
       ],
       "statusBar": "tablet",
       "statusBarHeight": 24,
-      "bottomBar": "gesture"
+      "bottomBar": "gesture",
+      "rimHighlight": "#80848c"
     },
     "laptop": {
       "radius": 14,
@@ -238,12 +246,13 @@
       "bezelTop": 24,
       "screenRadius": 4,
       "color": "#0e0f10",
-      "rim": ["#cfd1d4", "#8d9094"],
+      "rim": ["#3e4146", "#202226"],
       "rimWidth": 2,
       "base": {
         "height": 18,
         "overhang": 64
-      }
+      },
+      "rimHighlight": "#7a7e85"
     },
     "laptop-notch": {
       "radius": 16,
@@ -251,7 +260,7 @@
       "bezelTop": 14,
       "screenRadius": 10,
       "color": "#0e0f10",
-      "rim": ["#cfd1d4", "#8d9094"],
+      "rim": ["#3e4146", "#202226"],
       "rimWidth": 2,
       "cutout": {
         "shape": "notch",
@@ -262,7 +271,8 @@
       "base": {
         "height": 18,
         "overhang": 64
-      }
+      },
+      "rimHighlight": "#7a7e85"
     },
     "desktop": {
       "radius": 10,
@@ -291,11 +301,12 @@
       "bezel": 10,
       "screenRadius": 30,
       "color": "#0e0f10",
-      "rim": ["#6a6d72", "#2a2c2f"],
+      "rim": ["#3a3c40", "#18191b"],
       "rimWidth": 2,
       "statusBar": "android",
       "statusBarHeight": 28,
-      "bottomBar": "gesture"
+      "bottomBar": "gesture",
+      "rimHighlight": "#6c6f75"
     }
   },
   "devices": [

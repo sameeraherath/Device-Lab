@@ -36,6 +36,8 @@ export interface FramePreset {
   color: string;
   /** Metal rim gradient [light, dark] and its width. */
   rim?: [string, string];
+  /** Fine highlight line just inside the metal band. */
+  rimHighlight?: string;
   rimWidth?: number;
   cutout?: Cutout;
   homeButton?: boolean;

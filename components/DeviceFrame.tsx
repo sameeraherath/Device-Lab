@@ -105,6 +105,7 @@ export function DeviceFrame({ device, rotated, children }: Props) {
         '--frame-color': frame.color,
         '--rim-light': frame.rim?.[0] ?? frame.color,
         '--rim-dark': frame.rim?.[1] ?? frame.color,
+        '--rim-highlight': frame.rimHighlight ?? frame.rim?.[0] ?? frame.color,
       }}
     >
       <div class="lid-wrap" style={{ padding: px(layout.pad) }}>
