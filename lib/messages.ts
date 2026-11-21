@@ -1,2 +1,6 @@
-// Typed message definitions passed between the background worker and the content script.
-export {};
+// Typed messages sent from the content script to the background worker.
+export type ContentToBackground = { type: 'close' };
+
+export function sendToBackground(message: ContentToBackground): void {
+  void browser.runtime.sendMessage(message).catch(() => {});
+}

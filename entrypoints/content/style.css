@@ -1,1 +1,33 @@
 /* Styles for the device windows, scoped to the content script's Shadow DOM. */
+.window {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2147483647;
+  background: #111;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  font:
+    12px system-ui,
+    sans-serif;
+  color: #fff;
+}
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+}
+.titlebar button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+.screen {
+  display: block;
+  border: 0;
+  background: #fff;
+}
