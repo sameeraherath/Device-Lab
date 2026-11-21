@@ -387,6 +387,76 @@
   pointer-events: none;
 }
 
+/* Cutout details. Portrait first; rotated (cutout on the left edge) turns them a quarter turn. */
+.cutout::before,
+.cutout::after {
+  content: '';
+  position: absolute;
+}
+
+/* Island: a camera lens near its right end (the end that moves to the top when rotated). */
+.cutout[data-shape='island']::after {
+  right: 12px;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2c3d6e 0, #0a1022 45%, #000 72%);
+  box-shadow:
+    0 0 0 1.5px #111,
+    inset 0 0 0 1px rgba(120, 150, 255, 0.12);
+}
+
+.device[data-rotated] .cutout[data-shape='island']::after {
+  right: auto;
+  top: 12px;
+  left: 50%;
+  translate: -50% 0;
+}
+
+/* Punch hole: a thin lens ring. */
+.cutout[data-shape='punch']::after {
+  inset: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #1b2644, #000 62%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Notch: a speaker slit in the middle and a lens dot beside it. */
+.cutout[data-shape='notch']::before {
+  left: 50%;
+  top: 9px;
+  width: 46px;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 3px;
+  background: #1b1b1e;
+}
+
+.cutout[data-shape='notch']::after {
+  left: calc(50% + 40px);
+  top: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #26335a, #05070f 65%);
+  box-shadow: 0 0 0 1px #111;
+}
+
+.device[data-rotated] .cutout[data-shape='notch']::before {
+  left: 9px;
+  top: 50%;
+  width: 5px;
+  height: 46px;
+  translate: 0 -50%;
+}
+
+.device[data-rotated] .cutout[data-shape='notch']::after {
+  left: 7px;
+  top: calc(50% - 40px);
+}
+
 .home-button {
   position: absolute;
   box-sizing: border-box;
