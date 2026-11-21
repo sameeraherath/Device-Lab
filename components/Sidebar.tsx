@@ -10,9 +10,11 @@ import { ScreenshotMenu } from './ScreenshotMenu';
 
 interface Props {
   windows: readonly DeviceWindowState[];
+  stageOn: boolean;
+  onToggleStage: () => void;
 }
 
-export function Sidebar({ windows }: Props) {
+export function Sidebar({ windows, stageOn, onToggleStage }: Props) {
   const barRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState('');
   const [dialog, setDialog] = useState<DialogMode | null>(null);
@@ -121,6 +123,20 @@ export function Sidebar({ windows }: Props) {
         }}
       >
         <Icon name="plus" />
+      </button>
+      <button
+        type="button"
+        class="tool"
+        data-tool
+        aria-label="Focus mode"
+        aria-pressed={stageOn}
+        title="Focus mode: dark stage behind devices"
+        onClick={() => {
+          onToggleStage();
+          setStatus(stageOn ? 'Focus mode off' : 'Focus mode on');
+        }}
+      >
+        <Icon name="stage" />
       </button>
       <span class="sep" role="separator" aria-orientation="horizontal" />
       <ScreenshotMenu />

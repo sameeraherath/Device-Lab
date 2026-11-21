@@ -19,6 +19,8 @@ real device sizes side by side.
   bar at the bottom, a metal rim with side buttons, a deep soft shadow, and no desktop scrollbar.
   Like a real phone, the page starts below the status bar, so the viewport height is the screen
   height minus the status bar (the width is unchanged).
+- **Focus mode** (off by default): a button in the icon bar puts a calm dark stage behind the devices,
+  hiding the page behind them so you can concentrate on the device. The choice is remembered.
 - **Custom devices**: add up to 20 of your own (name, size, DPR, type, frame on/off); they are saved
   in `chrome.storage.local`.
 - **Rotate**: flip phones, foldables and tablets between portrait and landscape (the cutout moves
