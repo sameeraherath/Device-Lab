@@ -13,9 +13,13 @@ import {
 
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
+/** Width of a minimized window (just its title bar). */
 const MIN_OUTER_WIDTH = 300;
-/** Space between the title bar and the device. */
-const GAP = 8;
+/** The title bar floats this far above the device, so it needs room above the window. */
+const OVERLAY_GAP = 6;
+const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
+/** Narrowest title bar, so its controls always fit. */
+const MIN_BAR_WIDTH = 220;
 const KEY_STEP = 15;
 
 interface Props {
@@ -67,20 +71,22 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     Math.min(
       1,
       (viewW - 2 * MARGIN) / layout.width,
-      (window.innerHeight - TITLEBAR_HEIGHT - GAP - 2 * MARGIN) / layout.height,
+      (window.innerHeight - OVERLAY_SPACE - MARGIN) / layout.height,
     ),
   );
   const deviceW = layout.width * scale;
   const deviceH = layout.height * scale;
-  const outerW = Math.max(deviceW, MIN_OUTER_WIDTH);
-  const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : GAP + deviceH);
+  const outerW = Math.max(deviceW, win.minimized ? MIN_OUTER_WIDTH : MIN_BAR_WIDTH);
+  // Minimized: only the title bar is left, in the flow. Otherwise the bar floats above the device.
+  const outerH = win.minimized ? TITLEBAR_HEIGHT : deviceH;
+  const minY = win.minimized ? 0 : OVERLAY_SPACE;
 
   const x = clamp(win.x, 0, viewW - outerW);
-  const y = clamp(win.y, 0, window.innerHeight - outerH);
+  const y = clamp(win.y, minY, window.innerHeight - outerH);
 
   const clampPos = (px: number, py: number) => ({
     x: clamp(px, 0, viewW - outerW),
-    y: clamp(py, 0, window.innerHeight - outerH),
+    y: clamp(py, minY, window.innerHeight - outerH),
   });
 
   const announce = (text: string) => {
@@ -135,6 +141,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     <div
       ref={rootRef}
       class="window"
+      data-minimized={win.minimized ? 'true' : undefined}
       style={{ left: `${x}px`, top: `${y}px`, width: `${outerW}px`, zIndex: win.z }}
       onFocusIn={() => bringToFront(win.id)}
       onPointerDown={() => bringToFront(win.id)}
@@ -143,8 +150,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         <button
           type="button"
           class={`handle${dragging ? ' dragging' : ''}`}
-          aria-label={`Move ${device.name} window. Use arrow keys to move.`}
-          title="Drag or use arrow keys to move"
+          aria-label={`Move ${device.name} window, ${innerW}×${innerH}. Use arrow keys to move.`}
+          title={`${device.name} · ${innerW}×${innerH} @${device.dpr} · ${Math.round(scale * 100)}% — drag or use arrow keys to move`}
           onPointerDown={onHandlePointerDown}
           onPointerMove={onHandlePointerMove}
           onLostPointerCapture={onHandleLostCapture}
@@ -153,9 +160,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           <span class="grip" aria-hidden="true">
             ⋮⋮
           </span>
-          <span class="size">
-            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
-          </span>
+          <span class="size">{device.name}</span>
         </button>
         <button
           type="button"
@@ -176,6 +181,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           ×
         </button>
       </div>
+      {/* A faint marker above the device so the hidden title bar can be found. */}
+      {!win.minimized && <div class="title-hint" aria-hidden="true" />}
       {!win.minimized && (
         <div class="device-box" style={{ width: `${deviceW}px`, height: `${deviceH}px` }}>
           <div

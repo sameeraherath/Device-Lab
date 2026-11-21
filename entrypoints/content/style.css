@@ -122,6 +122,46 @@
   align-items: center;
 }
 
+/*
+ * Title bar: a pill floating above the device. Hidden until the pointer is over it, it has
+ * keyboard focus (focus-visible), or its handle is being dragged. A minimized window keeps it
+ * in the flow, always visible, because it is all that is left.
+ */
+.window:not([data-minimized]) .titlebar {
+  position: absolute;
+  inset: auto 0 calc(100% + 6px);
+  opacity: 0;
+}
+
+.window:not([data-minimized]) .titlebar:hover,
+.window:not([data-minimized]) .titlebar:has(:focus-visible),
+.window:not([data-minimized]) .titlebar:has(.handle.dragging) {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .window:not([data-minimized]) .titlebar {
+    transition: opacity 0.12s;
+  }
+}
+
+.title-hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px + 16px);
+  width: 44px;
+  height: 4px;
+  translate: -50% 0;
+  border-radius: 2px;
+  background: rgba(40, 42, 48, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.titlebar:is(:hover, :has(:focus-visible), :has(.handle.dragging)) + .title-hint {
+  opacity: 0;
+}
+
 /* ---- Focus mode: a calm, opaque dark stage that hides the page behind the windows ---- */
 .stage {
   position: fixed;
