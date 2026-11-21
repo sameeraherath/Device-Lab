@@ -1,6 +1,6 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useRef, useState } from 'preact/hooks';
-import { getDevice } from '@/lib/devices';
+import { canRotate, getDevice } from '@/lib/devices';
 import {
   BAR_WIDTH,
   bringToFront,
@@ -31,8 +31,9 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   // the whole screen is scaled down with the `scale` property to fit the viewport.
   // Windows never extend under the icon bar on the right.
   const viewW = window.innerWidth - BAR_WIDTH;
-  const innerW = win.rotated ? device.height : device.width;
-  const innerH = win.rotated ? device.width : device.height;
+  const turned = win.rotated && canRotate(device);
+  const innerW = turned ? device.height : device.width;
+  const innerH = turned ? device.width : device.height;
   const scale = Math.max(
     0.1,
     Math.min(
@@ -125,7 +126,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
             ⋮⋮
           </span>
           <span class="size">
-            {device.name} · {innerW}×{innerH} · {Math.round(scale * 100)}%
+            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
           </span>
         </button>
         <button

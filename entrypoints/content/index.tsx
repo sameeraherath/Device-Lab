@@ -5,6 +5,7 @@ import css from './style.css?inline';
 import { DeviceWindow } from '@/components/DeviceWindow';
 import { Sidebar } from '@/components/Sidebar';
 import { sendMessage } from '@/lib/messages';
+import { hasDevice } from '@/lib/devices';
 import { getLastDeviceId } from '@/lib/storage';
 import {
   getWindows,
@@ -76,7 +77,8 @@ export default defineContentScript({
 
     render(<App pageUrl={location.href} />, mount);
     void getLastDeviceId().then((id) => {
-      if (getWindows().length === 0 && w[HANDLE_KEY]) open(id);
+      // A stored device that no longer exists falls back to the default.
+      if (getWindows().length === 0 && w[HANDLE_KEY]) open(hasDevice(id) ? id : undefined);
     });
   },
 });

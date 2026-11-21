@@ -1,42 +1,637 @@
-[
-  {
-    "id": "iphone-15",
-    "name": "iPhone 15",
-    "type": "phone",
-    "width": 393,
-    "height": 852,
-    "pixelRatio": 3
+{
+  "frames": {
+    "iphone-island": {
+      "radius": 60,
+      "bezel": 12,
+      "screenRadius": 48,
+      "color": "#1d1d1f",
+      "cutout": {
+        "shape": "island",
+        "width": 124,
+        "height": 36,
+        "offset": 11
+      }
+    },
+    "iphone-notch": {
+      "radius": 56,
+      "bezel": 12,
+      "screenRadius": 44,
+      "color": "#1d1d1f",
+      "cutout": {
+        "shape": "notch",
+        "width": 162,
+        "height": 32,
+        "offset": 0
+      }
+    },
+    "iphone-home": {
+      "radius": 54,
+      "bezel": 14,
+      "bezelTop": 96,
+      "bezelBottom": 96,
+      "screenRadius": 2,
+      "color": "#1d1d1f",
+      "homeButton": true
+    },
+    "android-punch": {
+      "radius": 42,
+      "bezel": 10,
+      "screenRadius": 32,
+      "color": "#202124",
+      "cutout": {
+        "shape": "punch",
+        "width": 22,
+        "height": 22,
+        "offset": 12
+      }
+    },
+    "feature-phone": {
+      "radius": 26,
+      "bezel": 16,
+      "bezelTop": 44,
+      "bezelBottom": 140,
+      "screenRadius": 2,
+      "color": "#2b2b2e"
+    },
+    "foldable": {
+      "radius": 30,
+      "bezel": 9,
+      "screenRadius": 20,
+      "color": "#26262a",
+      "cutout": {
+        "shape": "punch",
+        "width": 18,
+        "height": 18,
+        "offset": 10
+      }
+    },
+    "dual-screen": {
+      "radius": 20,
+      "bezel": 14,
+      "bezelTop": 40,
+      "bezelBottom": 40,
+      "screenRadius": 4,
+      "color": "#cfd1d4"
+    },
+    "tablet": {
+      "radius": 34,
+      "bezel": 20,
+      "screenRadius": 18,
+      "color": "#2b2b2e"
+    },
+    "laptop": {
+      "radius": 14,
+      "bezel": 14,
+      "bezelTop": 24,
+      "screenRadius": 4,
+      "color": "#2a2b2e",
+      "base": {
+        "height": 18,
+        "overhang": 64
+      }
+    },
+    "laptop-notch": {
+      "radius": 16,
+      "bezel": 12,
+      "bezelTop": 14,
+      "screenRadius": 10,
+      "color": "#2a2b2e",
+      "cutout": {
+        "shape": "notch",
+        "width": 190,
+        "height": 30,
+        "offset": 0
+      },
+      "base": {
+        "height": 18,
+        "overhang": 64
+      }
+    },
+    "desktop": {
+      "radius": 10,
+      "bezel": 16,
+      "screenRadius": 2,
+      "color": "#18181a",
+      "stand": {
+        "neck": 110,
+        "neckWidth": 120,
+        "foot": 320,
+        "footHeight": 14
+      }
+    },
+    "smart-display": {
+      "radius": 28,
+      "bezel": 34,
+      "screenRadius": 10,
+      "color": "#f1f1ef",
+      "base": {
+        "height": 90,
+        "overhang": -180
+      }
+    },
+    "simple-phone": {
+      "radius": 42,
+      "bezel": 10,
+      "screenRadius": 30,
+      "color": "#202124"
+    }
   },
-  {
-    "id": "pixel-8",
-    "name": "Pixel 8",
-    "type": "phone",
-    "width": 412,
-    "height": 915,
-    "pixelRatio": 2.625
-  },
-  {
-    "id": "ipad-air",
-    "name": "iPad Air 11\"",
-    "type": "tablet",
-    "width": 820,
-    "height": 1180,
-    "pixelRatio": 2
-  },
-  {
-    "id": "galaxy-tab-s9",
-    "name": "Galaxy Tab S9",
-    "type": "tablet",
-    "width": 800,
-    "height": 1280,
-    "pixelRatio": 2
-  },
-  {
-    "id": "macbook-air-13",
-    "name": "MacBook Air 13\"",
-    "type": "laptop",
-    "width": 1470,
-    "height": 956,
-    "pixelRatio": 2
-  }
-]
+  "devices": [
+    {
+      "id": "iphone-se",
+      "name": "iPhone SE",
+      "group": "phones",
+      "width": 375,
+      "height": 667,
+      "dpr": 2,
+      "frame": "iphone-home"
+    },
+    {
+      "id": "iphone-xr",
+      "name": "iPhone XR",
+      "group": "phones",
+      "width": 414,
+      "height": 896,
+      "dpr": 2,
+      "frame": "iphone-notch"
+    },
+    {
+      "id": "iphone-12-pro",
+      "name": "iPhone 12 Pro",
+      "group": "phones",
+      "width": 390,
+      "height": 844,
+      "dpr": 3,
+      "frame": "iphone-notch"
+    },
+    {
+      "id": "iphone-14",
+      "name": "iPhone 14",
+      "group": "phones",
+      "width": 390,
+      "height": 844,
+      "dpr": 3,
+      "frame": "iphone-notch"
+    },
+    {
+      "id": "iphone-14-plus",
+      "name": "iPhone 14 Plus",
+      "group": "phones",
+      "width": 428,
+      "height": 926,
+      "dpr": 3,
+      "frame": "iphone-notch"
+    },
+    {
+      "id": "iphone-14-pro",
+      "name": "iPhone 14 Pro",
+      "group": "phones",
+      "width": 393,
+      "height": 852,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-14-pro-max",
+      "name": "iPhone 14 Pro Max",
+      "group": "phones",
+      "width": 430,
+      "height": 932,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-15",
+      "name": "iPhone 15",
+      "group": "phones",
+      "width": 393,
+      "height": 852,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-15-plus",
+      "name": "iPhone 15 Plus",
+      "group": "phones",
+      "width": 430,
+      "height": 932,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-15-pro",
+      "name": "iPhone 15 Pro",
+      "group": "phones",
+      "width": 393,
+      "height": 852,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-15-pro-max",
+      "name": "iPhone 15 Pro Max",
+      "group": "phones",
+      "width": 430,
+      "height": 932,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-16e",
+      "name": "iPhone 16e",
+      "group": "phones",
+      "width": 390,
+      "height": 844,
+      "dpr": 3,
+      "frame": "iphone-notch"
+    },
+    {
+      "id": "iphone-16",
+      "name": "iPhone 16",
+      "group": "phones",
+      "width": 393,
+      "height": 852,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-16-plus",
+      "name": "iPhone 16 Plus",
+      "group": "phones",
+      "width": 430,
+      "height": 932,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-16-pro",
+      "name": "iPhone 16 Pro",
+      "group": "phones",
+      "width": 402,
+      "height": 874,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-16-pro-max",
+      "name": "iPhone 16 Pro Max",
+      "group": "phones",
+      "width": 440,
+      "height": 956,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-17",
+      "name": "iPhone 17",
+      "group": "phones",
+      "width": 402,
+      "height": 874,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-17-pro-max",
+      "name": "iPhone 17 Pro Max",
+      "group": "phones",
+      "width": 440,
+      "height": 956,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-air",
+      "name": "iPhone Air",
+      "group": "phones",
+      "width": 420,
+      "height": 912,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-18-pro",
+      "name": "iPhone 18 Pro",
+      "group": "phones",
+      "width": 402,
+      "height": 874,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "iphone-18-pro-max",
+      "name": "iPhone 18 Pro Max",
+      "group": "phones",
+      "width": 440,
+      "height": 956,
+      "dpr": 3,
+      "frame": "iphone-island"
+    },
+    {
+      "id": "pixel-7",
+      "name": "Pixel 7",
+      "group": "phones",
+      "width": 412,
+      "height": 915,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-8",
+      "name": "Pixel 8",
+      "group": "phones",
+      "width": 412,
+      "height": 915,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-8-pro",
+      "name": "Pixel 8 Pro",
+      "group": "phones",
+      "width": 448,
+      "height": 997,
+      "dpr": 3,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-8a",
+      "name": "Pixel 8a",
+      "group": "phones",
+      "width": 412,
+      "height": 915,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-9",
+      "name": "Pixel 9",
+      "group": "phones",
+      "width": 412,
+      "height": 924,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-9-pro",
+      "name": "Pixel 9 Pro",
+      "group": "phones",
+      "width": 427,
+      "height": 952,
+      "dpr": 3,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-9-pro-xl",
+      "name": "Pixel 9 Pro XL",
+      "group": "phones",
+      "width": 448,
+      "height": 997,
+      "dpr": 3,
+      "frame": "android-punch"
+    },
+    {
+      "id": "pixel-10",
+      "name": "Pixel 10",
+      "group": "phones",
+      "width": 412,
+      "height": 924,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "samsung-galaxy-a55",
+      "name": "Samsung Galaxy A55",
+      "group": "phones",
+      "width": 360,
+      "height": 800,
+      "dpr": 2.25,
+      "frame": "android-punch"
+    },
+    {
+      "id": "samsung-galaxy-s8-plus",
+      "name": "Samsung Galaxy S8+",
+      "group": "phones",
+      "width": 360,
+      "height": 740,
+      "dpr": 4,
+      "frame": "android-punch"
+    },
+    {
+      "id": "samsung-galaxy-s20-ultra",
+      "name": "Samsung Galaxy S20 Ultra",
+      "group": "phones",
+      "width": 412,
+      "height": 915,
+      "dpr": 3.5,
+      "frame": "android-punch"
+    },
+    {
+      "id": "samsung-galaxy-a51-71",
+      "name": "Samsung Galaxy A51/71",
+      "group": "phones",
+      "width": 412,
+      "height": 914,
+      "dpr": 2.625,
+      "frame": "android-punch"
+    },
+    {
+      "id": "galaxy-s26",
+      "name": "Galaxy S26",
+      "group": "phones",
+      "width": 360,
+      "height": 780,
+      "dpr": 3,
+      "frame": "android-punch",
+      "note": "not measured"
+    },
+    {
+      "id": "galaxy-s26-ultra",
+      "name": "Galaxy S26 Ultra",
+      "group": "phones",
+      "width": 384,
+      "height": 832,
+      "dpr": 2.8125,
+      "frame": "android-punch"
+    },
+    {
+      "id": "moto-g-power",
+      "name": "Moto G Power",
+      "group": "phones",
+      "width": 412,
+      "height": 823,
+      "dpr": 1.75,
+      "frame": "android-punch"
+    },
+    {
+      "id": "moto-g4",
+      "name": "Moto G4",
+      "group": "phones",
+      "width": 360,
+      "height": 640,
+      "dpr": 3,
+      "frame": "android-punch"
+    },
+    {
+      "id": "jiophone-2",
+      "name": "JioPhone 2",
+      "group": "phones",
+      "width": 240,
+      "height": 320,
+      "dpr": 1,
+      "frame": "feature-phone"
+    },
+    {
+      "id": "facebook-on-android",
+      "name": "Facebook on Android",
+      "group": "phones",
+      "width": 412,
+      "height": 892,
+      "dpr": 3.5,
+      "frame": "android-punch"
+    },
+    {
+      "id": "surface-duo",
+      "name": "Surface Duo",
+      "group": "foldables",
+      "width": 540,
+      "height": 720,
+      "dpr": 2.5,
+      "frame": "dual-screen"
+    },
+    {
+      "id": "pixel-9-pro-fold",
+      "name": "Pixel 9 Pro Fold",
+      "group": "foldables",
+      "width": 412,
+      "height": 922,
+      "dpr": 2.625,
+      "frame": "foldable"
+    },
+    {
+      "id": "galaxy-z-fold-6",
+      "name": "Galaxy Z Fold 6",
+      "group": "foldables",
+      "width": 412,
+      "height": 968,
+      "dpr": 2.625,
+      "frame": "foldable"
+    },
+    {
+      "id": "galaxy-z-fold-5",
+      "name": "Galaxy Z Fold 5",
+      "group": "foldables",
+      "width": 344,
+      "height": 882,
+      "dpr": 2.625,
+      "frame": "foldable"
+    },
+    {
+      "id": "asus-zenbook-fold",
+      "name": "Asus Zenbook Fold",
+      "group": "foldables",
+      "width": 853,
+      "height": 1280,
+      "dpr": 1.5,
+      "frame": "foldable"
+    },
+    {
+      "id": "galaxy-tab-s4",
+      "name": "Galaxy Tab S4",
+      "group": "tablets",
+      "width": 712,
+      "height": 1138,
+      "dpr": 2.25,
+      "frame": "tablet"
+    },
+    {
+      "id": "ipad-mini-a17-pro",
+      "name": "iPad mini (A17 Pro)",
+      "group": "tablets",
+      "width": 744,
+      "height": 1133,
+      "dpr": 2,
+      "frame": "tablet"
+    },
+    {
+      "id": "ipad-pro-13",
+      "name": "iPad Pro 13",
+      "group": "tablets",
+      "width": 1032,
+      "height": 1376,
+      "dpr": 2,
+      "frame": "tablet"
+    },
+    {
+      "id": "surface-pro-7",
+      "name": "Surface Pro 7",
+      "group": "tablets",
+      "width": 912,
+      "height": 1368,
+      "dpr": 2,
+      "frame": "tablet"
+    },
+    {
+      "id": "surface-pro-10",
+      "name": "Surface Pro 10",
+      "group": "tablets",
+      "width": 960,
+      "height": 1440,
+      "dpr": 2,
+      "frame": "tablet"
+    },
+    {
+      "id": "laptop-with-touch",
+      "name": "Laptop with touch",
+      "group": "computers",
+      "width": 1280,
+      "height": 950,
+      "dpr": 1,
+      "frame": "laptop"
+    },
+    {
+      "id": "laptop-with-hidpi-screen",
+      "name": "Laptop with HiDPI screen",
+      "group": "computers",
+      "width": 1440,
+      "height": 900,
+      "dpr": 2,
+      "frame": "laptop"
+    },
+    {
+      "id": "laptop-with-mdpi-screen",
+      "name": "Laptop with MDPI screen",
+      "group": "computers",
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "frame": "laptop"
+    },
+    {
+      "id": "macbook-air-13",
+      "name": "MacBook Air 13″",
+      "group": "computers",
+      "width": 1280,
+      "height": 832,
+      "dpr": 2,
+      "frame": "laptop-notch"
+    },
+    {
+      "id": "full-hd-desktop",
+      "name": "Full HD Desktop",
+      "group": "computers",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1,
+      "frame": "desktop"
+    },
+    {
+      "id": "nest-hub-max",
+      "name": "Nest Hub Max",
+      "group": "displays",
+      "width": 1280,
+      "height": 800,
+      "dpr": 2,
+      "frame": "smart-display"
+    }
+  ]
+}

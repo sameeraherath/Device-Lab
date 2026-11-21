@@ -1,6 +1,6 @@
 // Slim translucent icon bar on the right edge; controls the focused (top) device window.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { getDevice } from '@/lib/devices';
+import { canRotate, getDevice } from '@/lib/devices';
 import { MAX_WINDOWS, closeAll, open, update, type DeviceWindowState } from '@/lib/windowManager';
 import { DevicePicker } from './DevicePicker';
 import { Icon } from './Icons';
@@ -18,6 +18,7 @@ export function Sidebar({ windows }: Props) {
     undefined,
   );
   const atMax = windows.length >= MAX_WINDOWS;
+  const rotatable = selected ? canRotate(getDevice(selected.deviceId)) : false;
 
   // Clear the live-region message once it has been announced.
   useEffect(() => {
@@ -91,8 +92,10 @@ export function Sidebar({ windows }: Props) {
         class="tool"
         data-tool
         aria-label="Rotate"
-        title="Rotate"
+        aria-disabled={!rotatable}
+        title={rotatable ? 'Rotate' : 'Rotation not available for this device'}
         onClick={() => {
+          if (!rotatable) return;
           update(selected.id, { rotated: !selected.rotated });
           setStatus(`Rotated to ${selected.rotated ? 'portrait' : 'landscape'}`);
         }}
