@@ -1,0 +1,200 @@
+/* Styles for the side panel; follows the browser's light/dark preference. */
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#ffffff, #1b1d21);
+  --fg: light-dark(#1f2328, #e8eaed);
+  --muted: light-dark(#59636e, #a0a7b0);
+  --border: light-dark(#d0d7de, #3a3f47);
+  --surface: light-dark(#f3f4f6, #262a30);
+  --accent: light-dark(#1a56db, #8ab4f8);
+  --accent-text: light-dark(#ffffff, #0b1d3a);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.heading-row h2 {
+  margin: 0;
+}
+
+.windows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.window-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-block-size: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.window-item[aria-current='true'] {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.name {
+  font-weight: 600;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.field > span {
+  color: var(--muted);
+}
+
+.picker {
+  width: 100%;
+  min-block-size: 32px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn,
+.primary {
+  min-inline-size: 24px;
+  min-block-size: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.btn[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .btn:not([aria-disabled='true']):hover,
+  .window-item:hover {
+    background: var(--border);
+  }
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .primary {
+    min-block-size: 44px;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.empty p {
+  margin: 0 0 10px;
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .window-item[aria-current='true'] {
+    border-color: Highlight;
+  }
+  .btn[aria-pressed='true'] {
+    border-color: Highlight;
+  }
+}

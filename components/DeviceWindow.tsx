@@ -1,18 +1,7 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useRef, useState } from 'preact/hooks';
 import { getDevice } from '@/lib/devices';
-import {
-  MAX_WINDOWS,
-  bringToFront,
-  clamp,
-  close,
-  open,
-  raiseTop,
-  update,
-  type DeviceWindowState,
-} from '@/lib/windowManager';
-import { DevicePicker } from './DevicePicker';
-import { ScreenshotMenu } from './ScreenshotMenu';
+import { bringToFront, clamp, close, update, type DeviceWindowState } from '@/lib/windowManager';
 
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
@@ -21,11 +10,10 @@ const KEY_STEP = 15;
 
 interface Props {
   win: DeviceWindowState;
-  count: number;
   pageUrl: string;
 }
 
-export function DeviceWindow({ win, count, pageUrl }: Props) {
+export function DeviceWindow({ win, pageUrl }: Props) {
   const device = getDevice(win.deviceId);
   const rootRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ offsetX: number; offsetY: number; x: number; y: number } | null>(null);
@@ -128,31 +116,8 @@ export function DeviceWindow({ win, count, pageUrl }: Props) {
             ⋮⋮
           </span>
           <span class="size">
-            {innerW}×{innerH} · {Math.round(scale * 100)}%
+            {device.name} · {innerW}×{innerH} · {Math.round(scale * 100)}%
           </span>
-        </button>
-        <DevicePicker value={win.deviceId} onChange={(deviceId) => update(win.id, { deviceId })} />
-        <button
-          type="button"
-          class="btn"
-          aria-label="Rotate"
-          title="Rotate"
-          onClick={() => update(win.id, { rotated: !win.rotated })}
-        >
-          ⟳
-        </button>
-        <ScreenshotMenu />
-        <button
-          type="button"
-          class="btn"
-          aria-label="New window"
-          title={count >= MAX_WINDOWS ? `Maximum ${MAX_WINDOWS} windows` : 'New window'}
-          onClick={() => {
-            if (!open()) raiseTop();
-          }}
-          disabled={count >= MAX_WINDOWS}
-        >
-          +
         </button>
         <button
           type="button"

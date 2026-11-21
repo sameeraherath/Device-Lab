@@ -74,16 +74,6 @@
   opacity: 0.75;
 }
 
-.picker {
-  height: 28px;
-  max-width: 130px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  background: #1f2228;
-  color: inherit;
-  font: inherit;
-}
-
 .btn {
   width: 28px;
   height: 28px;
@@ -103,8 +93,7 @@
 }
 
 .handle:focus-visible,
-.btn:focus-visible,
-.picker:focus-visible {
+.btn:focus-visible {
   outline: 2px solid #8ab4f8;
   outline-offset: 1px;
 }
