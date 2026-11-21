@@ -3,7 +3,8 @@ import { render } from 'preact';
 import { useLayoutEffect, useReducer } from 'preact/hooks';
 import css from './style.css?inline';
 import { DeviceWindow } from '@/components/DeviceWindow';
-import { sendToBackground } from '@/lib/messages';
+import { Sidebar } from '@/components/Sidebar';
+import { sendMessage } from '@/lib/messages';
 import { getLastDeviceId } from '@/lib/storage';
 import {
   getWindows,
@@ -15,7 +16,7 @@ import {
 } from '@/lib/windowManager';
 
 const HANDLE_KEY = '__deviceLab';
-type Handle = { openWindow: () => void };
+type Handle = { raise: () => void };
 
 function App({ pageUrl }: { pageUrl: string }) {
   const [, rerender] = useReducer((n: number) => n + 1, 0);
@@ -25,8 +26,9 @@ function App({ pageUrl }: { pageUrl: string }) {
   return (
     <>
       {windows.map((win) => (
-        <DeviceWindow key={win.id} win={win} count={windows.length} pageUrl={pageUrl} />
+        <DeviceWindow key={win.id} win={win} pageUrl={pageUrl} />
       ))}
+      <Sidebar windows={windows} />
     </>
   );
 }
@@ -36,10 +38,11 @@ export default defineContentScript({
   registration: 'runtime',
   main() {
     const w = window as unknown as Record<string, Handle | undefined>;
-    // A repeat toolbar click re-runs this script: add a window to the existing UI instead.
+    // A repeat toolbar click re-runs this script: just bring the windows forward.
+    // New windows are opened from the icon bar.
     const existing = w[HANDLE_KEY];
     if (existing) {
-      existing.openWindow();
+      existing.raise();
       return;
     }
 
@@ -65,15 +68,11 @@ export default defineContentScript({
       render(null, mount);
       host.remove();
       delete w[HANDLE_KEY];
-      sendToBackground({ type: 'close' });
+      sendMessage({ type: 'close' });
     };
     setOnEmpty(teardown);
 
-    w[HANDLE_KEY] = {
-      openWindow: () => {
-        if (!open()) raiseTop();
-      },
-    };
+    w[HANDLE_KEY] = { raise: raiseTop };
 
     render(<App pageUrl={location.href} />, mount);
     void getLastDeviceId().then((id) => {

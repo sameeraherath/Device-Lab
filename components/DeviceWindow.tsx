@@ -2,17 +2,13 @@
 import { useRef, useState } from 'preact/hooks';
 import { getDevice } from '@/lib/devices';
 import {
-  MAX_WINDOWS,
+  BAR_WIDTH,
   bringToFront,
   clamp,
   close,
-  open,
-  raiseTop,
   update,
   type DeviceWindowState,
 } from '@/lib/windowManager';
-import { DevicePicker } from './DevicePicker';
-import { ScreenshotMenu } from './ScreenshotMenu';
 
 const TITLEBAR_HEIGHT = 36;
 const MARGIN = 16;
@@ -21,11 +17,10 @@ const KEY_STEP = 15;
 
 interface Props {
   win: DeviceWindowState;
-  count: number;
   pageUrl: string;
 }
 
-export function DeviceWindow({ win, count, pageUrl }: Props) {
+export function DeviceWindow({ win, pageUrl }: Props) {
   const device = getDevice(win.deviceId);
   const rootRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ offsetX: number; offsetY: number; x: number; y: number } | null>(null);
@@ -34,13 +29,15 @@ export function DeviceWindow({ win, count, pageUrl }: Props) {
 
   // The iframe keeps its real CSS size (so media queries see the device width);
   // the whole screen is scaled down with the `scale` property to fit the viewport.
+  // Windows never extend under the icon bar on the right.
+  const viewW = window.innerWidth - BAR_WIDTH;
   const innerW = win.rotated ? device.height : device.width;
   const innerH = win.rotated ? device.width : device.height;
   const scale = Math.max(
     0.1,
     Math.min(
       1,
-      (window.innerWidth - 2 * MARGIN) / innerW,
+      (viewW - 2 * MARGIN) / innerW,
       (window.innerHeight - TITLEBAR_HEIGHT - 2 * MARGIN) / innerH,
     ),
   );
@@ -49,11 +46,11 @@ export function DeviceWindow({ win, count, pageUrl }: Props) {
   const outerW = Math.max(screenW, MIN_OUTER_WIDTH);
   const outerH = TITLEBAR_HEIGHT + (win.minimized ? 0 : screenH);
 
-  const x = clamp(win.x, 0, window.innerWidth - outerW);
+  const x = clamp(win.x, 0, viewW - outerW);
   const y = clamp(win.y, 0, window.innerHeight - outerH);
 
   const clampPos = (px: number, py: number) => ({
-    x: clamp(px, 0, window.innerWidth - outerW),
+    x: clamp(px, 0, viewW - outerW),
     y: clamp(py, 0, window.innerHeight - outerH),
   });
 
@@ -128,31 +125,8 @@ export function DeviceWindow({ win, count, pageUrl }: Props) {
             ⋮⋮
           </span>
           <span class="size">
-            {innerW}×{innerH} · {Math.round(scale * 100)}%
+            {device.name} · {innerW}×{innerH} · {Math.round(scale * 100)}%
           </span>
-        </button>
-        <DevicePicker value={win.deviceId} onChange={(deviceId) => update(win.id, { deviceId })} />
-        <button
-          type="button"
-          class="btn"
-          aria-label="Rotate"
-          title="Rotate"
-          onClick={() => update(win.id, { rotated: !win.rotated })}
-        >
-          ⟳
-        </button>
-        <ScreenshotMenu />
-        <button
-          type="button"
-          class="btn"
-          aria-label="New window"
-          title={count >= MAX_WINDOWS ? `Maximum ${MAX_WINDOWS} windows` : 'New window'}
-          onClick={() => {
-            if (!open()) raiseTop();
-          }}
-          disabled={count >= MAX_WINDOWS}
-        >
-          +
         </button>
         <button
           type="button"

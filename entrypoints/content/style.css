@@ -74,16 +74,6 @@
   opacity: 0.75;
 }
 
-.picker {
-  height: 28px;
-  max-width: 130px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  background: #1f2228;
-  color: inherit;
-  font: inherit;
-}
-
 .btn {
   width: 28px;
   height: 28px;
@@ -103,8 +93,7 @@
 }
 
 .handle:focus-visible,
-.btn:focus-visible,
-.picker:focus-visible {
+.btn:focus-visible {
   outline: 2px solid #8ab4f8;
   outline-offset: 1px;
 }
@@ -136,4 +125,178 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* ---- Slim icon bar on the right edge ---- */
+.sidebar {
+  position: fixed;
+  top: 16px;
+  right: 0;
+  z-index: 2147483647;
+  box-sizing: border-box;
+  width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0;
+  /* Translucent gray, dark enough for white icons to stay readable on light pages. */
+  background: rgba(50, 50, 50, 0.7);
+  backdrop-filter: blur(6px);
+  color: #f1f3f4;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  font:
+    12px/1.2 system-ui,
+    sans-serif;
+}
+
+.tool {
+  display: grid;
+  place-items: center;
+  min-inline-size: 36px;
+  min-block-size: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tool svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool[aria-disabled='true'] {
+  cursor: default;
+}
+
+/* Dim only the icon, so a badge on a disabled tool stays fully visible. */
+.tool[aria-disabled='true'] svg {
+  opacity: 0.4;
+}
+
+.tool {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: #1e8e3e;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.tool[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.sep {
+  width: 24px;
+  height: 0;
+  margin: 4px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+@media (hover: hover) {
+  .tool:not([aria-disabled='true']):hover,
+  .flyout-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}
+
+@media (pointer: coarse) {
+  .tool {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
+}
+
+.tool:focus-visible,
+.flyout-item:focus-visible {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 1px;
+}
+
+/* ---- Device flyout (popover, opens to the left of the bar) ---- */
+.flyout {
+  inset: auto;
+  margin: 0;
+  margin-inline-end: 8px;
+  padding: 6px;
+  max-block-size: 70vh;
+  overflow: auto;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(32, 33, 36, 0.97);
+  color: #e8eaed;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 8px 28px rgba(0, 0, 0, 0.45);
+  position-area: inline-start span-block-end;
+  position-try-fallbacks: flip-block, flip-inline;
+}
+
+/* Without anchor positioning the position is set from script. */
+@supports not (position-area: inline-start) {
+  .flyout {
+    position: fixed;
+  }
+}
+
+.flyout-heading {
+  padding: 6px 10px 2px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa0a6;
+}
+
+.flyout-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  inline-size: 100%;
+  min-block-size: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.flyout-item[aria-current='true'] {
+  background: rgba(138, 180, 248, 0.22);
+  box-shadow: inset 3px 0 0 #8ab4f8;
+}
+
+.flyout-size {
+  color: #9aa0a6;
+  font-size: 11px;
+}
+
+@media (forced-colors: active) {
+  .flyout-item[aria-current='true'] {
+    outline: 2px solid Highlight;
+  }
 }
