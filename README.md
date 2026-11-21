@@ -14,6 +14,11 @@ real device sizes side by side.
   (phones, foldables, tablets, laptops & desktops, smart displays).
 - **Device frames**: each device is drawn with CSS only (bezels, island / notch / punch-hole cutouts,
   laptop deck, monitor stand), from frame presets in `data/devices.json`.
+- **Feels like the real device**: a status bar (time, signal, Wi-Fi, battery, in the page's
+  theme colour) with the island or punch hole inside it, a Safari-style address pill or gesture
+  bar at the bottom, a metal rim with side buttons, a deep soft shadow, and no desktop scrollbar.
+  Like a real phone, the page starts below the status bar, so the viewport height is the screen
+  height minus the status bar (the width is unchanged).
 - **Custom devices**: add up to 20 of your own (name, size, DPR, type, frame on/off); they are saved
   in `chrome.storage.local`.
 - **Rotate**: flip phones, foldables and tablets between portrait and landscape (the cutout moves
