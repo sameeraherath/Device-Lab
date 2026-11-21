@@ -39,6 +39,12 @@ const PATHS = {
       <path d="M6 7l1 13h10l1-13M9 7V4h6v3" />
     </>
   ),
+  stage: (
+    <>
+      <path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
   camera: (
     <>
       <path d="M4 8h3l2-3h6l2 3h3v11H4z" />

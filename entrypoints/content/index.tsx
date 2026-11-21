@@ -1,13 +1,14 @@
 // Content script UI: mounts the floating device windows inside a Shadow DOM on the active page.
 import { render } from 'preact';
-import { useLayoutEffect, useReducer } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useReducer, useState } from 'preact/hooks';
 import css from './style.css?inline';
 import { DeviceWindow } from '@/components/DeviceWindow';
 import { Sidebar } from '@/components/Sidebar';
+import { Stage } from '@/components/Stage';
 import { sendMessage } from '@/lib/messages';
 import { hasDevice } from '@/lib/devices';
 import { loadCustomDevices, watchCustomDevices } from '@/lib/customDevices';
-import { getLastDeviceId } from '@/lib/storage';
+import { getLastDeviceId, getStageOn, setStageOn } from '@/lib/storage';
 import {
   applyCustomDevices,
   getWindows,
@@ -26,12 +27,23 @@ function App({ pageUrl }: { pageUrl: string }) {
   // Layout effect: subscribe synchronously so a window opened right after mount is never missed.
   useLayoutEffect(() => subscribe(() => rerender(0)), []);
   const windows = getWindows();
+  // Focus mode is off by default; the saved choice replaces it once it has loaded.
+  const [stageOn, setStage] = useState(false);
+  useEffect(() => {
+    void getStageOn().then(setStage);
+  }, []);
+  const toggleStage = () => {
+    const next = !stageOn;
+    setStage(next);
+    void setStageOn(next);
+  };
   return (
     <>
+      {stageOn && <Stage />}
       {windows.map((win) => (
         <DeviceWindow key={win.id} win={win} pageUrl={pageUrl} />
       ))}
-      <Sidebar windows={windows} />
+      <Sidebar windows={windows} stageOn={stageOn} onToggleStage={toggleStage} />
     </>
   );
 }

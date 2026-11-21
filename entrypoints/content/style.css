@@ -122,6 +122,17 @@
   align-items: center;
 }
 
+/* ---- Focus mode: a calm, opaque dark stage that hides the page behind the windows ---- */
+.stage {
+  position: fixed;
+  inset: 0;
+  /* Below the windows (their z-index starts at 2) and the icon bar. */
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 38% in oklab, #2e2f34, #1c1d20 55%, #111214);
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
 .lid-wrap {
   position: relative;
   flex: none;
@@ -479,7 +490,8 @@
   pointer-events: none;
 }
 
-.tool[aria-expanded='true'] {
+.tool[aria-expanded='true'],
+.tool[aria-pressed='true'] {
   background: rgba(255, 255, 255, 0.22);
 }
 
