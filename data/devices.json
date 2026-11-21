@@ -5,10 +5,7 @@
       "bezel": 12,
       "screenRadius": 48,
       "color": "#0b0b0c",
-      "rim": [
-        "#dcd7cf",
-        "#8e8a83"
-      ],
+      "rim": ["#dcd7cf", "#8e8a83"],
       "rimWidth": 3,
       "cutout": {
         "shape": "island",
@@ -47,10 +44,7 @@
       "bezel": 12,
       "screenRadius": 44,
       "color": "#0b0b0c",
-      "rim": [
-        "#e6e6e8",
-        "#a3a3a8"
-      ],
+      "rim": ["#e6e6e8", "#a3a3a8"],
       "rimWidth": 3,
       "cutout": {
         "shape": "notch",
@@ -91,10 +85,7 @@
       "bezelBottom": 96,
       "screenRadius": 2,
       "color": "#0b0b0c",
-      "rim": [
-        "#e6e6e8",
-        "#a3a3a8"
-      ],
+      "rim": ["#e6e6e8", "#a3a3a8"],
       "rimWidth": 3,
       "homeButton": true,
       "buttons": [
@@ -128,10 +119,7 @@
       "bezel": 10,
       "screenRadius": 32,
       "color": "#0e0f10",
-      "rim": [
-        "#6a6d72",
-        "#2a2c2f"
-      ],
+      "rim": ["#6a6d72", "#2a2c2f"],
       "rimWidth": 2,
       "cutout": {
         "shape": "punch",
@@ -162,10 +150,7 @@
       "bezelBottom": 140,
       "screenRadius": 2,
       "color": "#2b2b2e",
-      "rim": [
-        "#6a6d72",
-        "#2a2c2f"
-      ],
+      "rim": ["#6a6d72", "#2a2c2f"],
       "rimWidth": 2,
       "statusBar": "none",
       "bottomBar": "none"
@@ -175,10 +160,7 @@
       "bezel": 9,
       "screenRadius": 20,
       "color": "#0e0f10",
-      "rim": [
-        "#6a6d72",
-        "#2a2c2f"
-      ],
+      "rim": ["#6a6d72", "#2a2c2f"],
       "rimWidth": 2,
       "cutout": {
         "shape": "punch",
@@ -209,10 +191,7 @@
       "bezelBottom": 40,
       "screenRadius": 4,
       "color": "#cfd1d4",
-      "rim": [
-        "#e6e6e8",
-        "#a3a3a8"
-      ],
+      "rim": ["#e6e6e8", "#a3a3a8"],
       "rimWidth": 2,
       "buttons": [
         {
@@ -230,10 +209,7 @@
       "bezel": 20,
       "screenRadius": 18,
       "color": "#0e0f10",
-      "rim": [
-        "#9a9da2",
-        "#4a4c50"
-      ],
+      "rim": ["#9a9da2", "#4a4c50"],
       "rimWidth": 2,
       "buttons": [
         {
@@ -262,10 +238,7 @@
       "bezelTop": 24,
       "screenRadius": 4,
       "color": "#0e0f10",
-      "rim": [
-        "#cfd1d4",
-        "#8d9094"
-      ],
+      "rim": ["#cfd1d4", "#8d9094"],
       "rimWidth": 2,
       "base": {
         "height": 18,
@@ -278,10 +251,7 @@
       "bezelTop": 14,
       "screenRadius": 10,
       "color": "#0e0f10",
-      "rim": [
-        "#cfd1d4",
-        "#8d9094"
-      ],
+      "rim": ["#cfd1d4", "#8d9094"],
       "rimWidth": 2,
       "cutout": {
         "shape": "notch",
@@ -321,10 +291,7 @@
       "bezel": 10,
       "screenRadius": 30,
       "color": "#0e0f10",
-      "rim": [
-        "#6a6d72",
-        "#2a2c2f"
-      ],
+      "rim": ["#6a6d72", "#2a2c2f"],
       "rimWidth": 2,
       "statusBar": "android",
       "statusBarHeight": 28,
