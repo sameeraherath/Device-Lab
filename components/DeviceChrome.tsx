@@ -1,6 +1,7 @@
 // Device system UI drawn over the screen: status bar (time, signal, Wi-Fi, battery) and bottom bar.
 import type { BottomBarKind, StatusBarKind } from '@/lib/devices';
 import { clockTime, pageDomain, statusTheme } from '@/lib/pageInfo';
+import type { DragProps } from './dragProps';
 
 function Signal() {
   return (
@@ -45,19 +46,22 @@ function Battery() {
 interface StatusBarProps {
   kind: StatusBarKind;
   height: number;
+  /** Makes the status bar a drag surface for the window. */
+  dragProps?: DragProps;
 }
 
-export function StatusBar({ kind, height }: StatusBarProps) {
+export function StatusBar({ kind, height, dragProps }: StatusBarProps) {
   if (kind === 'none' || height <= 0) return null;
   const theme = statusTheme();
   const time = clockTime();
   return (
     <div
-      class="status-bar"
+      class="status-bar grab"
       data-kind={kind}
       data-fg={theme.foreground}
       style={{ height: `${height}px`, background: theme.background }}
       aria-hidden="true"
+      {...dragProps}
     >
       <span class="sb-time">{time}</span>
       <span class="sb-icons">

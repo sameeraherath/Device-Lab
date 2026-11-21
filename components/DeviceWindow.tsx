@@ -19,7 +19,7 @@ const MIN_OUTER_WIDTH = 300;
 const OVERLAY_GAP = 6;
 const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
 /** Narrowest title bar, so its controls always fit. */
-const MIN_BAR_WIDTH = 220;
+const MIN_BAR_WIDTH = 320;
 const KEY_STEP = 15;
 
 interface Props {
@@ -134,6 +134,18 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     if (rootRef.current) rootRef.current.style.translate = `${next.x - x}px ${next.y - y}px`;
   };
 
+  // One drag engine for every surface: the title bar handle, the frame, the side buttons, the
+  // status bar, the laptop base and the monitor stand. Pointer capture keeps the drag going.
+  const dragProps = {
+    onPointerDown: onHandlePointerDown,
+    onPointerMove: onHandlePointerMove,
+    onLostPointerCapture: () => onHandleLostCapture(),
+    // Without these, a press on the frame can start a native text/image drag in the page behind,
+    // and the browser then cancels the pointer in the middle of our drag.
+    onMouseDown: (e: MouseEvent) => e.preventDefault(),
+    onDragStart: (e: DragEvent) => e.preventDefault(),
+  };
+
   const onHandleLostCapture = () => {
     const state = drag.current;
     drag.current = null;
@@ -164,6 +176,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
       class="window"
       data-minimized={win.minimized ? 'true' : undefined}
       data-engaged={engaged ? 'true' : undefined}
+      data-dragging={dragging ? 'true' : undefined}
       style={{ left: `${x}px`, top: `${y}px`, width: `${outerW}px`, zIndex: win.z }}
       onFocusIn={() => bringToFront(win.id)}
       onPointerDown={() => bringToFront(win.id)}
@@ -174,15 +187,15 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           class={`handle${dragging ? ' dragging' : ''}`}
           aria-label={`Move ${device.name} window, ${innerW}×${innerH}. Use arrow keys to move.`}
           title={`${device.name} · ${innerW}×${innerH} @${device.dpr} · ${Math.round(scale * 100)}% — drag or use arrow keys to move`}
-          onPointerDown={onHandlePointerDown}
-          onPointerMove={onHandlePointerMove}
-          onLostPointerCapture={onHandleLostCapture}
+          {...dragProps}
           onKeyDown={onHandleKeyDown}
         >
           <span class="grip" aria-hidden="true">
             ⋮⋮
           </span>
-          <span class="size">{device.name}</span>
+          <span class="size">
+            {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
+          </span>
         </button>
         <button
           type="button"
@@ -209,7 +222,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
             class="device-scale"
             style={{ width: `${layout.width}px`, height: `${layout.height}px`, scale }}
           >
-            <DeviceFrame device={device} rotated={win.rotated}>
+            <DeviceFrame device={device} rotated={win.rotated} dragProps={dragProps}>
               {/* Not rendered while minimized, so the page and its memory are released. */}
               <iframe
                 ref={iframeRef}

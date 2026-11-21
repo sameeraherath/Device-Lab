@@ -135,7 +135,7 @@
   opacity: 0;
 }
 
-.window:not([data-minimized]):is(:hover, :focus-within, [data-engaged]) .titlebar,
+.window:not([data-minimized]):is(:hover, :focus-within, [data-engaged], [data-dragging]) .titlebar,
 .window:not([data-minimized]) .titlebar:has(.handle.dragging) {
   opacity: 1;
 }
@@ -155,6 +155,54 @@
   background: radial-gradient(ellipse at 50% 38% in oklab, #2e2f34, #1c1d20 55%, #111214);
   touch-action: none;
   overscroll-behavior: contain;
+}
+
+/*
+ * Hit-testing: only the real parts of a device catch the pointer, so the transparent corners
+ * around the rounded frame never block the page. The page (.screen) and the title bar stay
+ * interactive; the frame, side buttons, status bar, laptop base and monitor stand are drag handles.
+ */
+.window,
+.device-box,
+.device-scale,
+.device,
+.lid-wrap {
+  pointer-events: none;
+}
+
+.titlebar,
+.screen,
+.lid,
+.hw-button,
+.base,
+.neck,
+.foot {
+  pointer-events: auto;
+}
+
+.grab {
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.window[data-dragging] .grab {
+  cursor: grabbing;
+}
+
+/* The page keeps its own cursors; only the frame parts above are grab handles. */
+.screen,
+.viewport {
+  cursor: auto;
+}
+
+/* A thin invisible ring just outside the frame: modern bezels are only 10-12px wide. */
+.lid::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
 }
 
 .lid-wrap {
