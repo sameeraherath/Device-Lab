@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fafbfd"/>
+      <stop offset="1" stop-color="#e6e9f1"/>
+    </linearGradient>
+  </defs>
+  <!-- Simplified for 16px and 32px: heavier lines, a soft tile edge, shapes close to an 8-unit grid -->
+  <rect width="128" height="128" rx="28" fill="url(#tile)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="#bcc3d8" stroke-width="4"/>
+  <g transform="translate(0 -2)">
+    <rect x="20" y="40" width="48" height="36" rx="4" fill="none" stroke="#2b3bd6" stroke-width="8"/>
+    <rect x="8" y="88" width="72" height="8" rx="3" fill="#2b3bd6"/>
+    <rect x="68" y="52" width="24" height="40" rx="4" fill="#eef0f6" stroke="#2b3bd6" stroke-width="8"/>
+    <rect x="102" y="60" width="16" height="36" rx="4" fill="#2b3bd6"/>
+  </g>
+</svg>

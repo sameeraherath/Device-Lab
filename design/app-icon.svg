@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fafbfd"/>
+      <stop offset="1" stop-color="#e6e9f1"/>
+    </linearGradient>
+  </defs>
+  <!-- Light tile -->
+  <rect width="128" height="128" rx="30" fill="url(#tile)"/>
+  <rect x="0.75" y="0.75" width="126.5" height="126.5" rx="29.25" fill="none" stroke="#c9cfdf" stroke-width="1.5"/>
+  <!-- Laptop, tablet and phone: outlines, with a solid phone -->
+  <g transform="translate(6.5 -2)">
+    <rect x="11" y="44" width="56" height="34" rx="5" fill="none" stroke="#2b3bd6" stroke-width="6"/>
+    <rect x="4" y="85" width="72" height="7" rx="3.5" fill="#2b3bd6"/>
+    <rect x="65" y="51" width="28" height="38" rx="5" fill="#eef0f6" stroke="#2b3bd6" stroke-width="6"/>
+    <rect x="92" y="62" width="19" height="30" rx="4.5" fill="#2b3bd6" stroke="#eef0f6" stroke-width="4"/>
+  </g>
+</svg>
