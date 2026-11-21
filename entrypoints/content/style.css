@@ -1,33 +1,139 @@
 /* Styles for the device windows, scoped to the content script's Shadow DOM. */
+
+/* Stop inherited page styles (font, color, line-height) leaking into our UI. */
+:host {
+  all: initial;
+}
+
 .window {
   position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 2147483647;
-  background: #111;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #14161a;
+  color: #e8eaed;
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 10px 36px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   font:
-    12px system-ui,
+    12px/1.2 system-ui,
     sans-serif;
-  color: #fff;
+  /* Identity transform on the base element so dragging never changes its stacking context. */
+  translate: 0px;
 }
+
 .titlebar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
+  gap: 4px;
+  height: 36px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  flex: none;
 }
-.titlebar button {
-  background: none;
+
+.handle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 6px;
   border: 0;
+  border-radius: 6px;
+  background: none;
   color: inherit;
-  font-size: 18px;
+  font: inherit;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.handle.dragging {
+  cursor: grabbing;
+}
+
+.handle:hover,
+.btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.grip {
+  opacity: 0.6;
+  letter-spacing: -2px;
+}
+
+.size {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.picker {
+  height: 28px;
+  max-width: 130px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  background: #1f2228;
+  color: inherit;
+  font: inherit;
+}
+
+.btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
   cursor: pointer;
 }
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.handle:focus-visible,
+.btn:focus-visible,
+.picker:focus-visible {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 1px;
+}
+
+.screen-box {
+  overflow: hidden;
+  background: #fff;
+}
+
 .screen {
+  transform-origin: 0 0;
+  /* Identity scale as a base; the real value is set inline. */
+  scale: 1;
+}
+
+.frame {
   display: block;
+  width: 100%;
+  height: 100%;
   border: 0;
   background: #fff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

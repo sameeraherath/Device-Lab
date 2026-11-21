@@ -22,3 +22,8 @@ npm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Agent tooling (installed by modern-web-guidance)
+.agents/
+.claude/
+skills-lock.json
