@@ -18,7 +18,7 @@ real device sizes side by side.
   theme colour) with the island or punch hole inside it, a Safari-style address pill or gesture
   bar at the bottom, a dark metal rim with side buttons, a camera lens in the cutout, a glass screen
   edge, a deep soft shadow, and no desktop scrollbar. The window title bar stays out of the way: it
-  appears when you hover above the device, focus it with the keyboard, or drag it.
+  appears when you hover over the device or click into it, and hides when you click elsewhere.
   Like a real phone, the page starts below the status bar, so the viewport height is the screen
   height minus the status bar (the width is unchanged).
 - **Focus mode** (off by default): a button in the icon bar puts a calm dark stage behind the devices,

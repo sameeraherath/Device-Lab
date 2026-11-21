@@ -34,6 +34,8 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  // True while the framed page has focus (you clicked inside the device), so the title bar stays.
+  const [engaged, setEngaged] = useState(false);
 
   // Touch devices (phones, foldables, tablets) have no desktop scrollbar. Hide it inside our
   // own framed copy of the page; only possible while the frame is same-origin, so best effort.
@@ -58,6 +60,25 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     }
   };
   useEffect(syncScrollbar, [hideScrollbar, win.minimized]);
+
+  // CSS :focus-within does not reach into an iframe, so track it here. When focus moves into the
+  // framed page, our window gets `blur` and the iframe becomes the active element (this also works
+  // when the frame is cross-origin); when focus comes back, the window gets `focus`.
+  useEffect(() => {
+    const root = rootRef.current?.getRootNode() as ShadowRoot | undefined;
+    const check = () =>
+      setEngaged(!!iframeRef.current && root?.activeElement === iframeRef.current);
+    window.addEventListener('blur', check);
+    window.addEventListener('focus', check);
+    root?.addEventListener('focusin', check);
+    check();
+    return () => {
+      window.removeEventListener('blur', check);
+      window.removeEventListener('focus', check);
+      root?.removeEventListener('focusin', check);
+      setEngaged(false);
+    };
+  }, [win.minimized]);
 
   // The iframe keeps its real CSS size (so media queries see the device width);
   // the whole framed device is scaled down with the `scale` property to fit the viewport.
@@ -142,6 +163,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
       ref={rootRef}
       class="window"
       data-minimized={win.minimized ? 'true' : undefined}
+      data-engaged={engaged ? 'true' : undefined}
       style={{ left: `${x}px`, top: `${y}px`, width: `${outerW}px`, zIndex: win.z }}
       onFocusIn={() => bringToFront(win.id)}
       onPointerDown={() => bringToFront(win.id)}
@@ -181,8 +203,6 @@ export function DeviceWindow({ win, pageUrl }: Props) {
           ×
         </button>
       </div>
-      {/* A faint marker above the device so the hidden title bar can be found. */}
-      {!win.minimized && <div class="title-hint" aria-hidden="true" />}
       {!win.minimized && (
         <div class="device-box" style={{ width: `${deviceW}px`, height: `${deviceH}px` }}>
           <div
