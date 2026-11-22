@@ -149,7 +149,7 @@ export function Sidebar({ windows, stageOn, onToggleStage }: Props) {
         aria-disabled="true"
         title="Studio (coming soon)"
       >
-        <Icon name="studio" />
+        <Icon name="edit" />
         <span class="badge" aria-hidden="true">
           Soon
         </span>
