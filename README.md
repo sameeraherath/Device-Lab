@@ -13,6 +13,10 @@
   Free · Open source (MIT) · No account · No tracking
 </p>
 
+<p align="center">
+  <img src="docs/images/every-screen.png" width="840" alt="A MacBook Air and an iPhone 16 Pro showing the same website in Device Lab">
+</p>
+
 ---
 
 ## What it does
@@ -38,6 +42,27 @@ tab.
   straight to the clipboard.
 - **Focus mode.** A calm dark background behind the devices that hides the page, so you only see
   the devices.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="docs/images/real-devices.png" alt="A Galaxy S26 Ultra, an iPhone 16 Pro and a Pixel 9 Pro, with the colour menu"></td>
+    <td><img src="docs/images/screenshots.png" alt="The screenshot menu with four capture modes next to an iPhone"></td>
+  </tr>
+  <tr>
+    <td align="center">Real device frames and official colours</td>
+    <td align="center">Screenshots in one click</td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/export.png" alt="The export window with PNG, JPEG and WebP, background choices and file size"></td>
+    <td><img src="docs/images/free-and-private.png" alt="A Pixel, an iPad Pro and an iPhone showing the same website"></td>
+  </tr>
+  <tr>
+    <td align="center">Save as PNG, JPEG or WebP, or copy</td>
+    <td align="center">Free, private and simple</td>
+  </tr>
+</table>
 
 ## Install
 
@@ -142,6 +167,7 @@ data/
   devices.json      Every device (size, pixel ratio, group) and the frame presets
   device-colors.md  Where each official colour comes from
 design/             App icon source files
+docs/images/        Screenshots used in this README
 public/icon/        Extension icons (16, 32, 48, 128 px)
 ```
 
