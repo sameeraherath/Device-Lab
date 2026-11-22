@@ -1,47 +1,80 @@
-// Facts about the current page used by the device UI: theme colour, domain and clock time.
+// Facts about the current page used by the device UI: bar colours, domain and clock time.
 
 export interface StatusTheme {
-  /** Status bar background. */
+  /** Bar background (status bar and browser toolbar). */
   background: string;
   /** Text and icon colour that stays readable on it. */
   foreground: 'dark' | 'light';
 }
 
-let cached: StatusTheme | undefined;
+/**
+ * Where a device's bars get their colour from:
+ * - `page`: the page's own background (Safari 26 and iPadOS 26 ignore `theme-color`).
+ * - `safari`: `theme-color`, then the page background (Safari up to iOS 18).
+ * - `chrome`: `theme-color`, then Chrome's light or dark default.
+ */
+export type ThemeSource = 'page' | 'safari' | 'chrome';
 
-/** Normalises any CSS colour to [r, g, b] using a 2D canvas; null when it is not a colour. */
-function toRgb(color: string): [number, number, number] | null {
-  const ctx = document.createElement('canvas').getContext('2d');
+type Rgba = [number, number, number, number];
+
+/** Any CSS colour to [r, g, b, a] by painting one pixel; null when it is not a colour. */
+function toRgba(color: string): Rgba | null {
+  const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   if (!ctx) return null;
   ctx.fillStyle = '#010203';
   ctx.fillStyle = color;
-  const value = String(ctx.fillStyle);
-  if (value === '#010203' && color.trim().toLowerCase() !== '#010203') return null;
-  const hex = value.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
-  if (hex) return [parseInt(hex[1]!, 16), parseInt(hex[2]!, 16), parseInt(hex[3]!, 16)];
-  const rgb = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null;
+  if (String(ctx.fillStyle) === '#010203' && color.trim().toLowerCase() !== '#010203') return null;
+  ctx.clearRect(0, 0, 1, 1);
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+  return [r!, g!, b!, a! / 255];
 }
 
-/** The page's `<meta name="theme-color">` (light variant preferred), or white. Cached per page. */
-export function statusTheme(): StatusTheme {
-  if (cached) return cached;
-  const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
-  const meta =
-    metas.find((m) => !m.media || m.media.includes('light')) ?? metas.find((m) => !m.media);
-  const rgb = meta ? toRgb(meta.content) : null;
-  if (!rgb) {
-    cached = { background: '#ffffff', foreground: 'dark' };
-    return cached;
-  }
+function themeFrom([r, g, b]: Rgba): StatusTheme {
   // Relative luminance (sRGB) decides dark or light text.
-  const [r, g, b] = rgb.map((c) => {
+  const [lr, lg, lb] = [r, g, b].map((c) => {
     const v = c / 255;
     return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
   }) as [number, number, number];
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  cached = { background: `rgb(${rgb.join(', ')})`, foreground: luminance > 0.4 ? 'dark' : 'light' };
-  return cached;
+  const luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+  return { background: `rgb(${r}, ${g}, ${b})`, foreground: luminance > 0.4 ? 'dark' : 'light' };
+}
+
+/** The `<meta name="theme-color">` that matches the viewer's colour scheme, if any. */
+function themeColor(doc: Document): Rgba | null {
+  const metas = [...doc.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
+  const meta =
+    metas.find((m) => m.media && matchMedia(m.media).matches) ?? metas.find((m) => !m.media);
+  const rgba = meta ? toRgba(meta.content) : null;
+  return rgba && rgba[3] > 0.5 ? rgba : null;
+}
+
+/** The page's own background: `html`, then `body`, skipping transparent ones. White if neither. */
+function pageBackground(doc: Document): Rgba {
+  const view = doc.defaultView;
+  for (const el of [doc.documentElement, doc.body]) {
+    if (!el || !view) continue;
+    const rgba = toRgba(view.getComputedStyle(el).backgroundColor);
+    if (rgba && rgba[3] > 0.5) return rgba;
+  }
+  return [255, 255, 255, 1];
+}
+
+/** Chrome's own toolbar colour when the page sets none. */
+function chromeDefault(): Rgba {
+  return matchMedia('(prefers-color-scheme: dark)').matches ? [31, 31, 31, 1] : [255, 255, 255, 1];
+}
+
+/** Colours for the status bar and browser toolbar, read from the (framed) page `doc`. */
+export function pageTheme(doc: Document, source: ThemeSource): StatusTheme {
+  try {
+    if (source === 'page') return themeFrom(pageBackground(doc));
+    const fromMeta = themeColor(doc);
+    if (fromMeta) return themeFrom(fromMeta);
+    return themeFrom(source === 'chrome' ? chromeDefault() : pageBackground(doc));
+  } catch {
+    return themeFrom([255, 255, 255, 1]);
+  }
 }
 
 /** Domain shown in the browser bar, without "www.". */

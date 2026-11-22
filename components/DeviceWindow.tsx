@@ -1,7 +1,9 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { canRotate, frameLayout, getDevice } from '@/lib/devices';
+import { canRotate, frameLayout, getDevice, getFrame, themeSource } from '@/lib/devices';
+import { pageTheme, type StatusTheme } from '@/lib/pageInfo';
 import { DeviceFrame } from './DeviceFrame';
+import { FinishPicker } from './FinishPicker';
 import {
   BAR_WIDTH,
   bringToFront,
@@ -34,6 +36,21 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  // Colours for the device's bars come from the framed page (its own background or theme-color).
+  const source = themeSource(getFrame(device));
+  const [theme, setTheme] = useState<StatusTheme>(() => pageTheme(document, source));
+  const syncTheme = () => {
+    let doc: Document = document;
+    try {
+      doc = iframeRef.current?.contentDocument ?? document;
+    } catch {
+      // Cross-origin frame: the top page is the same site, so its colours are the next best.
+    }
+    const next = pageTheme(doc, source);
+    setTheme((cur) =>
+      cur.background === next.background && cur.foreground === next.foreground ? cur : next,
+    );
+  };
   // True while the framed page has focus (you clicked inside the device), so the title bar stays.
   const [engaged, setEngaged] = useState(false);
 
@@ -60,6 +77,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     }
   };
   useEffect(syncScrollbar, [hideScrollbar, win.minimized]);
+  useEffect(syncTheme, [source, win.minimized]);
 
   // CSS :focus-within does not reach into an iframe, so track it here. When focus moves into the
   // framed page, our window gets `blur` and the iframe becomes the active element (this also works
@@ -197,6 +215,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
             {device.name} · {innerW}×{innerH} @{device.dpr} · {Math.round(scale * 100)}%
           </span>
         </button>
+        {getFrame(device) && <FinishPicker device={device} />}
         <button
           type="button"
           class="btn"
@@ -222,14 +241,19 @@ export function DeviceWindow({ win, pageUrl }: Props) {
             class="device-scale"
             style={{ width: `${layout.width}px`, height: `${layout.height}px`, scale }}
           >
-            <DeviceFrame device={device} rotated={win.rotated} dragProps={dragProps}>
+            <DeviceFrame device={device} rotated={win.rotated} theme={theme} dragProps={dragProps}>
               {/* Not rendered while minimized, so the page and its memory are released. */}
               <iframe
                 ref={iframeRef}
                 class="frame"
                 src={pageUrl}
                 title={`${device.name} preview`}
-                onLoad={syncScrollbar}
+                onLoad={() => {
+                  syncScrollbar();
+                  syncTheme();
+                  // Late-applied styles (fonts, JS-set backgrounds) settle shortly after load.
+                  setTimeout(syncTheme, 800);
+                }}
               />
             </DeviceFrame>
           </div>

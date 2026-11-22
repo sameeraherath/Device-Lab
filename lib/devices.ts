@@ -1,5 +1,6 @@
 // Loads and types the device list (data/devices.json), holds custom devices, and computes frame geometry.
 import raw from '@/data/devices.json';
+import type { ThemeSource } from './pageInfo';
 
 export type DeviceGroup = 'custom' | 'phones' | 'foldables' | 'tablets' | 'computers' | 'displays';
 /** How the picker sections devices (phones are split by maker). */
@@ -27,7 +28,17 @@ export interface Cutout {
 
 export type StatusBarKind =
   'ios-island' | 'ios-notch' | 'ios-classic' | 'android' | 'tablet' | 'none';
-export type BottomBarKind = 'safari' | 'gesture' | 'none';
+export type BottomBarKind = 'safari' | 'safari-26' | 'gesture' | 'nav-buttons' | 'none';
+/** Browser toolbar above the page: Chrome on phones and Android tablets, Safari on iPad. */
+export type TopBarKind = 'chrome' | 'chrome-tablet' | 'safari-ipad';
+
+/** Heights in CSS px. A top bar and the 3-button navigation bar take space from the page. */
+export const TOP_BAR_HEIGHT: Record<TopBarKind, number> = {
+  chrome: 56,
+  'chrome-tablet': 96,
+  'safari-ipad': 50,
+};
+export const NAV_BAR_HEIGHT = 48;
 
 /** A hardware button on the frame edge; a negative `start` is measured from the far end. */
 export interface HardwareButton {
@@ -57,10 +68,20 @@ export interface FramePreset {
   statusBar?: StatusBarKind;
   statusBarHeight?: number;
   bottomBar?: BottomBarKind;
-  /** Laptop deck or smart-display base under the lid; overhang may be negative (narrower). */
-  base?: { height: number; overhang: number };
-  /** Desktop monitor stand. */
-  stand?: { neck: number; neckWidth: number; foot: number; footHeight: number };
+  topBar?: TopBarKind;
+  /**
+   * Laptop deck or smart-display base under the lid; overhang may be negative (narrower).
+   * `color` is the deck's [top, bottom] gradient.
+   */
+  base?: { height: number; overhang: number; color?: [string, string] };
+  /** Desktop monitor stand; `color` is the metal's [light, dark] gradient. */
+  stand?: {
+    neck: number;
+    neckWidth: number;
+    foot: number;
+    footHeight: number;
+    color?: [string, string];
+  };
 }
 
 export interface Device {
@@ -78,6 +99,72 @@ export interface Device {
   /** Custom devices only. */
   type?: CustomType;
   showFrame?: boolean;
+  /** Official colours, darkest (the default) first. Absent: the generic finishes apply. */
+  finishes?: Finish[];
+}
+
+/** One official colour of a device, as it shows from the front. */
+export interface Finish {
+  id: string;
+  /** The maker's official name, e.g. "Cosmic Orange". */
+  name: string;
+  /** Marketing colour for the picker dot. */
+  swatch: string;
+  /** Metal band [light, dark]; side buttons use it too. */
+  rim: [string, string];
+  rimHighlight?: string;
+  /** Front glass colour, only when it changes with the colour (e.g. a white front). */
+  bezel?: string;
+  /** Laptop keyboard deck [top, bottom]. */
+  base?: [string, string];
+  /** Sold only in the maker's online store. */
+  online?: boolean;
+}
+
+/** Neutral finishes for generic and custom devices. */
+export const GENERIC_FINISHES: readonly Finish[] = [
+  {
+    id: 'black',
+    name: 'Black',
+    swatch: '#2b2c2f',
+    rim: ['#4f5054', '#1c1d1f'],
+    rimHighlight: '#7d7f84',
+  },
+  {
+    id: 'silver',
+    name: 'Silver',
+    swatch: '#d9dadc',
+    rim: ['#d6d8db', '#9c9fa4'],
+    rimHighlight: '#eff0f2',
+  },
+  {
+    id: 'space-gray',
+    name: 'Space Gray',
+    swatch: '#7d7e82',
+    rim: ['#8a8b8f', '#4e4f53'],
+    rimHighlight: '#b3b4b8',
+  },
+];
+
+/** The colours a device can be shown in (its official ones, or the generic set). */
+export function finishesOf(device: Device): readonly Finish[] {
+  return device.finishes?.length ? device.finishes : GENERIC_FINISHES;
+}
+
+/** A frame preset recoloured with a finish; everything else stays the same. */
+export function withFinish(
+  frame: FramePreset | null,
+  finish: Finish | undefined,
+): FramePreset | null {
+  if (!frame || !finish) return frame;
+  return {
+    ...frame,
+    // Frames drawn without a metal band (e.g. a plain monitor) stay without one.
+    rim: frame.rim ? finish.rim : undefined,
+    rimHighlight: frame.rim ? (finish.rimHighlight ?? frame.rimHighlight) : frame.rimHighlight,
+    color: finish.bezel ?? frame.color,
+    base: frame.base && finish.base ? { ...frame.base, color: finish.base } : frame.base,
+  };
 }
 
 interface DeviceData {
@@ -166,7 +253,10 @@ export interface FrameLayout {
   screenH: number;
   /** Status bar height reserved at the top of the screen (0 when rotated or none). */
   statusH: number;
-  /** The page viewport: the screen minus the status bar. */
+  /** Browser toolbar above the page, and the 3-button navigation bar below it (0 when none). */
+  topBarH: number;
+  navBarH: number;
+  /** The page viewport: the screen minus the status bar and the bars that take page space. */
   viewportW: number;
   viewportH: number;
   /** Space around the lid for hardware buttons. */
@@ -189,16 +279,18 @@ export interface FrameLayout {
 }
 
 /**
- * Screen corner radii that nest inside the frame: the frame radius minus the bezel on each side,
- * per axis, so the bezel is equally thick all the way round every corner. Uneven bezels (a tall
- * chin or forehead) give elliptical or square corners, like the real devices.
+ * Screen corner radii: the display's own radius (`screenRadius`, measured from the real device),
+ * capped per axis at the frame radius minus the bezel on that side, so the bezel is never thinner
+ * at a corner than along the edges. Uneven bezels (a tall chin or forehead) can then give
+ * elliptical or square corners, like the real devices.
  * Returns a CSS `border-radius` value: "TL TR BR BL / TL TR BR BL" (horizontal / vertical).
  */
 export function screenCornerRadii(
   frame: FramePreset,
   bezel: { t: number; r: number; b: number; l: number },
 ): string {
-  const nest = (side: number) => `${Math.max(0, frame.radius - side)}px`;
+  const nest = (side: number) =>
+    `${Math.max(0, Math.min(frame.screenRadius, frame.radius - side))}px`;
   const [l, r, t, b] = [nest(bezel.l), nest(bezel.r), nest(bezel.t), nest(bezel.b)];
   return `${l} ${r} ${r} ${l} / ${t} ${t} ${b} ${b}`;
 }
@@ -215,6 +307,8 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
       screenW,
       screenH,
       statusH: 0,
+      topBarH: 0,
+      navBarH: 0,
       viewportW: screenW,
       viewportH: screenH,
       pad: 0,
@@ -239,6 +333,8 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
   const lidH = screenH + bezel.t + bezel.b;
   // Landscape phones hide the status bar.
   const statusH = turned ? 0 : (frame.statusBarHeight ?? 0);
+  const topBarH = frame.topBar ? TOP_BAR_HEIGHT[frame.topBar] : 0;
+  const navBarH = frame.bottomBar === 'nav-buttons' ? NAV_BAR_HEIGHT : 0;
 
   // Buttons are laid out on the portrait lid, then turned with it (top edge -> left edge).
   const pad = frame.buttons?.length ? BUTTON_DEPTH : 0;
@@ -267,8 +363,10 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
     screenW,
     screenH,
     statusH,
+    topBarH,
+    navBarH,
     viewportW: screenW,
-    viewportH: screenH - statusH,
+    viewportH: screenH - statusH - topBarH - navBarH,
     pad,
     buttons,
     bezel,
@@ -280,4 +378,11 @@ export function frameLayout(device: Device, rotated: boolean): FrameLayout {
     width,
     height,
   };
+}
+
+/** Where a frame's bars take their colour from (see `ThemeSource`). */
+export function themeSource(frame: FramePreset | null): ThemeSource {
+  if (frame?.bottomBar === 'safari-26' || frame?.topBar === 'safari-ipad') return 'page';
+  if (frame?.statusBar?.startsWith('ios')) return 'safari';
+  return 'chrome';
 }

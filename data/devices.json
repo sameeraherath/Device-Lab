@@ -1,121 +1,41 @@
 {
   "frames": {
-    "iphone-island": {
-      "radius": 60,
-      "bezel": 12,
-      "screenRadius": 48,
-      "color": "#0b0b0c",
-      "rim": ["#41444b", "#1c1e22"],
-      "rimWidth": 3,
-      "cutout": {
-        "shape": "island",
-        "width": 124,
-        "height": 36,
-        "offset": 11
-      },
-      "buttons": [
-        {
-          "side": "left",
-          "start": 150,
-          "length": 30
-        },
-        {
-          "side": "left",
-          "start": 215,
-          "length": 60
-        },
-        {
-          "side": "left",
-          "start": 290,
-          "length": 60
-        },
-        {
-          "side": "right",
-          "start": 240,
-          "length": 95
-        }
-      ],
-      "statusBar": "ios-island",
-      "statusBarHeight": 54,
-      "bottomBar": "safari",
-      "rimHighlight": "#7a7e88"
-    },
-    "iphone-notch": {
-      "radius": 56,
-      "bezel": 12,
-      "screenRadius": 44,
-      "color": "#0b0b0c",
-      "rim": ["#4a4d53", "#222428"],
-      "rimWidth": 3,
-      "cutout": {
-        "shape": "notch",
-        "width": 162,
-        "height": 32,
-        "offset": 0
-      },
-      "buttons": [
-        {
-          "side": "left",
-          "start": 150,
-          "length": 30
-        },
-        {
-          "side": "left",
-          "start": 215,
-          "length": 60
-        },
-        {
-          "side": "left",
-          "start": 290,
-          "length": 60
-        },
-        {
-          "side": "right",
-          "start": 240,
-          "length": 95
-        }
-      ],
-      "statusBar": "ios-notch",
-      "statusBarHeight": 47,
-      "bottomBar": "safari",
-      "rimHighlight": "#80848c"
-    },
     "iphone-home": {
-      "radius": 54,
-      "bezel": 14,
-      "bezelTop": 96,
-      "bezelBottom": 96,
-      "screenRadius": 2,
-      "color": "#0b0b0c",
-      "rim": ["#55585e", "#2a2c30"],
-      "rimWidth": 3,
+      "radius": 61,
+      "bezel": 28,
+      "bezelTop": 110,
+      "bezelBottom": 111,
+      "screenRadius": 0,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 6,
       "homeButton": true,
       "buttons": [
         {
           "side": "left",
-          "start": 100,
-          "length": 26
+          "start": 110,
+          "length": 30
         },
         {
           "side": "left",
-          "start": 160,
-          "length": 50
+          "start": 190,
+          "length": 66
         },
         {
           "side": "left",
-          "start": 225,
-          "length": 50
+          "start": 270,
+          "length": 66
         },
         {
           "side": "right",
-          "start": 160,
-          "length": 60
+          "start": 189,
+          "length": 66
         }
       ],
       "statusBar": "ios-classic",
       "statusBarHeight": 20,
       "bottomBar": "none",
-      "rimHighlight": "#8a8e96"
+      "rimHighlight": "#8e949c"
     },
     "android-punch": {
       "radius": 42,
@@ -145,7 +65,8 @@
       "statusBar": "android",
       "statusBarHeight": 28,
       "bottomBar": "gesture",
-      "rimHighlight": "#6c6f75"
+      "rimHighlight": "#6c6f75",
+      "topBar": "chrome"
     },
     "feature-phone": {
       "radius": 26,
@@ -188,7 +109,8 @@
       "statusBar": "android",
       "statusBarHeight": 28,
       "bottomBar": "gesture",
-      "rimHighlight": "#6c6f75"
+      "rimHighlight": "#6c6f75",
+      "topBar": "chrome"
     },
     "dual-screen": {
       "radius": 20,
@@ -209,7 +131,8 @@
       "statusBar": "android",
       "statusBarHeight": 28,
       "bottomBar": "gesture",
-      "rimHighlight": "#e4e5e7"
+      "rimHighlight": "#e4e5e7",
+      "topBar": "chrome"
     },
     "tablet": {
       "radius": 34,
@@ -238,7 +161,8 @@
       "statusBar": "tablet",
       "statusBarHeight": 24,
       "bottomBar": "gesture",
-      "rimHighlight": "#80848c"
+      "rimHighlight": "#80848c",
+      "topBar": "safari-ipad"
     },
     "laptop": {
       "radius": 14,
@@ -248,26 +172,6 @@
       "color": "#0e0f10",
       "rim": ["#3e4146", "#202226"],
       "rimWidth": 2,
-      "base": {
-        "height": 18,
-        "overhang": 64
-      },
-      "rimHighlight": "#7a7e85"
-    },
-    "laptop-notch": {
-      "radius": 16,
-      "bezel": 12,
-      "bezelTop": 14,
-      "screenRadius": 10,
-      "color": "#0e0f10",
-      "rim": ["#3e4146", "#202226"],
-      "rimWidth": 2,
-      "cutout": {
-        "shape": "notch",
-        "width": 190,
-        "height": 30,
-        "offset": 0
-      },
       "base": {
         "height": 18,
         "overhang": 64
@@ -306,7 +210,1138 @@
       "statusBar": "android",
       "statusBarHeight": 28,
       "bottomBar": "gesture",
-      "rimHighlight": "#6c6f75"
+      "rimHighlight": "#6c6f75",
+      "topBar": "chrome"
+    },
+    "iphone-air": {
+      "radius": 80,
+      "bezel": 15.5,
+      "screenRadius": 62,
+      "color": "#000000",
+      "rim": ["#d6d8dc", "#9a9ea5"],
+      "rimWidth": 6,
+      "cutout": {
+        "shape": "island",
+        "width": 125,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        },
+        {
+          "side": "right",
+          "start": 405,
+          "length": 40
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 62,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#f0f1f3"
+    },
+    "iphone-xr": {
+      "radius": 72,
+      "bezel": 35,
+      "screenRadius": 36,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 8,
+      "cutout": {
+        "shape": "notch",
+        "width": 209,
+        "height": 30,
+        "offset": 0
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 132,
+          "length": 36
+        },
+        {
+          "side": "left",
+          "start": 198,
+          "length": 66
+        },
+        {
+          "side": "left",
+          "start": 282,
+          "length": 66
+        },
+        {
+          "side": "right",
+          "start": 221,
+          "length": 106
+        }
+      ],
+      "statusBar": "ios-notch",
+      "statusBarHeight": 48,
+      "bottomBar": "safari",
+      "rimHighlight": "#8e949c"
+    },
+    "ipad-mini": {
+      "radius": 81,
+      "bezel": 60,
+      "screenRadius": 16.5,
+      "color": "#000000",
+      "rim": ["#ddd8cd", "#a9a396"],
+      "rimWidth": 4,
+      "buttons": [
+        {
+          "side": "top",
+          "start": -140,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 110,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 170,
+          "length": 50
+        }
+      ],
+      "statusBar": "tablet",
+      "statusBarHeight": 24,
+      "bottomBar": "gesture",
+      "rimHighlight": "#f3efe6",
+      "topBar": "safari-ipad"
+    },
+    "ipad-pro": {
+      "radius": 75.5,
+      "bezel": 44.5,
+      "screenRadius": 23.5,
+      "color": "#000000",
+      "rim": ["#5a5a5c", "#262627"],
+      "rimWidth": 4,
+      "buttons": [
+        {
+          "side": "top",
+          "start": -150,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 182,
+          "length": 34
+        },
+        {
+          "side": "right",
+          "start": 222,
+          "length": 34
+        }
+      ],
+      "statusBar": "tablet",
+      "statusBarHeight": 24,
+      "bottomBar": "gesture",
+      "rimHighlight": "#8d8d8f",
+      "topBar": "safari-ipad"
+    },
+    "laptop-touch": {
+      "radius": 34,
+      "bezel": 21,
+      "bezelTop": 35.5,
+      "bezelBottom": 18,
+      "screenRadius": 8,
+      "color": "#2d2e2e",
+      "rim": ["#e0e0e0", "#b5b5b5"],
+      "rimWidth": 2,
+      "base": {
+        "height": 40,
+        "overhang": 117,
+        "color": ["#d6d4d5", "#9d9d9d"]
+      },
+      "rimHighlight": "#f4f4f4"
+    },
+    "laptop-hidpi": {
+      "radius": 20,
+      "bezel": 17.5,
+      "bezelTop": 31.5,
+      "bezelBottom": 15,
+      "screenRadius": 0,
+      "color": "#010101",
+      "rim": ["#76777c", "#4a4b4f"],
+      "rimWidth": 2,
+      "base": {
+        "height": 40,
+        "overhang": 153,
+        "color": ["#c4c6cb", "#636466"]
+      },
+      "rimHighlight": "#9c9da2"
+    },
+    "laptop-mdpi": {
+      "radius": 12,
+      "bezel": 18,
+      "bezelTop": 30,
+      "bezelBottom": 34,
+      "screenRadius": 0,
+      "color": "#0e0f10",
+      "rim": ["#3a3c40", "#1d1e21"],
+      "rimWidth": 2,
+      "base": {
+        "height": 22,
+        "overhang": 64,
+        "color": ["#5a5c61", "#2b2c2f"]
+      },
+      "rimHighlight": "#5a5c61"
+    },
+    "macbook-air": {
+      "radius": 40,
+      "bezel": 30,
+      "bezelTop": 32,
+      "bezelBottom": 56,
+      "screenRadius": 12.5,
+      "color": "#000000",
+      "rim": ["#3a404a", "#23282f"],
+      "rimWidth": 2,
+      "cutout": {
+        "shape": "notch",
+        "width": 158,
+        "height": 28,
+        "offset": 0
+      },
+      "base": {
+        "height": 46,
+        "overhang": 131,
+        "color": ["#8a96a8", "#1d242f"]
+      },
+      "rimHighlight": "#5b6370"
+    },
+    "iphone-12-pro": {
+      "radius": 68,
+      "bezel": 21,
+      "screenRadius": 45,
+      "color": "#000000",
+      "rim": ["#6f706f", "#262626"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "notch",
+        "width": 210,
+        "height": 32,
+        "offset": 0
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 141,
+          "length": 33
+        },
+        {
+          "side": "left",
+          "start": 204,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 289,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 227,
+          "length": 105
+        }
+      ],
+      "statusBar": "ios-notch",
+      "statusBarHeight": 47,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#9a9a98"
+    },
+    "iphone-14": {
+      "radius": 73,
+      "bezel": 20,
+      "screenRadius": 40,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "notch",
+        "width": 162,
+        "height": 33,
+        "offset": 0
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 176,
+          "length": 34
+        },
+        {
+          "side": "left",
+          "start": 241,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 326,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 264,
+          "length": 107
+        }
+      ],
+      "statusBar": "ios-notch",
+      "statusBarHeight": 47,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#8e949c"
+    },
+    "iphone-14-pro": {
+      "radius": 80,
+      "bezel": 19,
+      "screenRadius": 55,
+      "color": "#000000",
+      "rim": ["#6f706f", "#262626"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "island",
+        "width": 126,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 171,
+          "length": 34
+        },
+        {
+          "side": "left",
+          "start": 236,
+          "length": 68
+        },
+        {
+          "side": "left",
+          "start": 321,
+          "length": 68
+        },
+        {
+          "side": "right",
+          "start": 282,
+          "length": 107
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 59,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#9a9a98"
+    },
+    "iphone-15-pro": {
+      "radius": 78,
+      "bezel": 16.5,
+      "screenRadius": 55,
+      "color": "#000000",
+      "rim": ["#6f706f", "#262626"],
+      "rimWidth": 6,
+      "cutout": {
+        "shape": "island",
+        "width": 126,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 59,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#9a9a98"
+    },
+    "iphone-16": {
+      "radius": 75,
+      "bezel": 19.5,
+      "screenRadius": 54,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "island",
+        "width": 126,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        },
+        {
+          "side": "right",
+          "start": 405,
+          "length": 40
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 59,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#8e949c"
+    },
+    "iphone-15": {
+      "radius": 75,
+      "bezel": 19.5,
+      "screenRadius": 54,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "island",
+        "width": 126,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 59,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#8e949c"
+    },
+    "iphone-16-pro": {
+      "radius": 80,
+      "bezel": 14.5,
+      "screenRadius": 62,
+      "color": "#000000",
+      "rim": ["#6f706f", "#262626"],
+      "rimWidth": 6,
+      "cutout": {
+        "shape": "island",
+        "width": 125,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        },
+        {
+          "side": "right",
+          "start": 405,
+          "length": 40
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 62,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#9a9a98"
+    },
+    "iphone-17": {
+      "radius": 79,
+      "bezel": 15,
+      "screenRadius": 62,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 6,
+      "cutout": {
+        "shape": "island",
+        "width": 125,
+        "height": 37,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        },
+        {
+          "side": "right",
+          "start": 405,
+          "length": 40
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 62,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#8e949c"
+    },
+    "iphone-18-pro": {
+      "radius": 79,
+      "bezel": 15,
+      "screenRadius": 62,
+      "color": "#000000",
+      "rim": ["#5d636b", "#2b2f35"],
+      "rimWidth": 6,
+      "cutout": {
+        "shape": "island",
+        "width": 100,
+        "height": 34,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "left",
+          "start": 185,
+          "length": 41
+        },
+        {
+          "side": "left",
+          "start": 257,
+          "length": 67
+        },
+        {
+          "side": "left",
+          "start": 343,
+          "length": 67
+        },
+        {
+          "side": "right",
+          "start": 281,
+          "length": 106
+        },
+        {
+          "side": "right",
+          "start": 405,
+          "length": 40
+        }
+      ],
+      "statusBar": "ios-island",
+      "statusBarHeight": 62,
+      "bottomBar": "safari-26",
+      "rimHighlight": "#8e949c"
+    },
+    "pixel-7": {
+      "radius": 37,
+      "bezel": 21,
+      "bezelBottom": 31,
+      "screenRadius": 16,
+      "color": "#000000",
+      "rim": ["#5c5d5f", "#222324"],
+      "rimWidth": 8,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 286,
+          "length": 61
+        },
+        {
+          "side": "right",
+          "start": 410,
+          "length": 124
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#9a9c9f",
+      "topBar": "chrome"
+    },
+    "pixel-8": {
+      "radius": 54,
+      "bezel": 19.5,
+      "bezelTop": 21,
+      "bezelBottom": 22,
+      "screenRadius": 28,
+      "color": "#000000",
+      "rim": ["#5c5d5f", "#222324"],
+      "rimWidth": 8,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 256,
+          "length": 63
+        },
+        {
+          "side": "right",
+          "start": 370,
+          "length": 127
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#9a9c9f",
+      "topBar": "chrome"
+    },
+    "pixel-8-pro": {
+      "radius": 51,
+      "bezel": 19,
+      "screenRadius": 29,
+      "color": "#000000",
+      "rim": ["#b9bcc0", "#6c6f73"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 329,
+          "length": 63
+        },
+        {
+          "side": "right",
+          "start": 443,
+          "length": 126
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#e2e4e6",
+      "topBar": "chrome"
+    },
+    "pixel-9": {
+      "radius": 71,
+      "bezel": 21,
+      "bezelTop": 21.5,
+      "bezelBottom": 18.5,
+      "screenRadius": 51,
+      "color": "#000000",
+      "rim": ["#5c5d5f", "#222324"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 262,
+          "length": 75
+        },
+        {
+          "side": "right",
+          "start": 382,
+          "length": 138
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#9a9c9f",
+      "topBar": "chrome"
+    },
+    "pixel-9-pro": {
+      "radius": 74,
+      "bezel": 19.5,
+      "screenRadius": 55,
+      "color": "#000000",
+      "rim": ["#c3c5c8", "#6e7174"],
+      "rimWidth": 7,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 270,
+          "length": 77
+        },
+        {
+          "side": "right",
+          "start": 392,
+          "length": 142
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#e6e7e9",
+      "topBar": "chrome"
+    },
+    "pixel-10": {
+      "radius": 80,
+      "bezel": 22,
+      "bezelTop": 21,
+      "bezelBottom": 21,
+      "screenRadius": 47,
+      "color": "#000000",
+      "rim": ["#5c5d5f", "#222324"],
+      "rimWidth": 8,
+      "cutout": {
+        "shape": "punch",
+        "width": 24,
+        "height": 24,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 270,
+          "length": 76
+        },
+        {
+          "side": "right",
+          "start": 391,
+          "length": 132
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#9a9c9f",
+      "topBar": "chrome"
+    },
+    "galaxy-s8": {
+      "radius": 59,
+      "bezel": 9,
+      "bezelTop": 47,
+      "bezelBottom": 41,
+      "screenRadius": 27,
+      "color": "#000000",
+      "rim": ["#4f5054", "#1c1d1f"],
+      "rimWidth": 4,
+      "buttons": [
+        {
+          "side": "left",
+          "start": 141,
+          "length": 70
+        },
+        {
+          "side": "left",
+          "start": 225,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 258,
+          "length": 56
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 24,
+      "bottomBar": "nav-buttons",
+      "rimHighlight": "#7d7f84",
+      "topBar": "chrome"
+    },
+    "galaxy-s20-ultra": {
+      "radius": 46,
+      "bezel": 11,
+      "bezelTop": 13,
+      "bezelBottom": 20,
+      "screenRadius": 28,
+      "color": "#000000",
+      "rim": ["#4f5054", "#1c1d1f"],
+      "rimWidth": 5,
+      "cutout": {
+        "shape": "punch",
+        "width": 22,
+        "height": 22,
+        "offset": 10
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 183,
+          "length": 111
+        },
+        {
+          "side": "right",
+          "start": 352,
+          "length": 59
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#7d7f84",
+      "topBar": "chrome"
+    },
+    "galaxy-s26": {
+      "radius": 45,
+      "bezel": 14.5,
+      "bezelTop": 14,
+      "bezelBottom": 17,
+      "screenRadius": 30,
+      "color": "#000000",
+      "rim": ["#4f5054", "#1c1d1f"],
+      "rimWidth": 5,
+      "cutout": {
+        "shape": "punch",
+        "width": 20,
+        "height": 20,
+        "offset": 10
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 135,
+          "length": 104
+        },
+        {
+          "side": "right",
+          "start": 310,
+          "length": 55
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#7d7f84",
+      "topBar": "chrome"
+    },
+    "galaxy-s26-ultra": {
+      "radius": 33,
+      "bezel": 12,
+      "bezelTop": 12,
+      "bezelBottom": 13.5,
+      "screenRadius": 21,
+      "color": "#000000",
+      "rim": ["#4a4c52", "#1b1c20"],
+      "rimWidth": 4,
+      "cutout": {
+        "shape": "punch",
+        "width": 21,
+        "height": 21,
+        "offset": 9
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 190,
+          "length": 100
+        },
+        {
+          "side": "right",
+          "start": 330,
+          "length": 55
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#7b7e86",
+      "topBar": "chrome"
+    },
+    "galaxy-a55": {
+      "radius": 46,
+      "bezel": 18,
+      "bezelTop": 18,
+      "bezelBottom": 26,
+      "screenRadius": 30,
+      "color": "#000000",
+      "rim": ["#4f5054", "#1c1d1f"],
+      "rimWidth": 4,
+      "cutout": {
+        "shape": "punch",
+        "width": 22,
+        "height": 22,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 200,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 275,
+          "length": 100
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#7d7f84",
+      "topBar": "chrome"
+    },
+    "galaxy-a51": {
+      "radius": 48,
+      "bezel": 18,
+      "bezelTop": 20,
+      "bezelBottom": 28,
+      "screenRadius": 30,
+      "color": "#000000",
+      "rim": ["#3b3d42", "#151618"],
+      "rimWidth": 3,
+      "cutout": {
+        "shape": "punch",
+        "width": 22,
+        "height": 22,
+        "offset": 11
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 195,
+          "length": 100
+        },
+        {
+          "side": "right",
+          "start": 310,
+          "length": 55
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#5e6166",
+      "topBar": "chrome"
+    },
+    "moto-g-power": {
+      "radius": 50,
+      "bezel": 22,
+      "bezelTop": 26,
+      "bezelBottom": 40,
+      "screenRadius": 30,
+      "color": "#000000",
+      "rim": ["#3a3c40", "#17181a"],
+      "rimWidth": 3,
+      "cutout": {
+        "shape": "punch",
+        "width": 22,
+        "height": 22,
+        "offset": 12
+      },
+      "buttons": [
+        {
+          "side": "right",
+          "start": 200,
+          "length": 50
+        },
+        {
+          "side": "right",
+          "start": 275,
+          "length": 100
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 28,
+      "bottomBar": "gesture",
+      "rimHighlight": "#55585d",
+      "topBar": "chrome"
+    },
+    "moto-g4": {
+      "radius": 62,
+      "bezel": 22,
+      "bezelTop": 80,
+      "bezelBottom": 80,
+      "screenRadius": 0,
+      "color": "#000000",
+      "rim": ["#2a2b2e", "#131415"],
+      "rimWidth": 3,
+      "buttons": [
+        {
+          "side": "right",
+          "start": 208,
+          "length": 53
+        },
+        {
+          "side": "right",
+          "start": 316,
+          "length": 114
+        }
+      ],
+      "statusBar": "android",
+      "statusBarHeight": 24,
+      "bottomBar": "nav-buttons",
+      "rimHighlight": "#45474b",
+      "topBar": "chrome"
+    },
+    "galaxy-tab-s4": {
+      "radius": 60,
+      "bezel": 57,
+      "screenRadius": 0,
+      "color": "#050505",
+      "rim": ["#4b4d52", "#202124"],
+      "rimWidth": 3,
+      "buttons": [
+        {
+          "side": "right",
+          "start": 110,
+          "length": 60
+        },
+        {
+          "side": "right",
+          "start": 190,
+          "length": 90
+        }
+      ],
+      "statusBar": "tablet",
+      "statusBarHeight": 24,
+      "bottomBar": "gesture",
+      "rimHighlight": "#76787d",
+      "topBar": "chrome-tablet"
+    },
+    "surface-pro-7": {
+      "radius": 32,
+      "bezel": 72,
+      "bezelTop": 83,
+      "bezelBottom": 83,
+      "screenRadius": 0,
+      "color": "#0d0d0e",
+      "rim": ["#c7c9cc", "#8d9095"],
+      "rimWidth": 3,
+      "buttons": [
+        {
+          "side": "top",
+          "start": 60,
+          "length": 50
+        },
+        {
+          "side": "top",
+          "start": 130,
+          "length": 30
+        }
+      ],
+      "statusBar": "none",
+      "statusBarHeight": 0,
+      "bottomBar": "none",
+      "rimHighlight": "#e4e5e7"
+    },
+    "surface-pro-10": {
+      "radius": 48,
+      "bezel": 67,
+      "bezelTop": 31.5,
+      "bezelBottom": 35.5,
+      "screenRadius": 0,
+      "color": "#151617",
+      "rim": ["#45474b", "#1d1e20"],
+      "rimWidth": 3,
+      "buttons": [
+        {
+          "side": "top",
+          "start": 60,
+          "length": 50
+        },
+        {
+          "side": "top",
+          "start": 130,
+          "length": 30
+        }
+      ],
+      "statusBar": "none",
+      "statusBarHeight": 0,
+      "bottomBar": "none",
+      "rimHighlight": "#6c6e73"
+    },
+    "monitor": {
+      "radius": 31,
+      "bezel": 63,
+      "bezelTop": 67,
+      "bezelBottom": 80,
+      "screenRadius": 0,
+      "color": "#1b1b1b",
+      "rim": ["#c8c8c8", "#8f8f8f"],
+      "rimWidth": 4,
+      "stand": {
+        "neck": 327,
+        "neckWidth": 225,
+        "foot": 855,
+        "footHeight": 60,
+        "color": ["#e2e2e2", "#a9a9a9"]
+      },
+      "rimHighlight": "#e6e6e6"
     }
   },
   "devices": [
@@ -318,7 +1353,30 @@
       "width": 375,
       "height": 667,
       "dpr": 2,
-      "frame": "iphone-home"
+      "frame": "iphone-home",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#1e1e20",
+          "rim": ["#ebebed", "#767676"],
+          "rimHighlight": "#ececee"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f7f7f7",
+          "rim": ["#f3f4f6", "#7a7a7b"],
+          "rimHighlight": "#f6f6f6"
+        },
+        {
+          "id": "product-red",
+          "name": "(PRODUCT)RED",
+          "swatch": "#b60c2d",
+          "rim": ["#d23a47", "#691d24"],
+          "rimHighlight": "#f95764"
+        }
+      ]
     },
     {
       "id": "iphone-xr",
@@ -328,7 +1386,51 @@
       "width": 414,
       "height": 896,
       "dpr": 2,
-      "frame": "iphone-notch"
+      "frame": "iphone-xr",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#1d1d1f",
+          "rim": ["#302f34", "#18181a"],
+          "rimHighlight": "#444348"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f6f6f6",
+          "rim": ["#d6d7d9", "#6b6c6c"],
+          "rimHighlight": "#f7f8fa"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#3ea5df",
+          "rim": ["#78a6c8", "#3c5364"],
+          "rimHighlight": "#c3e3fa"
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "swatch": "#f7d045",
+          "rim": ["#e7c78e", "#746447"],
+          "rimHighlight": "#fff2cf"
+        },
+        {
+          "id": "coral",
+          "name": "Coral",
+          "swatch": "#f85d49",
+          "rim": ["#e49181", "#724840"],
+          "rimHighlight": "#ffd2cc"
+        },
+        {
+          "id": "product-red",
+          "name": "(PRODUCT)RED",
+          "swatch": "#8e0110",
+          "rim": ["#f47377", "#7a3a3c"],
+          "rimHighlight": "#ff808c"
+        }
+      ]
     },
     {
       "id": "iphone-12-pro",
@@ -338,7 +1440,37 @@
       "width": 390,
       "height": 844,
       "dpr": 3,
-      "frame": "iphone-notch"
+      "frame": "iphone-12-pro",
+      "finishes": [
+        {
+          "id": "pacific-blue",
+          "name": "Pacific Blue",
+          "swatch": "#27424d",
+          "rim": ["#89a4b5", "#2a3c46"],
+          "rimHighlight": "#8ca7b8"
+        },
+        {
+          "id": "graphite",
+          "name": "Graphite",
+          "swatch": "#44433f",
+          "rim": ["#6e6d69", "#383733"],
+          "rimHighlight": "#b4b3ae"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#e8e9e4",
+          "rim": ["#c7c8c3", "#53544f"],
+          "rimHighlight": "#e5e6e0"
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "swatch": "#fcecd5",
+          "rim": ["#dccaa4", "#6b573e"],
+          "rimHighlight": "#f5e8d8"
+        }
+      ]
     },
     {
       "id": "iphone-14",
@@ -348,7 +1480,51 @@
       "width": 390,
       "height": 844,
       "dpr": 3,
-      "frame": "iphone-notch"
+      "frame": "iphone-14",
+      "finishes": [
+        {
+          "id": "midnight",
+          "name": "Midnight",
+          "swatch": "#1b2228",
+          "rim": ["#575c60", "#34383b"],
+          "rimHighlight": "#595e62"
+        },
+        {
+          "id": "starlight",
+          "name": "Starlight",
+          "swatch": "#f9f4f0",
+          "rim": ["#ece9e2", "#c0bdb8"],
+          "rimHighlight": "#fcf7f1"
+        },
+        {
+          "id": "product-red",
+          "name": "(PRODUCT)RED",
+          "swatch": "#e60726",
+          "rim": ["#f75057", "#7c282c"],
+          "rimHighlight": "#fe5457"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#9eb0c4",
+          "rim": ["#939eb0", "#6f7d8a"],
+          "rimHighlight": "#cbd3e6"
+        },
+        {
+          "id": "purple",
+          "name": "Purple",
+          "swatch": "#e6dbeb",
+          "rim": ["#d7ccda", "#938898"],
+          "rimHighlight": "#ece1ef"
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "swatch": "#fee469",
+          "rim": ["#dbcc89", "#b8a348"],
+          "rimHighlight": "#feeebd"
+        }
+      ]
     },
     {
       "id": "iphone-14-plus",
@@ -358,7 +1534,51 @@
       "width": 428,
       "height": 926,
       "dpr": 3,
-      "frame": "iphone-notch"
+      "frame": "iphone-14",
+      "finishes": [
+        {
+          "id": "midnight",
+          "name": "Midnight",
+          "swatch": "#1b2228",
+          "rim": ["#555a5e", "#3c4043"],
+          "rimHighlight": "#575c60"
+        },
+        {
+          "id": "starlight",
+          "name": "Starlight",
+          "swatch": "#f9f4f0",
+          "rim": ["#d8d5d0", "#b6b1ab"],
+          "rimHighlight": "#f6f1eb"
+        },
+        {
+          "id": "product-red",
+          "name": "(PRODUCT)RED",
+          "swatch": "#e60726",
+          "rim": ["#f54b54", "#900b1c"],
+          "rimHighlight": "#f64f57"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#9dafc3",
+          "rim": ["#9ba7b5", "#6a7684"],
+          "rimHighlight": "#c2cedc"
+        },
+        {
+          "id": "purple",
+          "name": "Purple",
+          "swatch": "#e6dbeb",
+          "rim": ["#c5b8c9", "#857d88"],
+          "rimHighlight": "#e6dbeb"
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "swatch": "#fee469",
+          "rim": ["#dcd088", "#a09043"],
+          "rimHighlight": "#f8e8ac"
+        }
+      ]
     },
     {
       "id": "iphone-14-pro",
@@ -368,7 +1588,37 @@
       "width": 393,
       "height": 852,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-14-pro",
+      "finishes": [
+        {
+          "id": "space-black",
+          "name": "Space Black",
+          "swatch": "#353432",
+          "rim": ["#c3beba", "#726e65"],
+          "rimHighlight": "#c6c1bb"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#f0f1f3",
+          "rim": ["#aeaeae", "#777779"],
+          "rimHighlight": "#f6f6f4"
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "swatch": "#f4e6cb",
+          "rim": ["#beaa89", "#8a7756"],
+          "rimHighlight": "#fff3de"
+        },
+        {
+          "id": "deep-purple",
+          "name": "Deep Purple",
+          "swatch": "#453d4c",
+          "rim": ["#7e7576", "#4b4553"],
+          "rimHighlight": "#d9d0d1"
+        }
+      ]
     },
     {
       "id": "iphone-14-pro-max",
@@ -378,7 +1628,37 @@
       "width": 430,
       "height": 932,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-14-pro",
+      "finishes": [
+        {
+          "id": "space-black",
+          "name": "Space Black",
+          "swatch": "#353432",
+          "rim": ["#c3beba", "#726e65"],
+          "rimHighlight": "#c6c1bb"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#f0f1f3",
+          "rim": ["#aeaeae", "#777779"],
+          "rimHighlight": "#f6f6f4"
+        },
+        {
+          "id": "gold",
+          "name": "Gold",
+          "swatch": "#f4e6cb",
+          "rim": ["#beaa89", "#8a7756"],
+          "rimHighlight": "#fff3de"
+        },
+        {
+          "id": "deep-purple",
+          "name": "Deep Purple",
+          "swatch": "#453d4c",
+          "rim": ["#7e7576", "#4b4553"],
+          "rimHighlight": "#d9d0d1"
+        }
+      ]
     },
     {
       "id": "iphone-15",
@@ -388,7 +1668,44 @@
       "width": 393,
       "height": 852,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-15",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#4c4d4f",
+          "rim": ["#585c5f", "#2c2d2f"],
+          "rimHighlight": "#888888"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#f5f9fa",
+          "rim": ["#d6e1e5", "#72777a"],
+          "rimHighlight": "#e1ebed"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "swatch": "#f4f8e9",
+          "rim": ["#d5e0d0", "#72786e"],
+          "rimHighlight": "#e4ecdf"
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "swatch": "#fefae1",
+          "rim": ["#ede7c7", "#827c70"],
+          "rimHighlight": "#f6f0d8"
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "swatch": "#ffe6e7",
+          "rim": ["#f6d8da", "#7f7373"],
+          "rimHighlight": "#fee5e8"
+        }
+      ]
     },
     {
       "id": "iphone-15-plus",
@@ -398,7 +1715,44 @@
       "width": 430,
       "height": 932,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-15",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#4c4d4f",
+          "rim": ["#585c5f", "#2c2d2f"],
+          "rimHighlight": "#888888"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#f5f9fa",
+          "rim": ["#d6e1e5", "#72777a"],
+          "rimHighlight": "#e1ebed"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "swatch": "#f4f8e9",
+          "rim": ["#d5e0d0", "#72786e"],
+          "rimHighlight": "#e4ecdf"
+        },
+        {
+          "id": "yellow",
+          "name": "Yellow",
+          "swatch": "#fefae1",
+          "rim": ["#ede7c7", "#827c70"],
+          "rimHighlight": "#f6f0d8"
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "swatch": "#ffe6e7",
+          "rim": ["#f6d8da", "#7f7373"],
+          "rimHighlight": "#fee5e8"
+        }
+      ]
     },
     {
       "id": "iphone-15-pro",
@@ -408,7 +1762,37 @@
       "width": 393,
       "height": 852,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-15-pro",
+      "finishes": [
+        {
+          "id": "black-titanium",
+          "name": "Black Titanium",
+          "swatch": "#454442",
+          "rim": ["#595959", "#2d2d2d"],
+          "rimHighlight": "#868686"
+        },
+        {
+          "id": "white-titanium",
+          "name": "White Titanium",
+          "swatch": "#e8e5de",
+          "rim": ["#c1beb9", "#898884"],
+          "rimHighlight": "#f3f3eb"
+        },
+        {
+          "id": "blue-titanium",
+          "name": "Blue Titanium",
+          "swatch": "#4a4d54",
+          "rim": ["#5c5e6b", "#262e41"],
+          "rimHighlight": "#8c93a5"
+        },
+        {
+          "id": "natural-titanium",
+          "name": "Natural Titanium",
+          "swatch": "#9d9893",
+          "rim": ["#9c9a8e", "#666259"],
+          "rimHighlight": "#f1eae0"
+        }
+      ]
     },
     {
       "id": "iphone-15-pro-max",
@@ -418,7 +1802,37 @@
       "width": 430,
       "height": 932,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-15-pro",
+      "finishes": [
+        {
+          "id": "black-titanium",
+          "name": "Black Titanium",
+          "swatch": "#454442",
+          "rim": ["#595959", "#2d2d2d"],
+          "rimHighlight": "#868686"
+        },
+        {
+          "id": "white-titanium",
+          "name": "White Titanium",
+          "swatch": "#e8e5de",
+          "rim": ["#c1beb9", "#898884"],
+          "rimHighlight": "#f3f3eb"
+        },
+        {
+          "id": "blue-titanium",
+          "name": "Blue Titanium",
+          "swatch": "#4a4d54",
+          "rim": ["#5c5e6b", "#262e41"],
+          "rimHighlight": "#8c93a5"
+        },
+        {
+          "id": "natural-titanium",
+          "name": "Natural Titanium",
+          "swatch": "#9d9893",
+          "rim": ["#9c9a8e", "#666259"],
+          "rimHighlight": "#f1eae0"
+        }
+      ]
     },
     {
       "id": "iphone-16e",
@@ -428,7 +1842,23 @@
       "width": 390,
       "height": 844,
       "dpr": 3,
-      "frame": "iphone-notch"
+      "frame": "iphone-14",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#3c3d3f",
+          "rim": ["#8d8f8e", "#5a5b5f"],
+          "rimHighlight": "#919294"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f6f6f4",
+          "rim": ["#bcbcbc", "#919191"],
+          "rimHighlight": "#c9c9c9"
+        }
+      ]
     },
     {
       "id": "iphone-16",
@@ -438,7 +1868,44 @@
       "width": 393,
       "height": 852,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-16",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#3f4042",
+          "rim": ["#575757", "#333333"],
+          "rimHighlight": "#696969"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f7f6f4",
+          "rim": ["#e6e6e6", "#979797"],
+          "rimHighlight": "#eaeaea"
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "swatch": "#eea3d2",
+          "rim": ["#c57dad", "#914472"],
+          "rimHighlight": "#d3a2c0"
+        },
+        {
+          "id": "teal",
+          "name": "Teal",
+          "swatch": "#a1cbc9",
+          "rim": ["#73999c", "#4c5a5a"],
+          "rimHighlight": "#9bb4b9"
+        },
+        {
+          "id": "ultramarine",
+          "name": "Ultramarine",
+          "swatch": "#889ce5",
+          "rim": ["#778ccf", "#4f5670"],
+          "rimHighlight": "#99a9dd"
+        }
+      ]
     },
     {
       "id": "iphone-16-plus",
@@ -448,7 +1915,44 @@
       "width": 430,
       "height": 932,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-16",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#3f4042",
+          "rim": ["#575757", "#333333"],
+          "rimHighlight": "#696969"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f7f6f4",
+          "rim": ["#e6e6e6", "#979797"],
+          "rimHighlight": "#eaeaea"
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "swatch": "#eea3d2",
+          "rim": ["#c57dad", "#914472"],
+          "rimHighlight": "#d3a2c0"
+        },
+        {
+          "id": "teal",
+          "name": "Teal",
+          "swatch": "#a1cbc9",
+          "rim": ["#73999c", "#4c5a5a"],
+          "rimHighlight": "#9bb4b9"
+        },
+        {
+          "id": "ultramarine",
+          "name": "Ultramarine",
+          "swatch": "#889ce5",
+          "rim": ["#778ccf", "#4f5670"],
+          "rimHighlight": "#99a9dd"
+        }
+      ]
     },
     {
       "id": "iphone-16-pro",
@@ -458,7 +1962,37 @@
       "width": 402,
       "height": 874,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-16-pro",
+      "finishes": [
+        {
+          "id": "black-titanium",
+          "name": "Black Titanium",
+          "swatch": "#464646",
+          "rim": ["#646464", "#2a2a2a"],
+          "rimHighlight": "#979797"
+        },
+        {
+          "id": "white-titanium",
+          "name": "White Titanium",
+          "swatch": "#e7e7e5",
+          "rim": ["#d9d6d1", "#8f8b88"],
+          "rimHighlight": "#deddd8"
+        },
+        {
+          "id": "natural-titanium",
+          "name": "Natural Titanium",
+          "swatch": "#bab5af",
+          "rim": ["#d3cfc6", "#7c756d"],
+          "rimHighlight": "#dcd5cd"
+        },
+        {
+          "id": "desert-titanium",
+          "name": "Desert Titanium",
+          "swatch": "#d1bfb0",
+          "rim": ["#dfc9bb", "#896e5b"],
+          "rimHighlight": "#e2d1bd"
+        }
+      ]
     },
     {
       "id": "iphone-16-pro-max",
@@ -468,7 +2002,37 @@
       "width": 440,
       "height": 956,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-16-pro",
+      "finishes": [
+        {
+          "id": "black-titanium",
+          "name": "Black Titanium",
+          "swatch": "#464646",
+          "rim": ["#646464", "#2a2a2a"],
+          "rimHighlight": "#979797"
+        },
+        {
+          "id": "white-titanium",
+          "name": "White Titanium",
+          "swatch": "#e7e7e5",
+          "rim": ["#d9d6d1", "#8f8b88"],
+          "rimHighlight": "#deddd8"
+        },
+        {
+          "id": "natural-titanium",
+          "name": "Natural Titanium",
+          "swatch": "#bab5af",
+          "rim": ["#d3cfc6", "#7c756d"],
+          "rimHighlight": "#dcd5cd"
+        },
+        {
+          "id": "desert-titanium",
+          "name": "Desert Titanium",
+          "swatch": "#d1bfb0",
+          "rim": ["#dfc9bb", "#896e5b"],
+          "rimHighlight": "#e2d1bd"
+        }
+      ]
     },
     {
       "id": "iphone-17",
@@ -478,7 +2042,44 @@
       "width": 402,
       "height": 874,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-17",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#5a5c5b",
+          "rim": ["#818382", "#414244"],
+          "rimHighlight": "#919392"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f7f6f4",
+          "rim": ["#dbdbdb", "#989898"],
+          "rimHighlight": "#e0e0de"
+        },
+        {
+          "id": "mist-blue",
+          "name": "Mist Blue",
+          "swatch": "#aabad1",
+          "rim": ["#bbc3d8", "#62708a"],
+          "rimHighlight": "#bfcadc"
+        },
+        {
+          "id": "sage",
+          "name": "Sage",
+          "swatch": "#b7c298",
+          "rim": ["#abba93", "#52554a"],
+          "rimHighlight": "#c2ccb3"
+        },
+        {
+          "id": "lavender",
+          "name": "Lavender",
+          "swatch": "#ece0f1",
+          "rim": ["#ded8e6", "#9c92ab"],
+          "rimHighlight": "#e2dcea"
+        }
+      ]
     },
     {
       "id": "iphone-17-pro-max",
@@ -488,7 +2089,30 @@
       "width": 440,
       "height": 956,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-17",
+      "finishes": [
+        {
+          "id": "deep-blue",
+          "name": "Deep Blue",
+          "swatch": "#383e4c",
+          "rim": ["#8d93ab", "#464a56"],
+          "rimHighlight": "#98a0b5"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#eaeae8",
+          "rim": ["#dddddd", "#696969"],
+          "rimHighlight": "#e0e0e0"
+        },
+        {
+          "id": "cosmic-orange",
+          "name": "Cosmic Orange",
+          "swatch": "#f47f3f",
+          "rim": ["#fbcca2", "#86462d"],
+          "rimHighlight": "#f8d1a8"
+        }
+      ]
     },
     {
       "id": "iphone-air",
@@ -498,7 +2122,37 @@
       "width": 420,
       "height": 912,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-air",
+      "finishes": [
+        {
+          "id": "space-black",
+          "name": "Space Black",
+          "swatch": "#373737",
+          "rim": ["#c5c5c5", "#606062"],
+          "rimHighlight": "#c5c5c7"
+        },
+        {
+          "id": "cloud-white",
+          "name": "Cloud White",
+          "swatch": "#f1f3f2",
+          "rim": ["#d1d1d1", "#686868"],
+          "rimHighlight": "#f9f9f9"
+        },
+        {
+          "id": "light-gold",
+          "name": "Light Gold",
+          "swatch": "#f4f1ea",
+          "rim": ["#ccc8bd", "#66645e"],
+          "rimHighlight": "#f5eedc"
+        },
+        {
+          "id": "sky-blue",
+          "name": "Sky Blue",
+          "swatch": "#e1eaf1",
+          "rim": ["#c1cacf", "#606568"],
+          "rimHighlight": "#e4f1fa"
+        }
+      ]
     },
     {
       "id": "iphone-18-pro",
@@ -508,7 +2162,37 @@
       "width": 402,
       "height": 874,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-18-pro",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#1f1f21",
+          "rim": ["#616161", "#4c4a4d"],
+          "rimHighlight": "#7d7b7e"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#d9d9d9",
+          "rim": ["#d5d5d5", "#999999"],
+          "rimHighlight": "#efefef"
+        },
+        {
+          "id": "glacier",
+          "name": "Glacier",
+          "swatch": "#a7b3c5",
+          "rim": ["#d0dae4", "#949caf"],
+          "rimHighlight": "#e9f1fc"
+        },
+        {
+          "id": "burgundy",
+          "name": "Burgundy",
+          "swatch": "#48292f",
+          "rim": ["#7c575e", "#422329"],
+          "rimHighlight": "#a47b83"
+        }
+      ]
     },
     {
       "id": "iphone-18-pro-max",
@@ -518,7 +2202,37 @@
       "width": 440,
       "height": 956,
       "dpr": 3,
-      "frame": "iphone-island"
+      "frame": "iphone-18-pro",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#1f1f21",
+          "rim": ["#616161", "#4c4a4d"],
+          "rimHighlight": "#7d7b7e"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#d9d9d9",
+          "rim": ["#d5d5d5", "#999999"],
+          "rimHighlight": "#efefef"
+        },
+        {
+          "id": "glacier",
+          "name": "Glacier",
+          "swatch": "#a7b3c5",
+          "rim": ["#d0dae4", "#949caf"],
+          "rimHighlight": "#e9f1fc"
+        },
+        {
+          "id": "burgundy",
+          "name": "Burgundy",
+          "swatch": "#48292f",
+          "rim": ["#7c575e", "#422329"],
+          "rimHighlight": "#a47b83"
+        }
+      ]
     },
     {
       "id": "pixel-7",
@@ -528,7 +2242,30 @@
       "width": 412,
       "height": 915,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "pixel-7",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#252525",
+          "rim": ["#323232", "#1c1c1c"],
+          "rimHighlight": "#8e8e8e"
+        },
+        {
+          "id": "snow",
+          "name": "Snow",
+          "swatch": "#f7f7f7",
+          "rim": ["#ebebeb", "#999999"],
+          "rimHighlight": "#f4f4f4"
+        },
+        {
+          "id": "lemongrass",
+          "name": "Lemongrass",
+          "swatch": "#d5e0a0",
+          "rim": ["#d2e18c", "#a7c02e"],
+          "rimHighlight": "#e6eec0"
+        }
+      ]
     },
     {
       "id": "pixel-8",
@@ -538,7 +2275,37 @@
       "width": 412,
       "height": 915,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "pixel-8",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#202020",
+          "rim": ["#2b2b2b", "#181818"],
+          "rimHighlight": "#8a8a8a"
+        },
+        {
+          "id": "hazel",
+          "name": "Hazel",
+          "swatch": "#8b8d8b",
+          "rim": ["#848684", "#565856"],
+          "rimHighlight": "#bbbcbb"
+        },
+        {
+          "id": "rose",
+          "name": "Rose",
+          "swatch": "#f1ddd2",
+          "rim": ["#efcfbe", "#d47743"],
+          "rimHighlight": "#f6e5db"
+        },
+        {
+          "id": "mint",
+          "name": "Mint",
+          "swatch": "#cbf0ed",
+          "rim": ["#b6efea", "#3bd7cb"],
+          "rimHighlight": "#d7f6f3"
+        }
+      ]
     },
     {
       "id": "pixel-8-pro",
@@ -548,7 +2315,37 @@
       "width": 448,
       "height": 997,
       "dpr": 3,
-      "frame": "android-punch"
+      "frame": "pixel-8-pro",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#3c4043",
+          "rim": ["#50575b", "#2c3033"],
+          "rimHighlight": "#9fa3a5"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#f5f1ec",
+          "rim": ["#eee6db", "#bd996e"],
+          "rimHighlight": "#f6f1eb"
+        },
+        {
+          "id": "bay",
+          "name": "Bay",
+          "swatch": "#a7d1fa",
+          "rim": ["#8dc7ff", "#0483ff"],
+          "rimHighlight": "#c0e0ff"
+        },
+        {
+          "id": "mint",
+          "name": "Mint",
+          "swatch": "#cbf0ed",
+          "rim": ["#b6efea", "#3bd7cb"],
+          "rimHighlight": "#d7f6f3"
+        }
+      ]
     },
     {
       "id": "pixel-8a",
@@ -558,7 +2355,37 @@
       "width": 412,
       "height": 915,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "pixel-7",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#3c4043",
+          "rim": ["#50575b", "#2c3033"],
+          "rimHighlight": "#9fa3a5"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#f5f1ec",
+          "rim": ["#eee6db", "#bd996e"],
+          "rimHighlight": "#f6f1eb"
+        },
+        {
+          "id": "bay",
+          "name": "Bay",
+          "swatch": "#a7d1fa",
+          "rim": ["#8dc7ff", "#0483ff"],
+          "rimHighlight": "#c0e0ff"
+        },
+        {
+          "id": "aloe",
+          "name": "Aloe",
+          "swatch": "#aefdc0",
+          "rim": ["#97ffae", "#0aff42"],
+          "rimHighlight": "#c6ffd2"
+        }
+      ]
     },
     {
       "id": "pixel-9",
@@ -568,7 +2395,37 @@
       "width": 412,
       "height": 924,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "pixel-9",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#343434",
+          "rim": ["#464646", "#272727"],
+          "rimHighlight": "#999999"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#efebe8",
+          "rim": ["#e6dfd9", "#a98f7b"],
+          "rimHighlight": "#f1edea"
+        },
+        {
+          "id": "wintergreen",
+          "name": "Wintergreen",
+          "swatch": "#d7ead7",
+          "rim": ["#c6e4c6", "#60b660"],
+          "rimHighlight": "#e0f0e0"
+        },
+        {
+          "id": "peony",
+          "name": "Peony",
+          "swatch": "#ff9ca9",
+          "rim": ["#ff8797", "#ff0021"],
+          "rimHighlight": "#ffbdc6"
+        }
+      ]
     },
     {
       "id": "pixel-9-pro",
@@ -578,7 +2435,37 @@
       "width": 427,
       "height": 952,
       "dpr": 3,
-      "frame": "android-punch"
+      "frame": "pixel-9-pro",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#343434",
+          "rim": ["#464646", "#272727"],
+          "rimHighlight": "#999999"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#f5f1ec",
+          "rim": ["#eee6db", "#bd996e"],
+          "rimHighlight": "#f6f1eb"
+        },
+        {
+          "id": "hazel",
+          "name": "Hazel",
+          "swatch": "#949997",
+          "rim": ["#8c9290", "#5b605e"],
+          "rimHighlight": "#c0c3c2"
+        },
+        {
+          "id": "rose-quartz",
+          "name": "Rose Quartz",
+          "swatch": "#f4ddec",
+          "rim": ["#f1c9e3", "#d44ca5"],
+          "rimHighlight": "#f7e1f0"
+        }
+      ]
     },
     {
       "id": "pixel-9-pro-xl",
@@ -588,7 +2475,37 @@
       "width": 448,
       "height": 997,
       "dpr": 3,
-      "frame": "android-punch"
+      "frame": "pixel-9-pro",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#343434",
+          "rim": ["#464646", "#272727"],
+          "rimHighlight": "#999999"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#f5f1ec",
+          "rim": ["#eee6db", "#bd996e"],
+          "rimHighlight": "#f6f1eb"
+        },
+        {
+          "id": "hazel",
+          "name": "Hazel",
+          "swatch": "#949997",
+          "rim": ["#8c9290", "#5b605e"],
+          "rimHighlight": "#c0c3c2"
+        },
+        {
+          "id": "rose-quartz",
+          "name": "Rose Quartz",
+          "swatch": "#f4ddec",
+          "rim": ["#f1c9e3", "#d44ca5"],
+          "rimHighlight": "#f7e1f0"
+        }
+      ]
     },
     {
       "id": "pixel-10",
@@ -598,7 +2515,37 @@
       "width": 412,
       "height": 924,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "pixel-10",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#2b2b2b",
+          "rim": ["#3a3a3a", "#202020"],
+          "rimHighlight": "#939393"
+        },
+        {
+          "id": "frost",
+          "name": "Frost",
+          "swatch": "#d4daed",
+          "rim": ["#c2cbe9", "#526ec4"],
+          "rimHighlight": "#dde2f3"
+        },
+        {
+          "id": "indigo",
+          "name": "Indigo",
+          "swatch": "#5570ca",
+          "rim": ["#4162d0", "#213b91"],
+          "rimHighlight": "#96a9e5"
+        },
+        {
+          "id": "lemongrass",
+          "name": "Lemongrass",
+          "swatch": "#ddf09e",
+          "rim": ["#dbf586", "#b6e80f"],
+          "rimHighlight": "#ebfabc"
+        }
+      ]
     },
     {
       "id": "samsung-galaxy-a55",
@@ -608,7 +2555,37 @@
       "width": 360,
       "height": 800,
       "dpr": 2.25,
-      "frame": "android-punch"
+      "frame": "galaxy-a55",
+      "finishes": [
+        {
+          "id": "awesome-navy",
+          "name": "Awesome Navy",
+          "swatch": "#1c2029",
+          "rim": ["#242b39", "#141820"],
+          "rimHighlight": "#878a92"
+        },
+        {
+          "id": "awesome-iceblue",
+          "name": "Awesome Iceblue",
+          "swatch": "#e2e9f1",
+          "rim": ["#d1ddeb", "#638ebf"],
+          "rimHighlight": "#e6ecf4"
+        },
+        {
+          "id": "awesome-lilac",
+          "name": "Awesome Lilac",
+          "swatch": "#e9e5ec",
+          "rim": ["#ded7e3", "#937ba5"],
+          "rimHighlight": "#ede9f0"
+        },
+        {
+          "id": "awesome-lemon",
+          "name": "Awesome Lemon",
+          "swatch": "#fdf4c6",
+          "rim": ["#fff2ad", "#ffd919"],
+          "rimHighlight": "#fff8d2"
+        }
+      ]
     },
     {
       "id": "samsung-galaxy-s8-plus",
@@ -618,7 +2595,44 @@
       "width": 360,
       "height": 740,
       "dpr": 4,
-      "frame": "android-punch"
+      "frame": "galaxy-s8",
+      "finishes": [
+        {
+          "id": "midnight-black",
+          "name": "Midnight Black",
+          "swatch": "#3b3b3b",
+          "rim": ["#3b3b3b", "#1e1e1e"],
+          "rimHighlight": "#d6d6d6"
+        },
+        {
+          "id": "orchid-gray",
+          "name": "Orchid Gray",
+          "swatch": "#9f9cb6",
+          "rim": ["#9f9cb6", "#504e5b"],
+          "rimHighlight": "#f2f2ff"
+        },
+        {
+          "id": "arctic-silver",
+          "name": "Arctic Silver",
+          "swatch": "#bec2c7",
+          "rim": ["#bec2c7", "#5f6164"],
+          "rimHighlight": "#eff0f2"
+        },
+        {
+          "id": "coral-blue",
+          "name": "Coral Blue",
+          "swatch": "#8795be",
+          "rim": ["#8795be", "#444a5f"],
+          "rimHighlight": "#f1fbfd"
+        },
+        {
+          "id": "maple-gold",
+          "name": "Maple Gold",
+          "swatch": "#c6b5a4",
+          "rim": ["#c6b5a4", "#635a52"],
+          "rimHighlight": "#fff6ec"
+        }
+      ]
     },
     {
       "id": "samsung-galaxy-s20-ultra",
@@ -628,7 +2642,23 @@
       "width": 412,
       "height": 915,
       "dpr": 3.5,
-      "frame": "android-punch"
+      "frame": "galaxy-s20-ultra",
+      "finishes": [
+        {
+          "id": "cosmic-black",
+          "name": "Cosmic Black",
+          "swatch": "#686767",
+          "rim": ["#686767", "#414141"],
+          "rimHighlight": "#6c6b6b"
+        },
+        {
+          "id": "cosmic-gray",
+          "name": "Cosmic Gray",
+          "swatch": "#737277",
+          "rim": ["#737277", "#5a5a5a"],
+          "rimHighlight": "#b6b5b8"
+        }
+      ]
     },
     {
       "id": "samsung-galaxy-a51-71",
@@ -638,7 +2668,37 @@
       "width": 412,
       "height": 914,
       "dpr": 2.625,
-      "frame": "android-punch"
+      "frame": "galaxy-a51",
+      "finishes": [
+        {
+          "id": "prism-crush-black",
+          "name": "Prism Crush Black",
+          "swatch": "#4e4242",
+          "rim": ["#6b5858", "#3b3131"],
+          "rimHighlight": "#aea3a3"
+        },
+        {
+          "id": "prism-crush-white",
+          "name": "Prism Crush White",
+          "swatch": "#f3ebd9",
+          "rim": ["#f0e3c5", "#d5aa48"],
+          "rimHighlight": "#f7f0df"
+        },
+        {
+          "id": "prism-crush-blue",
+          "name": "Prism Crush Blue",
+          "swatch": "#99d2cc",
+          "rim": ["#88d1c9", "#3ca59a"],
+          "rimHighlight": "#bee6e1"
+        },
+        {
+          "id": "prism-crush-silver",
+          "name": "Prism Crush Silver",
+          "swatch": "#e6e6e9",
+          "rim": ["#d9d9de", "#878798"],
+          "rimHighlight": "#eaeaed"
+        }
+      ]
     },
     {
       "id": "galaxy-s26",
@@ -648,8 +2708,54 @@
       "width": 360,
       "height": 780,
       "dpr": 3,
-      "frame": "android-punch",
-      "note": "not measured"
+      "frame": "galaxy-s26",
+      "note": "not measured",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#494d53",
+          "rim": ["#626871", "#363a3f"],
+          "rimHighlight": "#a9acb1"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f3f4f5",
+          "rim": ["#e5e8ea", "#8c97a3"],
+          "rimHighlight": "#f1f2f3"
+        },
+        {
+          "id": "cobalt-violet",
+          "name": "Cobalt Violet",
+          "swatch": "#686884",
+          "rim": ["#61617f", "#3f3f54"],
+          "rimHighlight": "#a8a8b9"
+        },
+        {
+          "id": "sky-blue",
+          "name": "Sky Blue",
+          "swatch": "#b3cbd9",
+          "rim": ["#a2c3d6", "#4a88ac"],
+          "rimHighlight": "#ccdee8"
+        },
+        {
+          "id": "silver-shadow",
+          "name": "Silver Shadow",
+          "swatch": "#c7c8ca",
+          "rim": ["#bcbec1", "#787b80"],
+          "rimHighlight": "#dadbdd",
+          "online": true
+        },
+        {
+          "id": "pink-gold",
+          "name": "Pink Gold",
+          "swatch": "#ead2c6",
+          "rim": ["#e8c4b3", "#c97043"],
+          "rimHighlight": "#f2dfd5",
+          "online": true
+        }
+      ]
     },
     {
       "id": "galaxy-s26-ultra",
@@ -659,7 +2765,53 @@
       "width": 384,
       "height": 832,
       "dpr": 2.8125,
-      "frame": "android-punch"
+      "frame": "galaxy-s26-ultra",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#494d53",
+          "rim": ["#626871", "#363a3f"],
+          "rimHighlight": "#a9acb1"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#f3f4f5",
+          "rim": ["#e5e8ea", "#8c97a3"],
+          "rimHighlight": "#f1f2f3"
+        },
+        {
+          "id": "cobalt-violet",
+          "name": "Cobalt Violet",
+          "swatch": "#686884",
+          "rim": ["#61617f", "#3f3f54"],
+          "rimHighlight": "#a8a8b9"
+        },
+        {
+          "id": "sky-blue",
+          "name": "Sky Blue",
+          "swatch": "#b3cbd9",
+          "rim": ["#a2c3d6", "#4a88ac"],
+          "rimHighlight": "#ccdee8"
+        },
+        {
+          "id": "silver-shadow",
+          "name": "Silver Shadow",
+          "swatch": "#c7c8ca",
+          "rim": ["#bcbec1", "#787b80"],
+          "rimHighlight": "#dadbdd",
+          "online": true
+        },
+        {
+          "id": "pink-gold",
+          "name": "Pink Gold",
+          "swatch": "#ead2c6",
+          "rim": ["#e8c4b3", "#c97043"],
+          "rimHighlight": "#f2dfd5",
+          "online": true
+        }
+      ]
     },
     {
       "id": "moto-g-power",
@@ -669,7 +2821,16 @@
       "width": 412,
       "height": 823,
       "dpr": 1.75,
-      "frame": "android-punch"
+      "frame": "moto-g-power",
+      "finishes": [
+        {
+          "id": "dark-grove",
+          "name": "Dark Grove",
+          "swatch": "#2c2e31",
+          "rim": ["#3a3c40", "#17181a"],
+          "rimHighlight": "#55585d"
+        }
+      ]
     },
     {
       "id": "moto-g4",
@@ -679,7 +2840,16 @@
       "width": 360,
       "height": 640,
       "dpr": 3,
-      "frame": "android-punch"
+      "frame": "moto-g4",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#21201e",
+          "rim": ["#2d2b28", "#191816"],
+          "rimHighlight": "#8c8a89"
+        }
+      ]
     },
     {
       "id": "jiophone-2",
@@ -689,7 +2859,16 @@
       "width": 240,
       "height": 320,
       "dpr": 1,
-      "frame": "feature-phone"
+      "frame": "feature-phone",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#2c2e31",
+          "rim": ["#3a3c40", "#18191b"],
+          "rimHighlight": "#6c6f75"
+        }
+      ]
     },
     {
       "id": "facebook-on-android",
@@ -709,7 +2888,16 @@
       "width": 540,
       "height": 720,
       "dpr": 2.5,
-      "frame": "dual-screen"
+      "frame": "dual-screen",
+      "finishes": [
+        {
+          "id": "glacier",
+          "name": "Glacier",
+          "swatch": "#dbe2e8",
+          "rim": ["#ccd7e1", "#6d8eaa"],
+          "rimHighlight": "#e3e9ee"
+        }
+      ]
     },
     {
       "id": "pixel-9-pro-fold",
@@ -719,7 +2907,23 @@
       "width": 412,
       "height": 922,
       "dpr": 2.625,
-      "frame": "foldable"
+      "frame": "foldable",
+      "finishes": [
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "swatch": "#19191c",
+          "rim": ["#474749", "#131315"],
+          "rimHighlight": "#9a9a9b"
+        },
+        {
+          "id": "porcelain",
+          "name": "Porcelain",
+          "swatch": "#f5f1ec",
+          "rim": ["#eee6db", "#bd996e"],
+          "rimHighlight": "#f6f1eb"
+        }
+      ]
     },
     {
       "id": "galaxy-z-fold-6",
@@ -729,7 +2933,46 @@
       "width": 412,
       "height": 968,
       "dpr": 2.625,
-      "frame": "foldable"
+      "frame": "foldable",
+      "finishes": [
+        {
+          "id": "navy",
+          "name": "Navy",
+          "swatch": "#24293d",
+          "rim": ["#40475a", "#1e2337"],
+          "rimHighlight": "#7c8393"
+        },
+        {
+          "id": "silver-shadow",
+          "name": "Silver Shadow",
+          "swatch": "#90908f",
+          "rim": ["#adadab", "#7d7d7b"],
+          "rimHighlight": "#ededed"
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "swatch": "#f3e0e2",
+          "rim": ["#e3cfd1", "#cbb5b8"],
+          "rimHighlight": "#f0dde1"
+        },
+        {
+          "id": "crafted-black",
+          "name": "Crafted Black",
+          "swatch": "#333333",
+          "rim": ["#606261", "#313131"],
+          "rimHighlight": "#c1c3c2",
+          "online": true
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "swatch": "#ebedea",
+          "rim": ["#dbdbd9", "#bdbdbb"],
+          "rimHighlight": "#e4e4e2",
+          "online": true
+        }
+      ]
     },
     {
       "id": "galaxy-z-fold-5",
@@ -739,7 +2982,30 @@
       "width": 344,
       "height": 882,
       "dpr": 2.625,
-      "frame": "foldable"
+      "frame": "foldable",
+      "finishes": [
+        {
+          "id": "phantom-black",
+          "name": "Phantom Black",
+          "swatch": "#211e16",
+          "rim": ["#2e291d", "#1a1710"],
+          "rimHighlight": "#8c8983"
+        },
+        {
+          "id": "icy-blue",
+          "name": "Icy Blue",
+          "swatch": "#a6afc2",
+          "rim": ["#99a5bd", "#576789"],
+          "rimHighlight": "#c7cedb"
+        },
+        {
+          "id": "cream",
+          "name": "Cream",
+          "swatch": "#f0eae0",
+          "rim": ["#eae0cf", "#be9b61"],
+          "rimHighlight": "#f3eee5"
+        }
+      ]
     },
     {
       "id": "asus-zenbook-fold",
@@ -749,7 +3015,16 @@
       "width": 853,
       "height": 1280,
       "dpr": 1.5,
-      "frame": "foldable"
+      "frame": "foldable",
+      "finishes": [
+        {
+          "id": "tech-black",
+          "name": "Tech Black",
+          "swatch": "#2c2e31",
+          "rim": ["#3a3c40", "#18191b"],
+          "rimHighlight": "#6c6f75"
+        }
+      ]
     },
     {
       "id": "galaxy-tab-s4",
@@ -759,7 +3034,23 @@
       "width": 712,
       "height": 1138,
       "dpr": 2.25,
-      "frame": "tablet"
+      "frame": "galaxy-tab-s4",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#010101",
+          "rim": ["#343434", "#010101"],
+          "rimHighlight": "#8f8f8f"
+        },
+        {
+          "id": "gray",
+          "name": "Gray",
+          "swatch": "#bfc3c6",
+          "rim": ["#b4b9bd", "#707a81"],
+          "rimHighlight": "#d6d8db"
+        }
+      ]
     },
     {
       "id": "ipad-mini-a17-pro",
@@ -769,7 +3060,37 @@
       "width": 744,
       "height": 1133,
       "dpr": 2,
-      "frame": "tablet"
+      "frame": "ipad-mini",
+      "finishes": [
+        {
+          "id": "space-gray",
+          "name": "Space Gray",
+          "swatch": "#535154",
+          "rim": ["#808080", "#5e5e5e"],
+          "rimHighlight": "#858585"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "swatch": "#a5babc",
+          "rim": ["#d4dedf", "#7a898c"],
+          "rimHighlight": "#d7e1e2"
+        },
+        {
+          "id": "purple",
+          "name": "Purple",
+          "swatch": "#c1b9c6",
+          "rim": ["#e4e2e7", "#9a949e"],
+          "rimHighlight": "#e5e3e8"
+        },
+        {
+          "id": "starlight",
+          "name": "Starlight",
+          "swatch": "#c3bcb2",
+          "rim": ["#e4e1dc", "#9b948c"],
+          "rimHighlight": "#e5e2dd"
+        }
+      ]
     },
     {
       "id": "ipad-pro-13",
@@ -779,7 +3100,23 @@
       "width": 1032,
       "height": 1376,
       "dpr": 2,
-      "frame": "tablet"
+      "frame": "ipad-pro",
+      "finishes": [
+        {
+          "id": "space-black",
+          "name": "Space Black",
+          "swatch": "#2c2a2d",
+          "rim": ["#3c383d", "#211f22"],
+          "rimHighlight": "#949294"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#c4c5c7",
+          "rim": ["#babbbe", "#77797e"],
+          "rimHighlight": "#d9dadb"
+        }
+      ]
     },
     {
       "id": "surface-pro-7",
@@ -789,7 +3126,16 @@
       "width": 912,
       "height": 1368,
       "dpr": 2,
-      "frame": "tablet"
+      "frame": "surface-pro-7",
+      "finishes": [
+        {
+          "id": "platinum",
+          "name": "Platinum",
+          "swatch": "#b0b2b6",
+          "rim": ["#c7c9cc", "#8d9095"],
+          "rimHighlight": "#e4e5e7"
+        }
+      ]
     },
     {
       "id": "surface-pro-10",
@@ -799,7 +3145,16 @@
       "width": 960,
       "height": 1440,
       "dpr": 2,
-      "frame": "tablet"
+      "frame": "surface-pro-10",
+      "finishes": [
+        {
+          "id": "black",
+          "name": "Black",
+          "swatch": "#35373a",
+          "rim": ["#45474b", "#1d1e20"],
+          "rimHighlight": "#6c6e73"
+        }
+      ]
     },
     {
       "id": "laptop-with-touch",
@@ -809,7 +3164,7 @@
       "width": 1280,
       "height": 950,
       "dpr": 1,
-      "frame": "laptop"
+      "frame": "laptop-touch"
     },
     {
       "id": "laptop-with-hidpi-screen",
@@ -819,7 +3174,7 @@
       "width": 1440,
       "height": 900,
       "dpr": 2,
-      "frame": "laptop"
+      "frame": "laptop-hidpi"
     },
     {
       "id": "laptop-with-mdpi-screen",
@@ -829,7 +3184,7 @@
       "width": 1280,
       "height": 800,
       "dpr": 1,
-      "frame": "laptop"
+      "frame": "laptop-mdpi"
     },
     {
       "id": "macbook-air-13",
@@ -839,7 +3194,41 @@
       "width": 1280,
       "height": 832,
       "dpr": 2,
-      "frame": "laptop-notch"
+      "frame": "macbook-air",
+      "finishes": [
+        {
+          "id": "midnight",
+          "name": "Midnight",
+          "swatch": "#373d46",
+          "rim": ["#373d46", "#262b31"],
+          "rimHighlight": "#9b9ea2",
+          "base": ["#768294", "#1d242f"]
+        },
+        {
+          "id": "starlight",
+          "name": "Starlight",
+          "swatch": "#c4beb4",
+          "rim": ["#c4beb4", "#89857e"],
+          "rimHighlight": "#e2deda",
+          "base": ["#f4eee6", "#a7a096"]
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "swatch": "#a1a2a4",
+          "rim": ["#a1a2a4", "#717173"],
+          "rimHighlight": "#d0d0d2",
+          "base": ["#e9eaec", "#838486"]
+        },
+        {
+          "id": "sky-blue",
+          "name": "Sky Blue",
+          "swatch": "#acbbc3",
+          "rim": ["#acbbc3", "#788388"],
+          "rimHighlight": "#d6dde1",
+          "base": ["#dfeaef", "#83929b"]
+        }
+      ]
     },
     {
       "id": "full-hd-desktop",
@@ -849,7 +3238,7 @@
       "width": 1920,
       "height": 1080,
       "dpr": 1,
-      "frame": "desktop"
+      "frame": "monitor"
     },
     {
       "id": "nest-hub-max",
@@ -859,7 +3248,25 @@
       "width": 1280,
       "height": 800,
       "dpr": 2,
-      "frame": "smart-display"
+      "frame": "smart-display",
+      "finishes": [
+        {
+          "id": "charcoal",
+          "name": "Charcoal",
+          "swatch": "#0a0a0b",
+          "rim": ["#3b3b3c", "#070708"],
+          "rimHighlight": "#939394",
+          "base": ["#272728", "#080809"]
+        },
+        {
+          "id": "chalk",
+          "name": "Chalk",
+          "swatch": "#c4c4c4",
+          "rim": ["#bababa", "#7a7a7a"],
+          "rimHighlight": "#d9d9d9",
+          "base": ["#cbcbcb", "#a1a1a1"]
+        }
+      ]
     }
   ]
 }

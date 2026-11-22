@@ -63,3 +63,28 @@ export async function pushRecentDevice(id: string): Promise<string[]> {
   }
   return next;
 }
+
+const FINISH_KEY = 'deviceFinishes';
+
+/** The colour chosen for each device: device id -> finish id. */
+export async function getFinishChoices(): Promise<Record<string, string>> {
+  try {
+    const value = (await browser.storage.local.get(FINISH_KEY))[FINISH_KEY];
+    if (!value || typeof value !== 'object') return {};
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).filter(
+        (e): e is [string, string] => typeof e[1] === 'string',
+      ),
+    );
+  } catch {
+    return {};
+  }
+}
+
+export async function setFinishChoices(choices: Record<string, string>): Promise<void> {
+  try {
+    await browser.storage.local.set({ [FINISH_KEY]: choices });
+  } catch {
+    // Storage is a convenience only; ignore failures.
+  }
+}
