@@ -1,12 +1,14 @@
-// Screenshot engine. Chrome can only capture what is on screen (captureVisibleTab), so a device
-// window is shown alone at its real size on a plain backdrop, captured in viewport-sized tiles,
-// and stitched on a canvas. Everything it changes in the page is put back in a `finally` block.
+// Screenshot engine. Chrome can only capture what is on screen (captureVisibleTab), so the device
+// is captured exactly where it is and as large as it is shown: nothing moves or resizes.
+// For a transparent background, a small white then black patch is put behind the device itself
+// (not the whole screen) and the alpha is recovered from the two shots. Everything it touches is
+// put back in a `finally` block.
 import { captureTab } from './messages';
 
 export type CaptureMode = 'device' | 'screen' | 'page';
 
 export interface CaptureResult {
-  /** Full-resolution image: CSS size × the screen's pixel ratio. */
+  /** The image, at the size the device is shown on screen × the screen's pixel ratio. */
   canvas: HTMLCanvasElement;
   /** True when the corners/edges are transparent (the device with its frame). */
   transparent: boolean;
@@ -16,9 +18,10 @@ export interface CaptureResult {
 
 export type Progress = (done: number, total: number) => void;
 
-/** Chrome allows about 2 captures a second; stay just under it. */
-const CAPTURE_GAP_MS = 550;
-/** Largest full page we stitch, in CSS px, and the canvas limits that also apply. */
+/** Chrome allows 2 captures per second: never ask for a third inside one second. */
+const QUOTA_WINDOW_MS = 1050;
+const QUOTA_CALLS = 2;
+/** Full page limits: tallest page in CSS px, and the canvas size limits that also apply. */
 const MAX_PAGE_CSS_HEIGHT = 16000;
 const MAX_CANVAS_SIDE = 32000;
 const MAX_CANVAS_AREA = 260_000_000;
@@ -27,9 +30,11 @@ const SCROLL_SETTLE_MS = 350;
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
-const settle = async () => {
+/** Two frames plus a beat, so a style change has been painted before the next capture. */
+const paint = async () => {
   await frame();
   await frame();
+  await sleep(40);
 };
 
 export class CaptureError extends Error {}
@@ -42,12 +47,16 @@ function dataUrlToBlob(dataUrl: string): Blob {
   return new Blob([out], { type: /data:([^;]+)/.exec(head ?? '')?.[1] ?? 'image/png' });
 }
 
+interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 interface Session {
-  root: ShadowRoot;
-  host: Element;
-  target: HTMLElement;
-  backdrop: HTMLElement;
-  lastCapture: number;
+  /** Start times of recent captures, for the 2-per-second quota. */
+  recent: number[];
   captures: number;
   expected: number;
   progress?: Progress;
@@ -55,10 +64,12 @@ interface Session {
 
 /** One screenshot of the visible tab, as an image (no network request, so page CSP cannot block it). */
 async function grab(s: Session): Promise<ImageBitmap> {
-  const wait = s.lastCapture + CAPTURE_GAP_MS - Date.now();
-  if (wait > 0) await sleep(wait);
+  if (s.recent.length >= QUOTA_CALLS) {
+    const wait = (s.recent[s.recent.length - QUOTA_CALLS] ?? 0) + QUOTA_WINDOW_MS - Date.now();
+    if (wait > 0) await sleep(wait);
+  }
+  s.recent.push(Date.now());
   const response = await captureTab();
-  s.lastCapture = Date.now();
   if (!response.ok) {
     throw new CaptureError(
       /activeTab|permission|cannot access/i.test(response.error)
@@ -72,30 +83,35 @@ async function grab(s: Session): Promise<ImageBitmap> {
   return bitmap;
 }
 
-const setBackdrop = async (s: Session, color: string) => {
-  s.backdrop.style.background = color;
-  await settle();
-  await sleep(60); // let the compositor paint before the capture
-};
-
-interface Viewport {
-  /** Capturable area in CSS px (excludes scroll bars). */
-  w: number;
-  h: number;
+/** Image pixels per CSS px. The tab may be zoomed, so measure instead of trusting the DPR. */
+function imageScale(bitmap: ImageBitmap): number {
+  const client = document.documentElement.clientWidth || window.innerWidth;
+  const guess = bitmap.width / window.devicePixelRatio;
+  const cssWidth =
+    Math.abs(guess - window.innerWidth) < Math.abs(guess - client) ? window.innerWidth : client;
+  return bitmap.width / cssWidth;
 }
 
-const viewport = (): Viewport => ({
-  w: document.documentElement.clientWidth || window.innerWidth,
-  h: Math.min(window.innerHeight, document.documentElement.clientHeight || window.innerHeight),
-});
+/**
+ * The whole image pixels that cover `rect` (in CSS px). Cropping on whole pixels copies them as they
+ * are; a fractional crop would resample and soften the picture.
+ */
+function pixelRect(rect: Rect, sx: number, bitmap: ImageBitmap): Rect {
+  const x0 = Math.max(0, Math.floor(rect.x * sx + 1e-6));
+  const y0 = Math.max(0, Math.floor(rect.y * sx + 1e-6));
+  const x1 = Math.min(bitmap.width, Math.ceil((rect.x + rect.w) * sx - 1e-6));
+  const y1 = Math.min(bitmap.height, Math.ceil((rect.y + rect.h) * sx - 1e-6));
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
 
-function readPixels(bitmap: ImageBitmap, w: number, h: number): ImageData {
+/** Copies a pixel rectangle out of a screenshot. */
+function crop(bitmap: ImageBitmap, px: Rect): ImageData {
   const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
+  c.width = px.w;
+  c.height = px.h;
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  ctx.drawImage(bitmap, 0, 0, w, h, 0, 0, w, h);
-  return ctx.getImageData(0, 0, w, h);
+  ctx.drawImage(bitmap, px.x, px.y, px.w, px.h, 0, 0, px.w, px.h);
+  return ctx.getImageData(0, 0, px.w, px.h);
 }
 
 /**
@@ -119,74 +135,12 @@ function matte(white: ImageData, black: ImageData): ImageData {
   return out;
 }
 
-/**
- * Captures a rectangle of the target window (measured at its rest position) in viewport-sized
- * tiles. With `transparent`, every tile is taken on white and on black and the alpha is recovered.
- */
-async function captureRect(
-  s: Session,
-  rect: { x: number; y: number; w: number; h: number },
-  transparent: boolean,
-  into?: { canvas: HTMLCanvasElement; offsetY: number; scale: number },
-): Promise<{ canvas: HTMLCanvasElement; scale: number }> {
-  const vp = viewport();
-  let canvas = into?.canvas;
-  let scale = into?.scale ?? 0;
-  const tilesX = Math.ceil(rect.w / vp.w);
-  const tilesY = Math.ceil(rect.h / vp.h);
-  for (let ty = 0; ty < tilesY; ty++) {
-    for (let tx = 0; tx < tilesX; tx++) {
-      const ox = tx * vp.w;
-      const oy = ty * vp.h;
-      const tw = Math.min(vp.w, rect.w - ox);
-      const th = Math.min(vp.h, rect.h - oy);
-      // Slide the window so this tile of the rectangle sits at the top-left of the viewport.
-      s.target.style.translate = `${-(rect.x + ox)}px ${-(rect.y + oy)}px`;
-      await settle();
-
-      let first: ImageBitmap;
-      let second: ImageBitmap | undefined;
-      if (transparent) {
-        await setBackdrop(s, '#fff');
-        first = await grab(s);
-        await setBackdrop(s, '#000');
-        second = await grab(s);
-      } else {
-        await setBackdrop(s, '#fff');
-        first = await grab(s);
-      }
-
-      // Image pixels per CSS px: the tab may be zoomed, so measure instead of trusting the DPR.
-      const full = first.width / window.devicePixelRatio;
-      const cssW =
-        Math.abs(full - window.innerWidth) < Math.abs(full - vp.w) ? window.innerWidth : vp.w;
-      const sx = first.width / cssW;
-      if (!canvas) {
-        scale = sx;
-        const wpx = Math.round(rect.w * sx);
-        const hpx = Math.round(rect.h * sx);
-        if (wpx > MAX_CANVAS_SIDE || hpx > MAX_CANVAS_SIDE || wpx * hpx > MAX_CANVAS_AREA) {
-          throw new CaptureError('This device is too large to capture at this screen resolution.');
-        }
-        canvas = document.createElement('canvas');
-        canvas.width = wpx;
-        canvas.height = hpx;
-      }
-      const pw = Math.max(1, Math.round(tw * sx));
-      const ph = Math.max(1, Math.round(th * sx));
-      const dx = Math.round(ox * scale);
-      const dy = Math.round((oy + (into?.offsetY ?? 0)) * scale);
-      const ctx = canvas.getContext('2d')!;
-      if (second) {
-        ctx.putImageData(matte(readPixels(first, pw, ph), readPixels(second, pw, ph)), dx, dy);
-        second.close();
-      } else {
-        ctx.drawImage(first, 0, 0, pw, ph, dx, dy, pw, ph);
-      }
-      first.close();
-    }
-  }
-  return { canvas: canvas!, scale };
+function toCanvas(data: ImageData): HTMLCanvasElement {
+  const c = document.createElement('canvas');
+  c.width = data.width;
+  c.height = data.height;
+  c.getContext('2d')!.putImageData(data, 0, 0);
+  return c;
 }
 
 /** Hides fixed and sticky elements of a page so headers and chat bubbles do not repeat in a stitch. */
@@ -205,16 +159,29 @@ function hideFloating(doc: Document): () => void {
   return () => hidden.forEach(([el, v]) => (el.style.visibility = v));
 }
 
-type StyleProp = 'left' | 'top' | 'width' | 'height' | 'translate' | 'scale';
+const measure = (el: HTMLElement): Rect => {
+  const r = el.getBoundingClientRect();
+  return { x: r.left, y: r.top, w: r.width, h: r.height };
+};
 
-interface Saved {
-  el: HTMLElement;
-  prop: StyleProp;
-  value: string;
+function assertInView(rect: Rect) {
+  const vw = document.documentElement.clientWidth || window.innerWidth;
+  const vh = window.innerHeight;
+  const slack = 1.5;
+  if (
+    rect.x < -slack ||
+    rect.y < -slack ||
+    rect.x + rect.w > vw + slack ||
+    rect.y + rect.h > vh + slack
+  ) {
+    throw new CaptureError(
+      'Part of the device is off screen. Move it fully into view, then try again.',
+    );
+  }
 }
 
 /**
- * Takes a screenshot of one device window.
+ * Takes a screenshot of one device window, where it is and as large as it is shown.
  * - `device`: the device with its frame, transparent outside the rounded edge, no shadow.
  * - `screen`: just the screen, as the device's own screenshot would be (status and browser bars included).
  * - `page`: the whole scrolling page at the device's width, without frame or bars.
@@ -230,79 +197,59 @@ export async function captureWindow(
   if (target.hasAttribute('data-minimized')) {
     throw new CaptureError('Restore the window first, then take the screenshot.');
   }
-  const scaleEl = target.querySelector<HTMLElement>('.device-scale');
-  const boxEl = target.querySelector<HTMLElement>('.device-box');
   const deviceEl = target.querySelector<HTMLElement>('.device');
   const screenEl = target.querySelector<HTMLElement>('.screen');
   const iframe = target.querySelector<HTMLIFrameElement>('iframe.frame');
-  if (!scaleEl || !boxEl || !deviceEl || !screenEl) {
+  if (!deviceEl || !screenEl)
     throw new CaptureError('The device is not ready yet. Try again in a moment.');
-  }
 
-  const host = (root as unknown as { host: Element }).host;
+  const session: Session = { recent: [], captures: 0, expected: 1, progress };
   const backdrop = document.createElement('div');
   backdrop.className = 'capture-backdrop';
-  const session: Session = {
-    root,
-    host,
-    target,
-    backdrop,
-    lastCapture: 0,
-    captures: 0,
-    expected: 1,
-    progress,
-  };
-
-  // Remember everything we change so it can be put back exactly.
-  const saved: Saved[] = [];
-  const set = (el: HTMLElement, prop: StyleProp, value: string) => {
-    saved.push({ el, prop, value: el.style[prop] });
-    el.style[prop] = value;
-  };
   const restoreFloating: (() => void)[] = [];
   let scrollBack: (() => void) | undefined;
 
   try {
-    // Real size, top-left, alone on a plain backdrop, no shadows or title bar.
-    const boxW = scaleEl.style.width;
-    const boxH = scaleEl.style.height;
-    host.classList.add('capturing');
+    // Mark the window: CSS turns off its shadows, and in screen and page modes square the screen
+    // corners and hide the cutout and bars, for the moment of the capture only.
     target.setAttribute('data-capture-target', '');
     target.setAttribute('data-capture-mode', mode);
-    root.append(backdrop);
-    set(target, 'left', '0px');
-    set(target, 'top', '0px');
-    set(target, 'width', boxW);
-    set(target, 'translate', '0px 0px');
-    set(boxEl, 'width', boxW);
-    set(boxEl, 'height', boxH);
-    set(scaleEl, 'scale', '1');
-    await setBackdrop(session, '#fff');
-
-    const measure = (el: HTMLElement) => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left, y: r.top, w: Math.round(r.width), h: Math.round(r.height) };
-    };
 
     if (mode === 'device') {
-      session.expected =
-        2 *
-        Math.ceil(measure(deviceEl).w / viewport().w) *
-        Math.ceil(measure(deviceEl).h / viewport().h);
-      const { canvas } = await captureRect(session, measure(deviceEl), true);
+      const rect = measure(deviceEl);
+      assertInView(rect);
+      // A white then a black patch behind the device (only its own box, not the screen).
+      // A few px larger than the device, so its own edge pixels sit fully on the patch.
+      const m = 4;
+      backdrop.style.cssText = `left:${rect.x - m}px;top:${rect.y - m}px;width:${rect.w + 2 * m}px;height:${rect.h + 2 * m}px;z-index:${getComputedStyle(target).zIndex}`;
+      target.before(backdrop);
+      session.expected = 2;
+      await paint();
+      const white = await grab(session);
+      backdrop.style.background = '#000';
+      await paint();
+      const black = await grab(session);
+      const px = pixelRect(rect, imageScale(white), white);
+      const canvas = toCanvas(matte(crop(white, px), crop(black, px)));
+      white.close();
+      black.close();
       return { canvas, transparent: true };
     }
 
     if (mode === 'screen') {
       const rect = measure(screenEl);
-      session.expected = Math.ceil(rect.w / viewport().w) * Math.ceil(rect.h / viewport().h);
-      const { canvas } = await captureRect(session, rect, false);
+      assertInView(rect);
+      await paint();
+      const shot = await grab(session);
+      const canvas = toCanvas(crop(shot, pixelRect(rect, imageScale(shot), shot)));
+      shot.close();
       return { canvas, transparent: false };
     }
 
     // Full page: scroll the framed page one screen at a time and stitch.
     if (!iframe) throw new CaptureError('This device has no page to capture.');
     const rect = measure(iframe);
+    assertInView(rect);
     let doc: Document | null = null;
     try {
       doc = iframe.contentDocument;
@@ -311,10 +258,11 @@ export async function captureWindow(
     }
     const win = iframe.contentWindow;
     const docEl = doc?.documentElement;
-    const perScreen = Math.ceil(rect.w / viewport().w) * Math.ceil(rect.h / viewport().h);
+    await paint();
     if (!doc || !win || !docEl) {
-      session.expected = perScreen;
-      const { canvas } = await captureRect(session, rect, false);
+      const shot = await grab(session);
+      const canvas = toCanvas(crop(shot, pixelRect(rect, imageScale(shot), shot)));
+      shot.close();
       return {
         canvas,
         transparent: false,
@@ -324,45 +272,48 @@ export async function captureWindow(
 
     const scrollTop = win.scrollY;
     scrollBack = () => win.scrollTo({ top: scrollTop, behavior: 'instant' });
-    const pageH = Math.max(docEl.scrollHeight, doc.body?.scrollHeight ?? 0, rect.h);
-    const sxGuess = window.devicePixelRatio || 1;
+    // The page is shown scaled to fit: `k` is how many on-screen CSS px one page px takes.
+    const k = rect.w / Math.max(1, iframe.clientWidth);
+    const screenH = iframe.clientHeight; // page px visible at once
+    const pageH = Math.max(docEl.scrollHeight, doc.body?.scrollHeight ?? 0, screenH);
+    const pxPerPage = k * window.devicePixelRatio;
     const maxH = Math.max(
-      rect.h,
+      screenH,
       Math.min(
         MAX_PAGE_CSS_HEIGHT,
-        Math.floor(MAX_CANVAS_SIDE / sxGuess),
-        Math.floor(MAX_CANVAS_AREA / (rect.w * sxGuess * sxGuess)),
+        Math.floor(MAX_CANVAS_SIDE / pxPerPage),
+        Math.floor(MAX_CANVAS_AREA / (rect.w * window.devicePixelRatio * pxPerPage)),
       ),
     );
     const total = Math.min(pageH, maxH);
-    const steps = Math.max(1, Math.ceil(total / rect.h));
-    session.expected = steps * perScreen;
+    const steps = Math.max(1, Math.ceil(total / screenH));
+    session.expected = steps;
 
     let canvas: HTMLCanvasElement | undefined;
-    let scale = 0;
+    let sx = 0;
+    let px: Rect | undefined;
     for (let i = 0; i < steps; i++) {
-      const y = Math.min(i * rect.h, Math.max(0, total - rect.h));
-      win.scrollTo({ top: y, behavior: 'instant' });
+      win.scrollTo({
+        top: Math.min(i * screenH, Math.max(0, total - screenH)),
+        behavior: 'instant',
+      });
       await sleep(SCROLL_SETTLE_MS);
       const actual = win.scrollY;
-      const part = await captureRect(
-        session,
-        rect,
-        false,
-        canvas ? { canvas, offsetY: actual, scale } : undefined,
-      );
+      const shot = await grab(session);
       if (!canvas) {
-        // The first call made a canvas sized for one screen: grow it to the whole page.
-        scale = part.scale;
-        const full = document.createElement('canvas');
-        full.width = part.canvas.width;
-        full.height = Math.round(total * scale);
-        full.getContext('2d')!.drawImage(part.canvas, 0, Math.round(actual * scale));
-        canvas = full;
+        sx = imageScale(shot);
+        px = pixelRect(rect, sx, shot);
+        canvas = document.createElement('canvas');
+        canvas.width = px.w;
+        canvas.height = Math.round(total * k * sx);
         // The first screen keeps headers, as a visitor sees the page. After it they would
         // repeat on every screen, so hide fixed and sticky elements for the rest.
         if (steps > 1) restoreFloating.push(hideFloating(doc));
       }
+      canvas
+        .getContext('2d')!
+        .drawImage(shot, px!.x, px!.y, px!.w, px!.h, 0, Math.round(actual * k * sx), px!.w, px!.h);
+      shot.close();
     }
     return {
       canvas: canvas!,
@@ -375,10 +326,8 @@ export async function captureWindow(
   } finally {
     restoreFloating.forEach((f) => f());
     scrollBack?.();
-    for (const { el, prop, value } of saved.reverse()) el.style[prop] = value;
     backdrop.remove();
     target.removeAttribute('data-capture-target');
     target.removeAttribute('data-capture-mode');
-    host.classList.remove('capturing');
   }
 }

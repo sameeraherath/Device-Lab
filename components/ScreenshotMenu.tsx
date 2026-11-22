@@ -115,6 +115,7 @@ export function ScreenshotMenu({ target }: Props) {
   const [prefs, setPrefs] = useState<ScreenshotPrefs>(DEFAULT_SHOT_PREFS);
   const [hover, setHover] = useState<ShotMode | null>(null);
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [outcome, setOutcome] = useState<ShotOutcome | null>(null);
   const [status, setStatus] = useState('');
 
@@ -141,8 +142,19 @@ export function ScreenshotMenu({ target }: Props) {
     const root = triggerRef.current?.getRootNode() as ShadowRoot | undefined;
     if (!target || disabled || !root) return;
     const device = getDevice(target.deviceId);
-    menuRef.current?.hidePopover();
+    // The popover stays open so its button can show the progress, unless it covers the device:
+    // then it would be in the picture, so close it and let the camera button show the progress.
+    const menu = menuRef.current;
+    const win = root.querySelector(`.window[data-window-id="${target.id}"]`);
+    if (menu && win) {
+      const m = menu.getBoundingClientRect();
+      const w = win.getBoundingClientRect();
+      if (m.left < w.right && m.right > w.left && m.top < w.bottom && m.bottom > w.top) {
+        menu.hidePopover();
+      }
+    }
     setBusy(true);
+    setProgress(null);
     setStatus('Taking screenshot');
     try {
       // "Device on background" is the framed device; the background is applied in the export step.
@@ -150,16 +162,20 @@ export function ScreenshotMenu({ target }: Props) {
         root,
         target.id,
         prefs.mode === 'background' ? 'device' : prefs.mode,
+        (done, total) => setProgress(total > 1 ? { done, total } : null),
       );
+      menu?.hidePopover();
       setOutcome({ result, deviceId: device.id, mode: prefs.mode });
       setStatus('Screenshot ready');
     } catch (e) {
       const message =
         e instanceof CaptureError ? e.message : 'The screenshot could not be taken. Try again.';
+      menu?.hidePopover();
       setOutcome({ error: message, deviceId: device.id, mode: prefs.mode });
       setStatus('Screenshot failed');
     } finally {
       setBusy(false);
+      setProgress(null);
     }
   };
 
@@ -174,10 +190,13 @@ export function ScreenshotMenu({ target }: Props) {
         data-tool
         aria-label="Screenshot"
         aria-haspopup="true"
-        title="Screenshot"
+        aria-busy={busy}
+        data-busy={busy ? '' : undefined}
+        title={busy ? 'Taking screenshot…' : 'Screenshot'}
         {...TRIGGER_ATTRS}
       >
         <Icon name="camera" />
+        {busy && <span class="spinner" aria-hidden="true" />}
       </button>
       {/* Placed right after its trigger so no implicit aria-details is added. */}
       <div
@@ -222,10 +241,16 @@ export function ScreenshotMenu({ target }: Props) {
           type="button"
           class="shot-go"
           aria-disabled={disabled}
+          aria-busy={busy}
           title={reason}
           onClick={() => void take()}
         >
-          {busy ? 'Capturing…' : 'Take screenshot'}
+          {busy && <span class="spinner" aria-hidden="true" />}
+          {busy
+            ? progress
+              ? `Capturing ${progress.done} of ${progress.total}…`
+              : 'Capturing…'
+            : 'Take screenshot'}
         </button>
         {reason && !busy && <p class="shot-note">{reason}.</p>}
       </div>

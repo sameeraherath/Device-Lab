@@ -39,9 +39,12 @@ real device sizes side by side.
   - **Full page**: the whole scrolling page at the device's width, without frame or bars (beta).
   - **Device on background**: the framed device on a colour you choose, with space around it.
 
-  After the shot, a dialog previews it and exports it as **PNG, JPEG or WebP** (with a quality slider
-  for JPEG and WebP), or copies it to the clipboard. Resolution is the device's CSS size times the
-  screen's pixel ratio. Big devices are captured in tiles and stitched. No extra permission is needed.
+  Nothing moves while it works: the button shows the progress and the device is captured where it
+  is. After the shot, a dialog previews it and exports it as **PNG, JPEG or WebP** (with a quality
+  slider for JPEG and WebP), or copies it to the clipboard. The image is as large as the device is
+  shown on screen times the screen's pixel ratio, so a device that is scaled down to fit a small
+  window gives a smaller image; make the window bigger for a larger one. No extra permission is
+  needed.
 
 ## Tech stack
 

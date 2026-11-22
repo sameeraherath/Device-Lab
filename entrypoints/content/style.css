@@ -1806,28 +1806,13 @@
 }
 
 /*
- * While a screenshot is taken, the target window is shown alone, at its real size, on a plain
- * backdrop: no other windows, icon bar, stage, title bar or shadows. (See lib/capture.ts.)
+ * While a screenshot is taken nothing moves: the device is captured where it is. Only its shadows
+ * are switched off, and a small patch is placed behind the device's own box (see lib/capture.ts).
  */
 .capture-backdrop {
   position: fixed;
-  inset: 0;
-  z-index: 1;
   background: #fff;
-}
-
-:host(.capturing) .sidebar,
-:host(.capturing) .stage,
-:host(.capturing) .window:not([data-capture-target]) {
-  visibility: hidden;
-}
-
-.window[data-capture-target] {
-  z-index: 3 !important;
-}
-
-.window[data-capture-target] .titlebar {
-  display: none;
+  pointer-events: none;
 }
 
 .window[data-capture-target] :is(.lid, .base, .neck, .foot, .hw-button, .screen.bare) {
@@ -1849,4 +1834,50 @@
 .window[data-capture-mode='page']
   :is(.cutout, .home-button, .status-bar, .top-bar, .bottom-bar, .nav-buttons) {
   visibility: hidden;
+}
+
+/* Loading spinner: inside the Take screenshot button and over the camera button in the icon bar. */
+.spinner {
+  display: inline-block;
+  inline-size: 14px;
+  block-size: 14px;
+  margin-inline-end: 8px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.tool > .spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  inline-size: 26px;
+  block-size: 26px;
+  border-width: 2px;
+  border-color: #8ab4f8;
+  border-block-start-color: transparent;
+  pointer-events: none;
+}
+
+.tool[data-busy] svg {
+  opacity: 0.45;
+}
+
+.shot-go[aria-busy='true'] {
+  cursor: progress;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    border-style: dotted;
+  }
 }
