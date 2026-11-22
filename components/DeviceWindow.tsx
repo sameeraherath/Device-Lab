@@ -1,27 +1,24 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { canRotate, frameLayout, getDevice, getFrame, themeSource } from '@/lib/devices';
+import { canRotate, getDevice, getFrame, themeSource } from '@/lib/devices';
 import { pageTheme, type StatusTheme } from '@/lib/pageInfo';
 import { DeviceFrame } from './DeviceFrame';
 import { FinishPicker } from './FinishPicker';
 import {
   BAR_WIDTH,
+  MIN_BAR_WIDTH,
+  OVERLAY_SPACE,
+  TITLEBAR_HEIGHT,
   bringToFront,
   clamp,
   close,
   update,
+  windowSize,
   type DeviceWindowState,
 } from '@/lib/windowManager';
 
-const TITLEBAR_HEIGHT = 36;
-const MARGIN = 16;
 /** Width of a minimized window (just its title bar). */
 const MIN_OUTER_WIDTH = 300;
-/** The title bar floats this far above the device, so it needs room above the window. */
-const OVERLAY_GAP = 6;
-const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
-/** Narrowest title bar, so its controls always fit. */
-const MIN_BAR_WIDTH = 320;
 const KEY_STEP = 15;
 
 interface Props {
@@ -102,19 +99,9 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   // the whole framed device is scaled down with the `scale` property to fit the viewport.
   // Windows never extend under the icon bar on the right.
   const viewW = window.innerWidth - BAR_WIDTH;
-  const layout = frameLayout(device, win.rotated);
+  const { layout, scale, deviceW, deviceH } = windowSize(device, win.rotated);
   const innerW = layout.screenW;
   const innerH = layout.screenH;
-  const scale = Math.max(
-    0.1,
-    Math.min(
-      1,
-      (viewW - 2 * MARGIN) / layout.width,
-      (window.innerHeight - OVERLAY_SPACE - MARGIN) / layout.height,
-    ),
-  );
-  const deviceW = layout.width * scale;
-  const deviceH = layout.height * scale;
   const outerW = Math.max(deviceW, win.minimized ? MIN_OUTER_WIDTH : MIN_BAR_WIDTH);
   // Minimized: only the title bar is left, in the flow. Otherwise the bar floats above the device.
   const outerH = win.minimized ? TITLEBAR_HEIGHT : deviceH;

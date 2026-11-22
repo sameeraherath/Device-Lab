@@ -3,6 +3,7 @@ import {
   DEFAULT_DEVICE_ID,
   FIRST_DEVICE_ID,
   canRotate,
+  frameLayout,
   getDevice,
   hasDevice,
   setCustomDevices,
@@ -24,7 +25,13 @@ export const MAX_WINDOWS = 3;
 /** Width reserved on the right edge for the icon bar. */
 export const BAR_WIDTH = 48;
 const CASCADE_OFFSET = 32;
-const MARGIN = 16;
+export const MARGIN = 16;
+export const TITLEBAR_HEIGHT = 36;
+/** The title bar floats this far above the device, so it needs room above the window. */
+const OVERLAY_GAP = 6;
+export const OVERLAY_SPACE = TITLEBAR_HEIGHT + OVERLAY_GAP;
+/** Narrowest title bar, so its controls always fit. */
+export const MIN_BAR_WIDTH = 320;
 
 let windows: DeviceWindowState[] = [];
 let nextId = 1;
@@ -78,17 +85,43 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, Math.max(min, max)));
 }
 
+/**
+ * Size of a device window for the current browser viewport: the device is scaled down to fit
+ * (never up), and windows never extend under the icon bar on the right.
+ */
+export function windowSize(device: Device, rotated: boolean) {
+  const layout = frameLayout(device, rotated);
+  const scale = Math.max(
+    0.1,
+    Math.min(
+      1,
+      (window.innerWidth - BAR_WIDTH - 2 * MARGIN) / layout.width,
+      (window.innerHeight - OVERLAY_SPACE - MARGIN) / layout.height,
+    ),
+  );
+  const deviceW = layout.width * scale;
+  const deviceH = layout.height * scale;
+  return { layout, scale, deviceW, deviceH, outerW: Math.max(deviceW, MIN_BAR_WIDTH) };
+}
+
 /** Opens a window; returns false when the limit is reached. */
 export function open(deviceId: string = lastDeviceId): boolean {
   if (windows.length >= MAX_WINDOWS) return false;
+  // Centred in the area left of the icon bar; further windows cascade from the centre.
+  const { outerW, deviceH } = windowSize(getDevice(deviceId), false);
   const step = windows.length * CASCADE_OFFSET;
+  const viewW = window.innerWidth - BAR_WIDTH;
   const win: DeviceWindowState = {
     id: nextId++,
     deviceId,
     rotated: false,
     minimized: false,
-    x: MARGIN + step,
-    y: MARGIN + step,
+    x: clamp((viewW - outerW) / 2 + step, 0, viewW - outerW),
+    y: clamp(
+      (window.innerHeight - deviceH) / 2 + step,
+      OVERLAY_SPACE,
+      window.innerHeight - deviceH,
+    ),
     z: ++zCounter,
   };
   lastDeviceId = deviceId;
