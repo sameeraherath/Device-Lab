@@ -8,6 +8,7 @@ import { Stage } from '@/components/Stage';
 import { sendMessage } from '@/lib/messages';
 import { hasDevice } from '@/lib/devices';
 import { loadCustomDevices, watchCustomDevices } from '@/lib/customDevices';
+import { loadFinishChoices } from '@/lib/finishes';
 import { getLastDeviceId, getStageOn, setStageOn } from '@/lib/storage';
 import {
   applyCustomDevices,
@@ -62,7 +63,10 @@ export default defineContentScript({
     }
 
     const host = document.createElement('device-lab-root');
-    const shadow = host.attachShadow({ mode: 'closed' });
+    // Closed in release builds; open in dev/test builds so automated UI tests can reach inside.
+    const shadow = host.attachShadow({
+      mode: import.meta.env.MODE === 'production' ? 'closed' : 'open',
+    });
     const style = document.createElement('style');
     style.textContent = css;
     const mount = document.createElement('div');
@@ -94,10 +98,12 @@ export default defineContentScript({
     w[HANDLE_KEY] = { raise: raiseTop };
 
     render(<App pageUrl={location.href} />, mount);
-    void Promise.all([getLastDeviceId(), loadCustomDevices()]).then(([id, custom]) => {
-      applyCustomDevices(custom);
-      // A stored device that no longer exists falls back to the default.
-      if (getWindows().length === 0 && w[HANDLE_KEY]) open(hasDevice(id) ? id : undefined);
-    });
+    void Promise.all([getLastDeviceId(), loadCustomDevices(), loadFinishChoices()]).then(
+      ([id, custom]) => {
+        applyCustomDevices(custom);
+        // A stored device that no longer exists falls back to the default.
+        if (getWindows().length === 0 && w[HANDLE_KEY]) open(hasDevice(id) ? id : undefined);
+      },
+    );
   },
 });

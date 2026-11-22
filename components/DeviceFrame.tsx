@@ -1,8 +1,17 @@
 // Draws a device with CSS only: metal rim, bezel, cutout, side buttons, status bar, bottom bar,
 // home button, laptop base and monitor stand.
 import type { ComponentChildren } from 'preact';
-import { canRotate, frameLayout, getFrame, screenCornerRadii, type Device } from '@/lib/devices';
-import { BottomBar, StatusBar } from './DeviceChrome';
+import {
+  canRotate,
+  frameLayout,
+  getFrame,
+  screenCornerRadii,
+  withFinish,
+  type Device,
+} from '@/lib/devices';
+import { finishFor } from '@/lib/finishes';
+import type { StatusTheme } from '@/lib/pageInfo';
+import { BottomBar, NavButtons, StatusBar, TopBar } from './DeviceChrome';
 import type { DragProps } from './dragProps';
 
 const px = (n: number) => `${n}px`;
@@ -10,15 +19,17 @@ const px = (n: number) => `${n}px`;
 interface Props {
   device: Device;
   rotated: boolean;
+  /** Colours for the status bar and browser bars, read from the framed page. */
+  theme: StatusTheme;
   /** Pointer handlers that make the device body (frame, buttons, base, stand) draggable. */
   dragProps?: DragProps;
   children: ComponentChildren;
 }
 
-export function DeviceFrame({ device, rotated, dragProps, children }: Props) {
-  const frame = getFrame(device);
+export function DeviceFrame({ device, rotated, theme, dragProps, children }: Props) {
+  const frame = withFinish(getFrame(device), finishFor(device));
   const layout = frameLayout(device, rotated);
-  const { screenW, screenH, bezel, statusH } = layout;
+  const { screenW, screenH, bezel, statusH, topBarH, navBarH, viewportH } = layout;
 
   // "Show frame" off: just the page at the device size.
   if (!frame) {
@@ -109,6 +120,14 @@ export function DeviceFrame({ device, rotated, dragProps, children }: Props) {
         '--rim-light': frame.rim?.[0] ?? frame.color,
         '--rim-dark': frame.rim?.[1] ?? frame.color,
         '--rim-highlight': frame.rimHighlight ?? frame.rim?.[0] ?? frame.color,
+        ...(frame.base?.color && {
+          '--base-light': frame.base.color[0],
+          '--base-dark': frame.base.color[1],
+        }),
+        ...(frame.stand?.color && {
+          '--stand-light': frame.stand.color[0],
+          '--stand-dark': frame.stand.color[1],
+        }),
       }}
     >
       <div class="lid-wrap" style={{ padding: px(layout.pad) }}>
@@ -129,11 +148,19 @@ export function DeviceFrame({ device, rotated, dragProps, children }: Props) {
               borderRadius: screenCornerRadii(frame, bezel),
             }}
           >
-            <StatusBar kind={frame.statusBar ?? 'none'} height={statusH} dragProps={dragProps} />
-            <div class="viewport" style={{ height: px(screenH - statusH) }}>
+            <StatusBar
+              kind={frame.statusBar ?? 'none'}
+              height={statusH}
+              theme={theme}
+              showDate={frame.topBar === 'safari-ipad'}
+              dragProps={dragProps}
+            />
+            {frame.topBar && <TopBar kind={frame.topBar} height={topBarH} theme={theme} />}
+            <div class="viewport" style={{ height: px(viewportH) }}>
               {children}
-              <BottomBar kind={frame.bottomBar ?? 'none'} rotated={turned} />
+              <BottomBar kind={frame.bottomBar ?? 'none'} rotated={turned} theme={theme} />
             </div>
+            {navBarH > 0 && <NavButtons height={navBarH} />}
           </div>
           {cutoutStyle && (
             <div class="cutout" data-shape={frame.cutout?.shape} style={cutoutStyle} />

@@ -94,6 +94,125 @@
   cursor: pointer;
 }
 
+/* ---- Colour picker: swatch button in the title bar, radio menu of official colours ---- */
+.finish-trigger {
+  display: grid;
+  place-items: center;
+}
+
+.finish-dot {
+  display: block;
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.finish-trigger[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.finish-menu {
+  /* Fallback placement (no anchor positioning): script sets left/top. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  min-inline-size: 200px;
+  max-block-size: min(420px, calc(100vh - 16px));
+  overflow: auto;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: #1b1d22;
+  color: #e8eaed;
+  font:
+    13px/1.2 system-ui,
+    sans-serif;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+@supports (position-area: block-end) {
+  .finish-menu {
+    position-area: block-end span-inline-start;
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+    margin-block-start: 4px;
+  }
+}
+
+.finish-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: 100%;
+  min-block-size: 32px;
+  padding: 0 10px 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+/* Check mark slot, shown on the chosen colour. */
+.finish-menu button::before {
+  content: '';
+  flex: none;
+  inline-size: 14px;
+  text-align: center;
+}
+
+.finish-menu button[aria-checked='true']::before {
+  content: '✓';
+}
+
+.finish-menu button:hover,
+.finish-menu button:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.finish-menu button:focus-visible {
+  box-shadow: inset 0 0 0 2px #8ab4f8;
+}
+
+.finish-menu .hint {
+  margin-inline-start: auto;
+  padding-inline-start: 12px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .finish-menu {
+    opacity: 0;
+    translate: 0 -4px;
+    transition: opacity, translate, display, overlay;
+    transition-duration: 0.15s;
+    transition-behavior: allow-discrete;
+  }
+
+  .finish-menu:popover-open {
+    opacity: 1;
+    translate: 0 0;
+    transition-duration: 0.1s;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+}
+
 .btn:disabled {
   opacity: 0.35;
   cursor: default;
@@ -342,6 +461,12 @@
   font-size: 12px;
 }
 
+.sb-date {
+  margin-left: 8px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
 .sb-icons {
   display: flex;
   align-items: center;
@@ -361,6 +486,194 @@
 .status-bar[data-kind='ios-classic'] .sb-icon,
 .status-bar[data-kind='tablet'] .sb-icon {
   height: 9px;
+}
+
+/* ---- Browser toolbar above the page: Chrome (Android) and Safari (iPad). Decorative. ---- */
+.top-bar {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  color: #202124;
+  font:
+    500 14px/1 system-ui,
+    sans-serif;
+  pointer-events: none;
+}
+
+.top-bar[data-fg='light'] {
+  color: #f1f3f4;
+}
+
+.tb-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 0;
+  padding: 0 10px;
+}
+
+.tb-side {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bar-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The address field: a soft pill, tinted from the text colour so it suits any bar colour. */
+.tb-url {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-inline-size: 0;
+  block-size: 40px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: color-mix(in oklab, currentColor 10%, transparent);
+}
+
+.tb-domain {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.top-bar[data-kind='safari-ipad'] .tb-url {
+  flex: none;
+  inline-size: 46%;
+  margin-inline: auto;
+  block-size: 34px;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.top-bar[data-kind='safari-ipad'] .tb-domain {
+  flex: none;
+  max-inline-size: 70%;
+  text-align: center;
+}
+
+.tb-tabs {
+  display: grid;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tb-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  block-size: 40px;
+  padding: 6px 8px 0;
+  box-sizing: border-box;
+  background: color-mix(in oklab, currentColor 8%, transparent);
+}
+
+.tb-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: 220px;
+  block-size: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border-radius: 10px 10px 0 0;
+  background: color-mix(in oklab, currentColor 10%, transparent);
+}
+
+.tb-favicon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: color-mix(in oklab, currentColor 45%, transparent);
+}
+
+/* ---- iOS 26 Safari: floating Liquid Glass row (back, address, more) ---- */
+.glass-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: calc(100% - 28px);
+}
+
+.glass {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  block-size: 46px;
+  border-radius: 999px;
+  color: #111;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(18px) saturate(1.8);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(0, 0, 0, 0.12),
+    0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-bar[data-fg='light'] .glass {
+  color: #fff;
+  background: rgba(60, 60, 64, 0.5);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.22),
+    0 0 0 0.5px rgba(0, 0, 0, 0.3),
+    0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.glass-round {
+  flex: none;
+  inline-size: 46px;
+  justify-content: center;
+}
+
+.glass-pill {
+  flex: 1;
+  min-inline-size: 0;
+  padding: 0 14px;
+}
+
+.glass-pill .pill-domain {
+  flex: 1;
+  text-align: center;
+}
+
+/* ---- 3-button Android navigation bar (older phones); it takes space from the page ---- */
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background: #000;
+  pointer-events: none;
+}
+
+.nav-buttons svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #f1f3f4;
+  stroke-width: 2;
+  stroke-linejoin: round;
 }
 
 /* ---- Bottom bar: Safari pill and home indicator (decorative; clicks pass through) ---- */
@@ -523,7 +836,7 @@
   position: relative;
   flex: none;
   box-sizing: border-box;
-  background: linear-gradient(in oklab, #d4d5d8, #9a9ca1);
+  background: linear-gradient(in oklab, var(--base-light, #d4d5d8), var(--base-dark, #9a9ca1));
   border-radius: 0 0 14px 14px;
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.3),
@@ -552,7 +865,7 @@
 }
 
 .device[data-preset='smart-display'] .base {
-  background: linear-gradient(in oklab, #c9c4bd, #a8a39c);
+  background: linear-gradient(in oklab, var(--base-light, #c9c4bd), var(--base-dark, #a8a39c));
   border-radius: 0 0 40px 40px;
 }
 
@@ -569,11 +882,16 @@
 }
 
 .neck {
-  background: linear-gradient(in oklab, #3a3b3f, #232427);
+  background: linear-gradient(
+    90deg in oklab,
+    var(--stand-dark, #232427),
+    var(--stand-light, #3a3b3f) 50%,
+    var(--stand-dark, #232427)
+  );
 }
 
 .foot {
-  background: linear-gradient(in oklab, #3a3b3f, #1c1d20);
+  background: linear-gradient(in oklab, var(--stand-light, #3a3b3f), var(--stand-dark, #1c1d20));
   border-radius: 8px 8px 4px 4px;
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.3),
