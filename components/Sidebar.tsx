@@ -140,20 +140,7 @@ export function Sidebar({ windows, stageOn, onToggleStage }: Props) {
       </button>
       <span class="sep" role="separator" aria-orientation="horizontal" />
       <ScreenshotMenu target={selected} />
-      <span class="sep" role="separator" aria-orientation="horizontal" />
-      <button
-        type="button"
-        class="tool"
-        data-tool
-        aria-label="Studio (coming soon)"
-        aria-disabled="true"
-        title="Studio (coming soon)"
-      >
-        <Icon name="edit" />
-        <span class="badge" aria-hidden="true">
-          Soon
-        </span>
-      </button>
+      {/* The Studio button (a pencil icon) is left out until Studio exists. */}
       <CustomDeviceDialog
         mode={dialog}
         onClose={() => setDialog(null)}
