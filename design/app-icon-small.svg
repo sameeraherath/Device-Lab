@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Device Lab icon, small (16 and 32 px): a blue laptop with a phone in front, white screens,
+       transparent background. The phone is cut out of the laptop with a gap so both read at 16 px. -->
   <defs>
-    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="128" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fafbfd"/>
-      <stop offset="1" stop-color="#e6e9f1"/>
-    </linearGradient>
+    <mask id="t1-cut">
+      <rect width="32" height="32" fill="#fff"/>
+      <rect x="18" y="10" width="13" height="21" rx="3.5" fill="#000"/>
+    </mask>
   </defs>
-  <!-- Simplified for 16px and 32px: heavier lines, a soft tile edge, shapes close to an 8-unit grid -->
-  <rect width="128" height="128" rx="28" fill="url(#tile)"/>
-  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="#bcc3d8" stroke-width="4"/>
-  <g transform="translate(0 -2)">
-    <rect x="20" y="40" width="48" height="36" rx="4" fill="none" stroke="#2b3bd6" stroke-width="8"/>
-    <rect x="8" y="88" width="72" height="8" rx="3" fill="#2b3bd6"/>
-    <rect x="68" y="52" width="24" height="40" rx="4" fill="#eef0f6" stroke="#2b3bd6" stroke-width="8"/>
-    <rect x="102" y="60" width="16" height="36" rx="4" fill="#2b3bd6"/>
+  <g mask="url(#t1-cut)">
+    <rect x="3" y="5" width="22" height="15" rx="2.5" fill="#1877f2"/>
+    <rect x="5.5" y="7.5" width="17" height="10" rx="1" fill="#ffffff"/>
+    <rect x="0.5" y="21" width="27" height="3.5" rx="1.75" fill="#1877f2"/>
   </g>
+  <rect x="20" y="12" width="9" height="17" rx="2.2" fill="#1877f2"/>
+  <rect x="21.7" y="14" width="5.6" height="12" rx="1" fill="#ffffff"/>
 </svg>

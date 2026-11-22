@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Option B, small (16/32 px): the isometric trio as bold faces with glowing screens. -->
+  <defs>
+    <linearGradient id="bs-tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e3e7f2"/>
+    </linearGradient>
+    <linearGradient id="bs-screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7dd3fc"/>
+      <stop offset="1" stop-color="#a5b4fc"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7.5" fill="url(#bs-tile)"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="none" stroke="#c7cde0"/>
+  <!-- laptop lid + deck -->
+  <path d="M5 6 L17 13 L17 22 L5 15 Z" fill="#2b3bd6"/>
+  <path d="M6.2 8 L15.8 13.6 L15.8 20 L6.2 14.4 Z" fill="url(#bs-screen)"/>
+  <path d="M5 15 L17 22 L12 25 L0.8 18.3 Z" fill="#4a59e6" transform="translate(2 0)"/>
+  <!-- tablet -->
+  <path d="M18 12 L25 16 L25 26 L18 22 Z" fill="#2b3bd6"/>
+  <path d="M19 14 L24 16.9 L24 24.2 L19 21.3 Z" fill="url(#bs-screen)"/>
+  <!-- phone -->
+  <path d="M25.5 17 L30 19.6 L30 28 L25.5 25.4 Z" fill="#2b3bd6"/>
+  <path d="M26.3 18.8 L29.2 20.5 L29.2 26.4 L26.3 24.7 Z" fill="url(#bs-screen)"/>
+</svg>
