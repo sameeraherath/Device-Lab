@@ -1,147 +1,157 @@
-# Device Lab
+<p align="center">
+  <img src="design/app-icon.svg" width="96" height="96" alt="Device Lab icon">
+</p>
 
-Device Lab is a Chrome extension for seeing your site on phones, tablets and laptops without
-leaving the page. Click the toolbar icon and the current page opens in floating device windows,
-with a slim icon bar on the right edge of the page to pick the device, rotate and more, so you can check layouts at
-real device sizes side by side.
+<h1 align="center">Device Lab</h1>
 
-> Status: project setup only. No features are built yet.
+<p align="center">
+  <strong>Your site. On every screen.</strong><br>
+  See any web page inside real iPhone, Pixel, Galaxy, iPad and Mac frames, right in Chrome.
+</p>
 
-## Planned features
+<p align="center">
+  Free · Open source (MIT) · No account · No tracking
+</p>
 
-- **Floating device windows**: open the current page in one or more draggable windows sized like real devices.
-- **Switch device**: choose from a gallery of 55 devices opened from the icon bar: search, filter
-  chips (iPhone, Android, Foldables, Tablets, Laptops & desktops, Displays, Custom), sections by
-  maker (iPhone, Google Pixel, Samsung Galaxy, Motorola, ...), a small drawing of each device, and a
-  Recent row with the last four you used. Arrow keys move around the grid.
-- **Device frames**: each device is drawn with CSS only (bezels, island / notch / punch-hole cutouts,
-  laptop deck, monitor stand), from frame presets in `data/devices.json`.
-- **Feels like the real device**: a status bar (time, signal, Wi-Fi, battery, in the page's
-  theme colour) with the island or punch hole inside it, a Safari-style address pill or gesture
-  bar at the bottom, a dark metal rim with side buttons, a camera lens in the cutout, a glass screen
-  edge, a deep soft shadow, and no desktop scrollbar. The window title bar stays out of the way: it
-  appears when you hover over the device or click into it, and hides when you click elsewhere.
-  Like a real phone, the page starts below the status bar, so the viewport height is the screen
-  height minus the status bar (the width is unchanged).
-- **Drag the device itself**: grab the frame, the side buttons, the status bar, the laptop base or
-  the monitor stand and drag (the page inside the screen stays fully interactive, so it cannot be a
-  drag surface). The title bar handle and its arrow keys still work too.
-- **Focus mode** (off by default): a button in the icon bar puts a calm dark stage behind the devices,
-  hiding the page behind them so you can concentrate on the device. The choice is remembered.
-- **Custom devices**: add up to 20 of your own (name, size, DPR, type, frame on/off); they are saved
-  in `chrome.storage.local`.
-- **Rotate**: flip phones, foldables and tablets between portrait and landscape (the cutout moves
-  to the left edge). Laptops, desktops and smart displays do not rotate.
-- **Screenshots**: the camera button on the icon bar captures the focused device. Hover a tile to
-  see what it captures:
-  - **Device**: the device with its frame, no shadow, on a transparent background.
-  - **Screen**: just the screen, like a screenshot taken on the device itself.
-  - **Full page**: everything on screen as you see it: the page behind with its background, and every
-    open device. The icon bar is left out.
-  - **Device on background**: the framed device on a colour you choose, with space around it.
+---
 
-  Nothing moves while it works: the button shows the progress and the device is captured where it
-  is. After the shot, a dialog previews it and exports it as **PNG, JPEG or WebP** (JPEG and WebP use a fixed high quality), shows the
-  file size, or copies it to the clipboard. The image is as large as the device is
-  shown on screen times the screen's pixel ratio, so a device that is scaled down to fit a small
-  window gives a smaller image; make the window bigger for a larger one. No extra permission is
-  needed.
+## What it does
 
-## Tech stack
+Click the Device Lab icon on any page. The page opens in floating device windows, at each device's
+real screen size, so you can check your layout on many screens side by side, without leaving the
+tab.
 
-| Part                                     | Why                                                                                                                                                                                                                                                                                                              |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **TypeScript**                           | Types for device data and for messages between the background worker and the page catch mistakes early.                                                                                                                                                                                                          |
-| **[WXT](https://wxt.dev) (Manifest V3)** | Generates the manifest from config, gives file-based entrypoints, a dev mode that launches Chrome with auto-reload, and `zip` for store uploads. MV3 is required for new Chrome extensions.                                                                                                                      |
-| **Preact**                               | React-style components and hooks at about 4 kB. The UI is injected into other people's pages, so a small bundle matters. WXT has no official Preact module, so it is wired in through `@preact/preset-vite` in `wxt.config.ts`, which also aliases `react` to `preact/compat` if a React library is ever needed. |
-| **Plain CSS**                            | The UI lives in a Shadow DOM, which already isolates styles, so a CSS framework adds weight without much benefit.                                                                                                                                                                                                |
-| **npm**                                  | Default Node package manager; nothing extra to install.                                                                                                                                                                                                                                                          |
-| **ESLint + Prettier**                    | ESLint (flat config with `typescript-eslint`) catches bugs; Prettier owns formatting so the two never conflict.                                                                                                                                                                                                  |
+- **55 real devices.** iPhones, Pixels, Galaxys, foldables, iPads, Surface, laptops, desktops and
+  smart displays, grouped by maker, with search and a Recent row. You can add up to 20 of your own.
+- **Looks like the real thing.** Frames measured from real devices: the right corners, bezels,
+  Dynamic Island, notch or punch hole, side buttons, and the matching status bar and browser bar
+  (Safari, Chrome).
+- **Official colours.** Pick the device colour from the title bar, like Desert Titanium or
+  Midnight. Device Lab remembers it.
+- **Rotate** phones, foldables and tablets between portrait and landscape.
+- **Screenshots in one click.** Choose what to capture:
+  - **Device**: the device with its frame, on a transparent background.
+  - **Screen**: just the screen, like a screenshot taken on the phone.
+  - **Full page**: everything you see, with the page behind and every open device.
+  - **Device on background**: the framed device on a colour you choose.
+- **Save it your way.** PNG, JPEG or WebP, with the file size shown before you save, or copy it
+  straight to the clipboard.
+- **Focus mode.** A calm dark background behind the devices that hides the page, so you only see
+  the devices.
 
-## Folder structure
+## Install
 
-```
-entrypoints/            WXT entrypoints; each file becomes part of the extension
-  background.ts         Service worker: toolbar icon click (injects the content script, header
-                        rules), takes the tab screenshot for the capture engine
-  content/
-    index.tsx           Content script: mounts device windows in a Shadow DOM
-    style.css           Styles for the device windows
-components/             Preact UI components (DeviceWindow, Sidebar icon bar, DevicePicker flyout,
-                        ScreenshotMenu, ScreenshotDialog, Icons)
-lib/                    Non-UI logic: device list, window manager, typed messages, storage, capture
-                        (the screenshot engine)
-data/
-  devices.json          Device list (name, CSS size, DPR, group) and the CSS frame presets
-public/icon/            Extension icons (16, 32, 48, 128 px), copied as-is into the build
-wxt.config.ts           WXT and manifest configuration
-eslint.config.js        ESLint flat config
-.output/                Build output (generated, git-ignored)
-.wxt/                   WXT generated types and tsconfig (generated, git-ignored)
-```
+**Chrome Web Store:** coming soon.
 
-## Permissions
+**From the source code** (for now, or to try the latest version):
 
-| Permission                            | Why                                                                                                                                                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `activeTab`                           | Lets the toolbar click read and inject into the current page only.                                                                                                                                |
-| `scripting`                           | Injects the content script on demand (it is never declared in the manifest).                                                                                                                      |
-| `storage`                             | Remembers the last used device.                                                                                                                                                                   |
-| `declarativeNetRequestWithHostAccess` | Removes `X-Frame-Options` / CSP from sub-frame requests of the current page's host, in that tab only, so the page can load inside the device windows. The rule is removed when the windows close. |
-
-## Setup
-
-Requires Node.js 20+ and Google Chrome.
-
-```bash
-# Install dependencies (also runs `wxt prepare` to generate types)
-npm install
-
-# Dev mode: builds, opens a fresh Chrome profile with the extension loaded, and reloads on save
-npm run dev
-
-# Production build into .output/chrome-mv3/
-npm run build
-
-# Zip the production build for the Chrome Web Store (into .output/)
-npm run zip
-
-# Checks
-npm run typecheck
-npm run lint
-npm run format
-```
-
-### Load the unpacked extension in Chrome
-
-Use this to try a production build in your normal Chrome profile:
-
-1. Run `npm run build`.
-2. Open `chrome://extensions`.
-3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and select the `.output/chrome-mv3` folder.
+1. Install [Node.js](https://nodejs.org) 20 or newer.
+2. Run:
+   ```bash
+   git clone https://github.com/sameeraherath/Device-Lab.git
+   cd Device-Lab
+   npm install
+   npm run build
+   ```
+3. Open `chrome://extensions` and turn on **Developer mode** (top right).
+4. Click **Load unpacked** and choose the `.output/chrome-mv3` folder.
 5. Pin **Device Lab** from the puzzle-piece menu so the icon stays in the toolbar.
 
-After rebuilding, click the reload button on the extension's card.
+## How to use
 
-## Device data
+1. Open the site you want to check.
+2. Click the **Device Lab** icon in the toolbar.
+3. Use the icon bar on the right to pick a device, add another one, rotate, take a screenshot or turn
+   on Focus mode.
+4. Drag a device by its frame to move it. The page inside stays fully usable: scroll, click and type
+   as normal.
 
-`data/devices.json` has two parts:
+Close a device with the × in its title bar, or close all of Device Lab from the icon bar.
 
-- `frames`: named presets (`iphone-island`, `iphone-notch`, `iphone-home`, `android-punch`,
-  `feature-phone`, `foldable`, `dual-screen`, `tablet`, `laptop`, `laptop-notch`, `desktop`,
-  `smart-display`, `simple-phone`) with `radius`, `bezel`, optional `bezelTop` / `bezelBottom`,
-  `screenRadius`, `color`, and optional `cutout`, `homeButton`, `base` and `stand`. Lengths are CSS
-  px at device scale.
-- `devices`: `id`, `name`, `group`, `family` (how the picker sections it), `width`, `height` (CSS px; portrait for phones, foldables and
-  tablets, landscape for computers and displays), `dpr`, `frame` and an optional `note`.
+## Privacy
 
-**DPR is shown, not emulated.** An iframe always renders at the host screen's `devicePixelRatio`, so
-the listed DPR is informational (and for screenshots later). The user agent is not changed either.
+Device Lab collects nothing and sends nothing. It has no server, no analytics and no ads. Your
+settings are saved only in Chrome on your computer, and screenshots never leave your computer. It
+only works on the tab where you click its icon.
+
+Read the full [privacy policy](PRIVACY.md).
+
+### Permissions
+
+| Permission                            | Why it is needed                                                                                                                                                                                   |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `activeTab`                           | Works only on the tab where you click the icon, and takes screenshots when you ask.                                                                                                                |
+| `scripting`                           | Adds the Device Lab windows and icon bar to that tab.                                                                                                                                              |
+| `storage`                             | Remembers your settings on your computer: last and recent devices, colours, screenshot options, custom devices and Focus mode.                                                                     |
+| `declarativeNetRequestWithHostAccess` | Many sites block being shown in a frame. This removes that block only for the tab you clicked, only for the same site, and only while Device Lab is open, so the page can show inside the devices. |
+
+## Good to know
+
+- **The page is your real page.** It is the same site, loaded at the device's screen size. Your
+  layout, media queries and scripts run as they would on a screen that size.
+- **It does not pretend to be the device.** The browser's user agent and pixel density stay the same
+  as your computer's, so sites that check "is this an iPhone?" may act like they are on a desktop.
+  The pixel ratio shown on each device is for information.
+- **Screenshot size** follows how big the device is shown on your screen. For a larger image, make the
+  Chrome window bigger.
+
+## Contributing
+
+Issues and pull requests are welcome.
+
+- **Found a bug or a wrong device size?** [Open an issue](https://github.com/sameeraherath/Device-Lab/issues)
+  and include the device name and, if you can, a screenshot.
+- **Want to add or fix a device?** Devices and frames live in [`data/devices.json`](data/devices.json).
+  Where each colour comes from is listed in [`data/device-colors.md`](data/device-colors.md).
+- **Code changes:** fork the repo, make a branch, and run the checks below before opening a pull
+  request.
+
+### Development
+
+```bash
+npm install          # install, and generate WXT types
+npm run dev          # opens Chrome with the extension loaded, reloads on save
+npm run build        # production build into .output/chrome-mv3/
+npm run zip          # zip for the Chrome Web Store, into .output/
+
+npm run typecheck    # TypeScript
+npm run lint         # ESLint
+npm run format       # Prettier
+```
+
+After `npm run build`, click the reload button on the extension's card in `chrome://extensions`.
+
+### Tech stack
+
+- **[WXT](https://wxt.dev)** for the Manifest V3 build, dev mode and store zip.
+- **TypeScript** and **[Preact](https://preactjs.com)** (about 4 kB, because the UI is added to other
+  people's pages).
+- **Plain CSS** inside a Shadow DOM, so the page's styles and Device Lab's never mix.
+- **ESLint** and **Prettier**.
+
+### Project layout
+
+```
+entrypoints/
+  background.ts     Toolbar click: adds the frame rule and the UI; takes tab screenshots
+  content/          The UI added to the page (index.tsx) and its styles (style.css)
+components/         Preact components: device window and frame, icon bar, device picker,
+                    colour picker, screenshot menu and dialog, Focus mode
+lib/                Logic: devices and frames, window placement, storage, screenshot engine
+data/
+  devices.json      Every device (size, pixel ratio, group) and the frame presets
+  device-colors.md  Where each official colour comes from
+design/             App icon source files
+public/icon/        Extension icons (16, 32, 48, 128 px)
+```
 
 ## Roadmap
 
-- Verify the Galaxy S26 viewport on a real device (currently marked "not measured").
-- User-agent and DPR emulation for sites that sniff the device.
-- Screenshots at the device's own pixel ratio (needs the `debugger` permission).
+- Check the Galaxy S26 screen size on a real device (marked "not measured" for now).
+- Optional user-agent and pixel-ratio emulation for sites that check the device.
+- Screenshots at the device's own pixel ratio.
 - Studio (coming soon).
+
+## License
+
+[MIT](LICENSE) © 2026 Sameera Herath. Free to use, change and share.
