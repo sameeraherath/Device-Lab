@@ -387,6 +387,16 @@
 .screen {
   position: relative;
   overflow: clip;
+  /*
+   * The bezel's colour, not white: the page and the status bar rarely line up with a whole screen
+   * pixel (bezels are fractional and the window is scaled), and whatever shows through that
+   * sliver would otherwise be a thin white line between the frame and the page.
+   */
+  background: var(--frame-color, #000);
+}
+
+/* A frameless device has no bezel, so its edge stays white like the page. */
+.screen.bare {
   background: #fff;
 }
 
@@ -417,6 +427,23 @@
 /* The page area below the status bar; the bottom bar floats over it. */
 .viewport {
   position: relative;
+}
+
+/*
+ * White under the page, for sites that set no background of their own. It stops a hair inside the
+ * edge (1.25 screen pixels, whatever the scale): the page's edge pixels are only partly covered,
+ * and a white layer reaching the very edge would show as a thin light line between the bezel and
+ * the page. `--k` is the window's scale, set on .device-scale.
+ */
+.viewport::before {
+  content: '';
+  position: absolute;
+  inset: calc(1.25px / var(--k, 1));
+  background: #fff;
+}
+
+.screen.bare .viewport::before {
+  inset: 0;
 }
 
 /* ---- Status bar ---- */
@@ -743,7 +770,9 @@
   width: 100%;
   height: 100%;
   border: 0;
-  background: #fff;
+  /* Above the white layer under the page; see .viewport::before. */
+  position: relative;
+  background: transparent;
 }
 
 .cutout {

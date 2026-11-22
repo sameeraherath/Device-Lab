@@ -227,7 +227,12 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         <div class="device-box" style={{ width: `${deviceW}px`, height: `${deviceH}px` }}>
           <div
             class="device-scale"
-            style={{ width: `${layout.width}px`, height: `${layout.height}px`, scale }}
+            style={{
+              width: `${layout.width}px`,
+              height: `${layout.height}px`,
+              scale,
+              '--k': scale,
+            }}
           >
             <DeviceFrame device={device} rotated={win.rotated} theme={theme} dragProps={dragProps}>
               {/* Not rendered while minimized, so the page and its memory are released. */}

@@ -91,11 +91,16 @@ function imageScale(bitmap: ImageBitmap): number {
  * The whole image pixels that cover `rect` (in CSS px). Cropping on whole pixels copies them as they
  * are; a fractional crop would resample and soften the picture.
  */
-function pixelRect(rect: Rect, sx: number, bitmap: ImageBitmap): Rect {
-  const x0 = Math.max(0, Math.floor(rect.x * sx + 1e-6));
-  const y0 = Math.max(0, Math.floor(rect.y * sx + 1e-6));
-  const x1 = Math.min(bitmap.width, Math.ceil((rect.x + rect.w) * sx - 1e-6));
-  const y1 = Math.min(bitmap.height, Math.ceil((rect.y + rect.h) * sx - 1e-6));
+function pixelRect(rect: Rect, sx: number, bitmap: ImageBitmap, inward = false): Rect {
+  // Outward keeps the partly covered edge pixels (right for a device with transparent corners);
+  // inward keeps only whole pixels of the rectangle, so no edge pixel is a blend with the bezel.
+  const lo = inward ? Math.ceil : Math.floor;
+  const hi = inward ? Math.floor : Math.ceil;
+  const e = inward ? -1e-6 : 1e-6;
+  const x0 = Math.max(0, lo(rect.x * sx + e));
+  const y0 = Math.max(0, lo(rect.y * sx + e));
+  const x1 = Math.min(bitmap.width, hi((rect.x + rect.w) * sx - e));
+  const y1 = Math.min(bitmap.height, hi((rect.y + rect.h) * sx - e));
   return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 }
 
@@ -218,7 +223,20 @@ export async function captureWindow(
       assertInView(rect);
       await paint();
       const shot = await grab(session);
-      const canvas = toCanvas(crop(shot, pixelRect(rect, imageScale(shot), shot)));
+      const px = pixelRect(rect, imageScale(shot), shot, true);
+      // A device shown scaled down is smoothed across about one more pixel at its edges: leave
+      // that pixel out too, so no edge pixel is a blend with the bezel.
+      const scaled =
+        Math.abs(
+          parseFloat(target.querySelector<HTMLElement>('.device-scale')?.style.scale || '1') - 1,
+        ) > 0.001;
+      if (scaled && px.w > 4 && px.h > 4) {
+        px.x += 1;
+        px.y += 1;
+        px.w -= 2;
+        px.h -= 2;
+      }
+      const canvas = toCanvas(crop(shot, px));
       shot.close();
       return { canvas, transparent: false };
     }
