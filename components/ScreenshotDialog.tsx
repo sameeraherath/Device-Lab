@@ -1,4 +1,4 @@
-// Export dialog: preview the screenshot, choose format, quality, background and padding,
+// Export dialog: preview the screenshot, choose format, background and padding, see the file size,
 // then download it or copy it to the clipboard.
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { getDevice } from '@/lib/devices';
@@ -46,6 +46,14 @@ const PADDINGS: { id: ShotPadding; label: string; share: number }[] = [
 ];
 
 const PREVIEW_MAX = 1100;
+/** JPEG and WebP quality: high, so text and edges stay sharp while files stay small. */
+const LOSSY_QUALITY = 0.92;
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
 
 function fileName(deviceId: string, mode: ShotMode, ext: string): string {
   const d = new Date();
@@ -135,15 +143,37 @@ export function ScreenshotDialog({ outcome, prefs, onPrefs, onClose }: Props) {
   }, [composed]);
 
   const format = FORMATS.find((f) => f.id === prefs.format) ?? FORMATS[0]!;
-  const lossy = prefs.format !== 'png';
   const showBackground = !!result?.transparent;
   const flattened = showBackground && prefs.format === 'jpeg' && prefs.background === 'transparent';
   const canCopy = window.isSecureContext && typeof ClipboardItem !== 'undefined';
 
+  // The file as it will be saved, so its size can be shown and Download is instant.
+  const [file, setFile] = useState<{
+    blob: Blob | null;
+    for: HTMLCanvasElement;
+    format: ShotFormat;
+  } | null>(null);
+  useEffect(() => {
+    if (!composed) return;
+    let stale = false;
+    setFile(null);
+    void toBlob(composed, format.mime, format.id === 'png' ? undefined : LOSSY_QUALITY).then(
+      (blob) => {
+        if (!stale) setFile({ blob, for: composed, format: format.id });
+      },
+    );
+    return () => {
+      stale = true;
+    };
+  }, [composed, format.id]);
+  const ready = file && file.for === composed && file.format === format.id ? file : null;
+
   const download = async () => {
     if (!composed || !outcome) return;
     setBusy(true);
-    const blob = await toBlob(composed, format.mime, lossy ? prefs.quality / 100 : undefined);
+    const blob = ready
+      ? ready.blob
+      : await toBlob(composed, format.mime, format.id === 'png' ? undefined : LOSSY_QUALITY);
     setBusy(false);
     if (!blob) {
       setMessage(`This browser cannot save ${format.label}. Choose another format.`);
@@ -203,7 +233,13 @@ export function ScreenshotDialog({ outcome, prefs, onPrefs, onClose }: Props) {
                 <canvas ref={previewRef} aria-label="Screenshot preview" role="img" />
               </div>
               <p class="help" aria-live="polite">
-                {composed.width.toLocaleString()} × {composed.height.toLocaleString()} px
+                {composed.width.toLocaleString()} × {composed.height.toLocaleString()} px ·{' '}
+                {format.label} ·{' '}
+                {ready
+                  ? ready.blob
+                    ? formatSize(ready.blob.size)
+                    : 'not supported'
+                  : 'calculating size…'}
                 {result?.note ? ` · ${result.note}` : ''}
               </p>
 
@@ -223,22 +259,6 @@ export function ScreenshotDialog({ outcome, prefs, onPrefs, onClose }: Props) {
                   ))}
                 </div>
               </fieldset>
-
-              {lossy && (
-                <label class="shot-field">
-                  <span class="shot-legend">
-                    Quality <output>{prefs.quality}</output>
-                  </span>
-                  <input
-                    type="range"
-                    min={40}
-                    max={100}
-                    step={1}
-                    value={prefs.quality}
-                    onInput={(e) => onPrefs({ quality: Number(e.currentTarget.value) })}
-                  />
-                </label>
-              )}
 
               {showBackground && (
                 <>

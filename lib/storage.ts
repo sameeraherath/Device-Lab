@@ -97,8 +97,6 @@ export type ShotPadding = 'none' | 'small' | 'medium' | 'large';
 export interface ScreenshotPrefs {
   mode: ShotMode;
   format: ShotFormat;
-  /** JPEG and WebP quality, 40 to 100. */
-  quality: number;
   background: ShotBackground;
   /** Colour used when `background` is "custom" (a #rrggbb value). */
   color: string;
@@ -108,7 +106,6 @@ export interface ScreenshotPrefs {
 export const DEFAULT_SHOT_PREFS: ScreenshotPrefs = {
   mode: 'device',
   format: 'png',
-  quality: 92,
   background: 'transparent',
   color: '#e8eaed',
   padding: 'medium',
@@ -124,13 +121,9 @@ export async function getScreenshotPrefs(): Promise<ScreenshotPrefs> {
     const raw = (await browser.storage.local.get(SHOT_KEY))[SHOT_KEY] as
       Partial<Record<keyof ScreenshotPrefs, unknown>> | undefined;
     if (!raw || typeof raw !== 'object') return DEFAULT_SHOT_PREFS;
-    const q = Number(raw.quality);
     return {
       mode: pick(raw.mode, ['device', 'screen', 'page', 'background'], DEFAULT_SHOT_PREFS.mode),
       format: pick(raw.format, ['png', 'jpeg', 'webp'], DEFAULT_SHOT_PREFS.format),
-      quality: Number.isFinite(q)
-        ? Math.max(40, Math.min(100, Math.round(q)))
-        : DEFAULT_SHOT_PREFS.quality,
       background: pick(
         raw.background,
         ['transparent', 'white', 'black', 'custom'],

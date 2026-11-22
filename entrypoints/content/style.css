@@ -1710,16 +1710,6 @@
   color: #c4c7c5;
 }
 
-.shot-legend output {
-  margin-inline-start: 6px;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
-}
-
-.shot-field input[type='range'] {
-  accent-color: #4da3ff;
-}
-
 .shot-field select {
   min-block-size: 34px;
   padding: 0 10px;
