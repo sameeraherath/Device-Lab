@@ -17,9 +17,13 @@ function Signal() {
 function Wifi() {
   return (
     <svg class="sb-icon" viewBox="0 0 16 12" aria-hidden="true">
-      <path d="M8 11.5l2.6-3a3.6 3.6 0 0 0-5.2 0z" />
-      <path d="M3.6 6.6a6.2 6.2 0 0 1 8.8 0l1.6-1.8a8.6 8.6 0 0 0-12 0z" />
-      <path d="M0.4 3a10.8 10.8 0 0 1 15.2 0L16 2.5l-.1-.1a12 12 0 0 0-15.8 0L0 2.5z" />
+      {/* Three bold arcs and a dot (stroked, so all of them stay visible at small sizes). */}
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M1.3 4.2a9.6 9.6 0 0 1 13.4 0" />
+        <path d="M3.7 6.7a6.2 6.2 0 0 1 8.6 0" />
+        <path d="M6.1 9a2.9 2.9 0 0 1 3.8 0" />
+      </g>
+      <circle cx="8" cy="10.8" r="1.15" />
     </svg>
   );
 }
