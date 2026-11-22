@@ -1512,3 +1512,341 @@
   outline: 2px solid #8ab4f8;
   outline-offset: 1px;
 }
+
+/* ---- Screenshots: popover with four capture modes, export dialog, and the capture state ---- */
+.shot-menu {
+  inset: auto;
+  margin: 0;
+  margin-inline-end: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+  inline-size: 270px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(40, 41, 44, 0.98);
+  color: #e8eaed;
+  font:
+    12px/1.4 system-ui,
+    sans-serif;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+  position-area: inline-start span-block-end;
+  position-try-fallbacks: flip-block, flip-inline;
+}
+
+@supports not (position-area: inline-start) {
+  .shot-menu {
+    position: fixed;
+    right: 64px;
+    top: 120px;
+  }
+}
+
+.shot-menu:popover-open {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.shot-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-block-size: 76px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: #3a3b3f;
+  color: inherit;
+  cursor: pointer;
+}
+
+.shot-tile[aria-checked='true'] {
+  border-color: #4da3ff;
+  background: #4a4f57;
+}
+
+@media (hover: hover) {
+  .shot-tile:hover {
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+  .shot-tile[aria-checked='true']:hover {
+    border-color: #4da3ff;
+  }
+}
+
+.shot-tile:focus-visible,
+.shot-go:focus-visible {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 2px;
+}
+
+.shot-beta {
+  position: absolute;
+  inset: 4px 4px auto auto;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: #1e8e3e;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.shot-beta.inline {
+  position: static;
+  display: inline-block;
+  margin-inline-start: 6px;
+  vertical-align: 1px;
+}
+
+/* What the highlighted mode captures; follows hover and keyboard focus. */
+.shot-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-block-size: 5.6em;
+  margin: 0;
+  color: #c4c7c5;
+}
+
+.shot-hint strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.shot-go {
+  min-block-size: 38px;
+  border: 0;
+  border-radius: 6px;
+  background: #4da3ff;
+  color: #06223f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.shot-go[aria-disabled='true'] {
+  background: #4b4d52;
+  color: #9aa0a6;
+  cursor: default;
+}
+
+.shot-note {
+  margin: -4px 0 0;
+  color: #9aa0a6;
+  text-align: center;
+}
+
+.shot-dialog {
+  inline-size: min(520px, calc(100vw - 32px));
+  max-block-size: calc(100vh - 32px);
+  padding: 18px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
+  background: #202124;
+  color: #e8eaed;
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.shot-dialog:modal {
+  overscroll-behavior: contain;
+}
+
+.shot-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.shot-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shot-body h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.shot-sub {
+  color: #9aa0a6;
+  font-weight: 400;
+}
+
+.shot-preview {
+  display: grid;
+  place-items: center;
+  max-block-size: 38vh;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 8px;
+  background: #2b2c30;
+}
+
+.shot-preview.checker {
+  background: conic-gradient(#3a3b3f 25%, #2b2c30 0 50%, #3a3b3f 0 75%, #2b2c30 0) 0 0 / 16px 16px;
+}
+
+.shot-preview canvas {
+  display: block;
+  max-inline-size: 100%;
+  max-block-size: calc(38vh - 20px);
+  inline-size: auto;
+  block-size: auto;
+  object-fit: contain;
+}
+
+.shot-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.shot-field legend,
+.shot-legend {
+  padding: 0;
+  color: #c4c7c5;
+}
+
+.shot-legend output {
+  margin-inline-start: 6px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.shot-field input[type='range'] {
+  accent-color: #4da3ff;
+}
+
+.shot-field select {
+  min-block-size: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: #2b2c30;
+  color: inherit;
+  font: inherit;
+}
+
+.seg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.seg-item input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seg-item span {
+  display: inline-block;
+  min-block-size: 32px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.seg-item input:checked + span {
+  border-color: #4da3ff;
+  background: rgba(77, 163, 255, 0.2);
+  color: #fff;
+}
+
+.seg-item input:focus-visible + span {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 1px;
+}
+
+.shot-color {
+  inline-size: 40px;
+  block-size: 32px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+
+.shot-message {
+  min-block-size: 1.4em;
+  margin: 0;
+  color: #81c995;
+}
+
+.shot-dialog :is(input, select, button):focus-visible {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 1px;
+}
+
+/*
+ * While a screenshot is taken, the target window is shown alone, at its real size, on a plain
+ * backdrop: no other windows, icon bar, stage, title bar or shadows. (See lib/capture.ts.)
+ */
+.capture-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: #fff;
+}
+
+:host(.capturing) .sidebar,
+:host(.capturing) .stage,
+:host(.capturing) .window:not([data-capture-target]) {
+  visibility: hidden;
+}
+
+.window[data-capture-target] {
+  z-index: 3 !important;
+}
+
+.window[data-capture-target] .titlebar {
+  display: none;
+}
+
+.window[data-capture-target] :is(.lid, .base, .neck, .foot, .hw-button, .screen.bare) {
+  box-shadow: none !important;
+}
+
+/* Screen and full page: only the page area, like a screenshot taken on the device itself. */
+.window[data-capture-mode='screen'] .screen,
+.window[data-capture-mode='page'] .screen {
+  border-radius: 0 !important;
+}
+
+.window[data-capture-mode='screen'] .screen::after,
+.window[data-capture-mode='page'] .screen::after {
+  display: none;
+}
+
+.window[data-capture-mode='screen'] :is(.cutout, .home-button),
+.window[data-capture-mode='page']
+  :is(.cutout, .home-button, .status-bar, .top-bar, .bottom-bar, .nav-buttons) {
+  visibility: hidden;
+}

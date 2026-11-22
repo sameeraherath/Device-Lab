@@ -179,6 +179,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     <div
       ref={rootRef}
       class="window"
+      data-window-id={win.id}
       data-minimized={win.minimized ? 'true' : undefined}
       data-engaged={engaged ? 'true' : undefined}
       data-dragging={dragging ? 'true' : undefined}

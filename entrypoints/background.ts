@@ -60,9 +60,21 @@ export default defineBackground(() => {
     void activate(tab);
   });
 
-  browser.runtime.onMessage.addListener((message: RuntimeMessage, sender) => {
+  browser.runtime.onMessage.addListener((message: RuntimeMessage, sender, sendResponse) => {
     if (message.type === 'close' && sender.tab?.id !== undefined) {
       void removeFrameRule(sender.tab.id);
+      return;
+    }
+    if (message.type === 'capture') {
+      // Needs the tab's activeTab grant (given by the toolbar click); captures what is on screen.
+      const windowId = sender.tab?.windowId ?? browser.windows.WINDOW_ID_CURRENT;
+      browser.tabs
+        .captureVisibleTab(windowId, { format: 'png' })
+        .then((dataUrl) => sendResponse({ ok: true, dataUrl }))
+        .catch((e: unknown) =>
+          sendResponse({ ok: false, error: e instanceof Error ? e.message : String(e) }),
+        );
+      return true; // the answer comes asynchronously
     }
   });
 

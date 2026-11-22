@@ -32,7 +32,16 @@ real device sizes side by side.
   in `chrome.storage.local`.
 - **Rotate**: flip phones, foldables and tablets between portrait and landscape (the cutout moves
   to the left edge). Laptops, desktops and smart displays do not rotate.
-- **Screenshots**: capture a window with the device frame, or just the screen content without it.
+- **Screenshots**: the camera button on the icon bar captures the focused device. Hover a tile to
+  see what it captures:
+  - **Device**: the device with its frame, no shadow, on a transparent background.
+  - **Screen**: just the screen, like a screenshot taken on the device itself.
+  - **Full page**: the whole scrolling page at the device's width, without frame or bars (beta).
+  - **Device on background**: the framed device on a colour you choose, with space around it.
+
+  After the shot, a dialog previews it and exports it as **PNG, JPEG or WebP** (with a quality slider
+  for JPEG and WebP), or copies it to the clipboard. Resolution is the device's CSS size times the
+  screen's pixel ratio. Big devices are captured in tiles and stitched. No extra permission is needed.
 
 ## Tech stack
 
@@ -50,13 +59,14 @@ real device sizes side by side.
 ```
 entrypoints/            WXT entrypoints; each file becomes part of the extension
   background.ts         Service worker: toolbar icon click (injects the content script, header
-                        rules), screenshots later
+                        rules), takes the tab screenshot for the capture engine
   content/
     index.tsx           Content script: mounts device windows in a Shadow DOM
     style.css           Styles for the device windows
 components/             Preact UI components (DeviceWindow, Sidebar icon bar, DevicePicker flyout,
-                        ScreenshotMenu, Icons)
-lib/                    Non-UI logic: device list, window manager, typed messages, storage
+                        ScreenshotMenu, ScreenshotDialog, Icons)
+lib/                    Non-UI logic: device list, window manager, typed messages, storage, capture
+                        (the screenshot engine)
 data/
   devices.json          Device list (name, CSS size, DPR, group) and the CSS frame presets
 public/icon/            Extension icons (16, 32, 48, 128 px), copied as-is into the build
@@ -129,5 +139,5 @@ the listed DPR is informational (and for screenshots later). The user agent is n
 
 - Verify the Galaxy S26 viewport on a real device (currently marked "not measured").
 - User-agent and DPR emulation for sites that sniff the device.
-- Screenshots with and without the device frame.
+- Screenshots at the device's own pixel ratio (needs the `debugger` permission) and a more reliable full page.
 - Studio (coming soon).
