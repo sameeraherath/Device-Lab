@@ -23,7 +23,6 @@ interface ModeInfo {
   id: ShotMode;
   name: string;
   hint: string;
-  beta?: boolean;
 }
 
 const MODES: ModeInfo[] = [
@@ -40,8 +39,7 @@ const MODES: ModeInfo[] = [
   {
     id: 'page',
     name: 'Full page',
-    hint: 'The whole scrolling page at the device’s width, without the frame or bars.',
-    beta: true,
+    hint: 'Everything on screen as you see it: the page behind with its background, and every open device. The icon bar is left out.',
   },
   {
     id: 'background',
@@ -73,15 +71,10 @@ function ModeDrawing({ id }: { id: ShotMode }) {
       {id === 'screen' && <rect x="9" y="3" width="22" height="42" rx="2" fill="#e8eaed" />}
       {id === 'page' && (
         <>
-          <rect x="9" y="3" width="22" height="42" rx="2" fill="#e8eaed" />
-          <path
-            d="M20 15v17m-5-5l5 5 5-5"
-            fill="none"
-            stroke="#202124"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+          <rect x="1" y="6" width="38" height="36" rx="3" fill="#e8eaed" />
+          <rect x="1" y="6" width="38" height="6" rx="3" fill="#b9bbbe" />
+          <rect x="14" y="16" width="12" height="22" rx="3" fill="#1b1c1f" />
+          <rect x="15.5" y="17.5" width="9" height="19" rx="1.6" fill="#fff" />
         </>
       )}
       {id === 'background' && (
@@ -146,7 +139,10 @@ export function ScreenshotMenu({ target }: Props) {
     // then it would be in the picture, so close it and let the camera button show the progress.
     const menu = menuRef.current;
     const win = root.querySelector(`.window[data-window-id="${target.id}"]`);
-    if (menu && win) {
+    if (menu && prefs.mode === 'page') {
+      // The whole screen is captured, so the popover must not be in it.
+      menu.hidePopover();
+    } else if (menu && win) {
       const m = menu.getBoundingClientRect();
       const w = win.getBoundingClientRect();
       if (m.left < w.right && m.right > w.left && m.top < w.bottom && m.bottom > w.top) {
@@ -223,18 +219,12 @@ export function ScreenshotMenu({ target }: Props) {
               onBlur={() => setHover(null)}
             >
               <ModeDrawing id={m.id} />
-              {m.beta && (
-                <span class="shot-beta" aria-hidden="true">
-                  Beta
-                </span>
-              )}
               <span class="visually-hidden">{m.name}</span>
             </button>
           ))}
         </div>
         <p id="shot-hint" class="shot-hint" aria-live="polite">
           <strong>{shown.name}</strong>
-          {shown.beta ? <span class="shot-beta inline">Beta</span> : null}
           <span>{shown.hint}</span>
         </p>
         <button

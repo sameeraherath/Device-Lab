@@ -1588,26 +1588,6 @@
   outline-offset: 2px;
 }
 
-.shot-beta {
-  position: absolute;
-  inset: 4px 4px auto auto;
-  padding: 1px 4px;
-  border-radius: 4px;
-  background: #1e8e3e;
-  color: #fff;
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.shot-beta.inline {
-  position: static;
-  display: inline-block;
-  margin-inline-start: 6px;
-  vertical-align: 1px;
-}
-
 /* What the highlighted mode captures; follows hover and keyboard focus. */
 .shot-hint {
   display: flex;
@@ -1819,20 +1799,22 @@
   box-shadow: none !important;
 }
 
-/* Screen and full page: only the page area, like a screenshot taken on the device itself. */
-.window[data-capture-mode='screen'] .screen,
-.window[data-capture-mode='page'] .screen {
+/* Screen: only the page area, like a screenshot taken on the device itself. */
+/* Full page: the whole screen as it is, without the icon bar or title bars. */
+:host(.capturing-view) .sidebar,
+:host(.capturing-view) .titlebar {
+  visibility: hidden;
+}
+
+.window[data-capture-mode='screen'] .screen {
   border-radius: 0 !important;
 }
 
-.window[data-capture-mode='screen'] .screen::after,
-.window[data-capture-mode='page'] .screen::after {
+.window[data-capture-mode='screen'] .screen::after {
   display: none;
 }
 
-.window[data-capture-mode='screen'] :is(.cutout, .home-button),
-.window[data-capture-mode='page']
-  :is(.cutout, .home-button, .status-bar, .top-bar, .bottom-bar, .nav-buttons) {
+.window[data-capture-mode='screen'] :is(.cutout, .home-button) {
   visibility: hidden;
 }
 

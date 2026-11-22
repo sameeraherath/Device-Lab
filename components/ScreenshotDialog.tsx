@@ -51,7 +51,7 @@ function fileName(deviceId: string, mode: ShotMode, ext: string): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, '0');
   const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
-  return `device-lab_${deviceId}_${mode}_${stamp}.${ext}`;
+  return `device-lab_${deviceId}_${mode === 'page' ? 'full-page' : mode}_${stamp}.${ext}`;
 }
 
 /** The image to export: the capture on the chosen background, with padding. */

@@ -1,5 +1,6 @@
 // Screenshot engine. Chrome can only capture what is on screen (captureVisibleTab), so the device
 // is captured exactly where it is and as large as it is shown: nothing moves or resizes.
+// The "page" mode is the whole screen as it is: the page behind and every open device.
 // For a transparent background, a small white then black patch is put behind the device itself
 // (not the whole screen) and the alpha is recovered from the two shots. Everything it touches is
 // put back in a `finally` block.
@@ -12,7 +13,7 @@ export interface CaptureResult {
   canvas: HTMLCanvasElement;
   /** True when the corners/edges are transparent (the device with its frame). */
   transparent: boolean;
-  /** Something the person should know, e.g. a full page that was cut at the size limit. */
+  /** Something the person should know. */
   note?: string;
 }
 
@@ -21,12 +22,6 @@ export type Progress = (done: number, total: number) => void;
 /** Chrome allows 2 captures per second: never ask for a third inside one second. */
 const QUOTA_WINDOW_MS = 1050;
 const QUOTA_CALLS = 2;
-/** Full page limits: tallest page in CSS px, and the canvas size limits that also apply. */
-const MAX_PAGE_CSS_HEIGHT = 16000;
-const MAX_CANVAS_SIDE = 32000;
-const MAX_CANVAS_AREA = 260_000_000;
-/** Time for lazy-loaded images and scroll effects to settle after a scroll. */
-const SCROLL_SETTLE_MS = 350;
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
@@ -143,22 +138,6 @@ function toCanvas(data: ImageData): HTMLCanvasElement {
   return c;
 }
 
-/** Hides fixed and sticky elements of a page so headers and chat bubbles do not repeat in a stitch. */
-function hideFloating(doc: Document): () => void {
-  const hidden: [HTMLElement, string][] = [];
-  const view = doc.defaultView;
-  if (view) {
-    for (const el of doc.querySelectorAll<HTMLElement>('body *')) {
-      const pos = view.getComputedStyle(el).position;
-      if (pos === 'fixed' || pos === 'sticky') {
-        hidden.push([el, el.style.visibility]);
-        el.style.visibility = 'hidden';
-      }
-    }
-  }
-  return () => hidden.forEach(([el, v]) => (el.style.visibility = v));
-}
-
 const measure = (el: HTMLElement): Rect => {
   const r = el.getBoundingClientRect();
   return { x: r.left, y: r.top, w: r.width, h: r.height };
@@ -184,7 +163,7 @@ function assertInView(rect: Rect) {
  * Takes a screenshot of one device window, where it is and as large as it is shown.
  * - `device`: the device with its frame, transparent outside the rounded edge, no shadow.
  * - `screen`: just the screen, as the device's own screenshot would be (status and browser bars included).
- * - `page`: the whole scrolling page at the device's width, without frame or bars.
+ * - `page`: the whole screen as it is, with the page behind and every open device (no icon bar).
  */
 export async function captureWindow(
   root: ShadowRoot,
@@ -199,15 +178,13 @@ export async function captureWindow(
   }
   const deviceEl = target.querySelector<HTMLElement>('.device');
   const screenEl = target.querySelector<HTMLElement>('.screen');
-  const iframe = target.querySelector<HTMLIFrameElement>('iframe.frame');
+  const host = (root as ShadowRoot & { host: Element }).host;
   if (!deviceEl || !screenEl)
     throw new CaptureError('The device is not ready yet. Try again in a moment.');
 
   const session: Session = { recent: [], captures: 0, expected: 1, progress };
   const backdrop = document.createElement('div');
   backdrop.className = 'capture-backdrop';
-  const restoreFloating: (() => void)[] = [];
-  let scrollBack: (() => void) | undefined;
 
   try {
     // Mark the window: CSS turns off its shadows, and in screen and page modes square the screen
@@ -246,86 +223,22 @@ export async function captureWindow(
       return { canvas, transparent: false };
     }
 
-    // Full page: scroll the framed page one screen at a time and stitch.
-    if (!iframe) throw new CaptureError('This device has no page to capture.');
-    const rect = measure(iframe);
-    assertInView(rect);
-    let doc: Document | null = null;
-    try {
-      doc = iframe.contentDocument;
-    } catch {
-      doc = null;
-    }
-    const win = iframe.contentWindow;
-    const docEl = doc?.documentElement;
+    // Full page: the whole screen as it is, with the page behind and every open device.
+    host.classList.add('capturing-view');
     await paint();
-    if (!doc || !win || !docEl) {
-      const shot = await grab(session);
-      const canvas = toCanvas(crop(shot, pixelRect(rect, imageScale(shot), shot)));
-      shot.close();
-      return {
-        canvas,
-        transparent: false,
-        note: 'This page comes from another site, so it cannot be scrolled. Only the visible part was captured.',
-      };
-    }
-
-    const scrollTop = win.scrollY;
-    scrollBack = () => win.scrollTo({ top: scrollTop, behavior: 'instant' });
-    // The page is shown scaled to fit: `k` is how many on-screen CSS px one page px takes.
-    const k = rect.w / Math.max(1, iframe.clientWidth);
-    const screenH = iframe.clientHeight; // page px visible at once
-    const pageH = Math.max(docEl.scrollHeight, doc.body?.scrollHeight ?? 0, screenH);
-    const pxPerPage = k * window.devicePixelRatio;
-    const maxH = Math.max(
-      screenH,
-      Math.min(
-        MAX_PAGE_CSS_HEIGHT,
-        Math.floor(MAX_CANVAS_SIDE / pxPerPage),
-        Math.floor(MAX_CANVAS_AREA / (rect.w * window.devicePixelRatio * pxPerPage)),
-      ),
-    );
-    const total = Math.min(pageH, maxH);
-    const steps = Math.max(1, Math.ceil(total / screenH));
-    session.expected = steps;
-
-    let canvas: HTMLCanvasElement | undefined;
-    let sx = 0;
-    let px: Rect | undefined;
-    for (let i = 0; i < steps; i++) {
-      win.scrollTo({
-        top: Math.min(i * screenH, Math.max(0, total - screenH)),
-        behavior: 'instant',
-      });
-      await sleep(SCROLL_SETTLE_MS);
-      const actual = win.scrollY;
-      const shot = await grab(session);
-      if (!canvas) {
-        sx = imageScale(shot);
-        px = pixelRect(rect, sx, shot);
-        canvas = document.createElement('canvas');
-        canvas.width = px.w;
-        canvas.height = Math.round(total * k * sx);
-        // The first screen keeps headers, as a visitor sees the page. After it they would
-        // repeat on every screen, so hide fixed and sticky elements for the rest.
-        if (steps > 1) restoreFloating.push(hideFloating(doc));
-      }
-      canvas
-        .getContext('2d')!
-        .drawImage(shot, px!.x, px!.y, px!.w, px!.h, 0, Math.round(actual * k * sx), px!.w, px!.h);
-      shot.close();
-    }
-    return {
-      canvas: canvas!,
-      transparent: false,
-      note:
-        pageH > total
-          ? `The page is ${pageH.toLocaleString()} px tall; the screenshot stops at ${total.toLocaleString()} px.`
-          : undefined,
+    const shot = await grab(session);
+    const sx = imageScale(shot);
+    const view = {
+      x: 0,
+      y: 0,
+      w: document.documentElement.clientWidth || window.innerWidth,
+      h: window.innerHeight,
     };
+    const canvas = toCanvas(crop(shot, pixelRect(view, sx, shot)));
+    shot.close();
+    return { canvas, transparent: false };
   } finally {
-    restoreFloating.forEach((f) => f());
-    scrollBack?.();
+    host.classList.remove('capturing-view');
     backdrop.remove();
     target.removeAttribute('data-capture-target');
     target.removeAttribute('data-capture-mode');

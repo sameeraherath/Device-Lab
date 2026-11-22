@@ -36,7 +36,8 @@ real device sizes side by side.
   see what it captures:
   - **Device**: the device with its frame, no shadow, on a transparent background.
   - **Screen**: just the screen, like a screenshot taken on the device itself.
-  - **Full page**: the whole scrolling page at the device's width, without frame or bars (beta).
+  - **Full page**: everything on screen as you see it: the page behind with its background, and every
+    open device. The icon bar is left out.
   - **Device on background**: the framed device on a colour you choose, with space around it.
 
   Nothing moves while it works: the button shows the progress and the device is captured where it
@@ -142,5 +143,5 @@ the listed DPR is informational (and for screenshots later). The user agent is n
 
 - Verify the Galaxy S26 viewport on a real device (currently marked "not measured").
 - User-agent and DPR emulation for sites that sniff the device.
-- Screenshots at the device's own pixel ratio (needs the `debugger` permission) and a more reliable full page.
+- Screenshots at the device's own pixel ratio (needs the `debugger` permission).
 - Studio (coming soon).
