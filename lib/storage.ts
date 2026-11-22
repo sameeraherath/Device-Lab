@@ -88,3 +88,62 @@ export async function setFinishChoices(choices: Record<string, string>): Promise
     // Storage is a convenience only; ignore failures.
   }
 }
+
+export type ShotMode = 'device' | 'screen' | 'page' | 'background';
+export type ShotFormat = 'png' | 'jpeg' | 'webp';
+export type ShotBackground = 'transparent' | 'white' | 'black' | 'custom';
+export type ShotPadding = 'none' | 'small' | 'medium' | 'large';
+
+export interface ScreenshotPrefs {
+  mode: ShotMode;
+  format: ShotFormat;
+  background: ShotBackground;
+  /** Colour used when `background` is "custom" (a #rrggbb value). */
+  color: string;
+  padding: ShotPadding;
+}
+
+export const DEFAULT_SHOT_PREFS: ScreenshotPrefs = {
+  mode: 'device',
+  format: 'png',
+  background: 'transparent',
+  color: '#e8eaed',
+  padding: 'medium',
+};
+
+const SHOT_KEY = 'screenshotPrefs';
+const pick = <T extends string>(v: unknown, allowed: readonly T[], fallback: T): T =>
+  allowed.includes(v as T) ? (v as T) : fallback;
+
+/** The last screenshot choices; anything missing or malformed falls back to the defaults. */
+export async function getScreenshotPrefs(): Promise<ScreenshotPrefs> {
+  try {
+    const raw = (await browser.storage.local.get(SHOT_KEY))[SHOT_KEY] as
+      Partial<Record<keyof ScreenshotPrefs, unknown>> | undefined;
+    if (!raw || typeof raw !== 'object') return DEFAULT_SHOT_PREFS;
+    return {
+      mode: pick(raw.mode, ['device', 'screen', 'page', 'background'], DEFAULT_SHOT_PREFS.mode),
+      format: pick(raw.format, ['png', 'jpeg', 'webp'], DEFAULT_SHOT_PREFS.format),
+      background: pick(
+        raw.background,
+        ['transparent', 'white', 'black', 'custom'],
+        DEFAULT_SHOT_PREFS.background,
+      ),
+      color:
+        typeof raw.color === 'string' && /^#[0-9a-f]{6}$/i.test(raw.color)
+          ? raw.color
+          : DEFAULT_SHOT_PREFS.color,
+      padding: pick(raw.padding, ['none', 'small', 'medium', 'large'], DEFAULT_SHOT_PREFS.padding),
+    };
+  } catch {
+    return DEFAULT_SHOT_PREFS;
+  }
+}
+
+export async function setScreenshotPrefs(prefs: ScreenshotPrefs): Promise<void> {
+  try {
+    await browser.storage.local.set({ [SHOT_KEY]: prefs });
+  } catch {
+    // Storage is a convenience only; ignore failures.
+  }
+}

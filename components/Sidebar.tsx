@@ -139,7 +139,7 @@ export function Sidebar({ windows, stageOn, onToggleStage }: Props) {
         <Icon name="stage" />
       </button>
       <span class="sep" role="separator" aria-orientation="horizontal" />
-      <ScreenshotMenu />
+      <ScreenshotMenu target={selected} />
       <span class="sep" role="separator" aria-orientation="horizontal" />
       <button
         type="button"
@@ -149,7 +149,7 @@ export function Sidebar({ windows, stageOn, onToggleStage }: Props) {
         aria-disabled="true"
         title="Studio (coming soon)"
       >
-        <Icon name="studio" />
+        <Icon name="edit" />
         <span class="badge" aria-hidden="true">
           Soon
         </span>

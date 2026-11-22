@@ -1,7 +1,7 @@
 // A floating, draggable window that renders the page in an iframe at a chosen device size.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { canRotate, getDevice, getFrame, themeSource } from '@/lib/devices';
-import { pageTheme, type StatusTheme } from '@/lib/pageInfo';
+import { pageCanvas, pageTheme, type StatusTheme } from '@/lib/pageInfo';
 import { DeviceFrame } from './DeviceFrame';
 import { FinishPicker } from './FinishPicker';
 import {
@@ -36,6 +36,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   // Colours for the device's bars come from the framed page (its own background or theme-color).
   const source = themeSource(getFrame(device));
   const [theme, setTheme] = useState<StatusTheme>(() => pageTheme(document, source));
+  const [canvas, setCanvas] = useState(() => pageCanvas(document));
   const syncTheme = () => {
     let doc: Document = document;
     try {
@@ -44,6 +45,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
       // Cross-origin frame: the top page is the same site, so its colours are the next best.
     }
     const next = pageTheme(doc, source);
+    setCanvas(pageCanvas(doc));
     setTheme((cur) =>
       cur.background === next.background && cur.foreground === next.foreground ? cur : next,
     );
@@ -179,6 +181,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
     <div
       ref={rootRef}
       class="window"
+      data-window-id={win.id}
       data-minimized={win.minimized ? 'true' : undefined}
       data-engaged={engaged ? 'true' : undefined}
       data-dragging={dragging ? 'true' : undefined}
@@ -226,9 +229,19 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         <div class="device-box" style={{ width: `${deviceW}px`, height: `${deviceH}px` }}>
           <div
             class="device-scale"
-            style={{ width: `${layout.width}px`, height: `${layout.height}px`, scale }}
+            style={{
+              width: `${layout.width}px`,
+              height: `${layout.height}px`,
+              scale,
+            }}
           >
-            <DeviceFrame device={device} rotated={win.rotated} theme={theme} dragProps={dragProps}>
+            <DeviceFrame
+              device={device}
+              rotated={win.rotated}
+              theme={theme}
+              canvas={canvas}
+              dragProps={dragProps}
+            >
               {/* Not rendered while minimized, so the page and its memory are released. */}
               <iframe
                 ref={iframeRef}

@@ -77,6 +77,19 @@ export function pageTheme(doc: Document, source: ThemeSource): StatusTheme {
   }
 }
 
+/**
+ * The colour behind the page: its own background, or white. Used behind the screen, so that the
+ * partly covered pixels at the page's edges blend with the page itself and never show as a line.
+ */
+export function pageCanvas(doc: Document): string {
+  try {
+    const [r, g, b] = pageBackground(doc);
+    return `rgb(${r}, ${g}, ${b})`;
+  } catch {
+    return '#fff';
+  }
+}
+
 /** Domain shown in the browser bar, without "www.". */
 export function pageDomain(): string {
   return location.hostname.replace(/^www\./, '');

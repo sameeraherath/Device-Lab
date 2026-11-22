@@ -21,12 +21,14 @@ interface Props {
   rotated: boolean;
   /** Colours for the status bar and browser bars, read from the framed page. */
   theme: StatusTheme;
+  /** The page's own background colour; goes behind the screen (see pageCanvas). */
+  canvas: string;
   /** Pointer handlers that make the device body (frame, buttons, base, stand) draggable. */
   dragProps?: DragProps;
   children: ComponentChildren;
 }
 
-export function DeviceFrame({ device, rotated, theme, dragProps, children }: Props) {
+export function DeviceFrame({ device, rotated, theme, canvas, dragProps, children }: Props) {
   const frame = withFinish(getFrame(device), finishFor(device));
   const layout = frameLayout(device, rotated);
   const { screenW, screenH, bezel, statusH, topBarH, navBarH, viewportH } = layout;
@@ -146,6 +148,7 @@ export function DeviceFrame({ device, rotated, theme, dragProps, children }: Pro
               width: px(screenW),
               height: px(screenH),
               borderRadius: screenCornerRadii(frame, bezel),
+              background: canvas,
             }}
           >
             <StatusBar
