@@ -13,7 +13,8 @@ export default defineConfig({
   manifest: {
     name: 'Device Lab – Mobile & Tablet Website Simulator',
     short_name: 'Device Lab',
-    description: 'See your site on every screen.',
+    description:
+      'Free website simulator: see your site in iPhone, Pixel, Galaxy, iPad and Mac frames at true screen sizes, and take screenshots.',
     icons: {
       16: '/icon/16.png',
       32: '/icon/32.png',
