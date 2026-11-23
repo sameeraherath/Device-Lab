@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Your site. On every screen.</strong><br>
-  See any web page inside real iPhone, Pixel, Galaxy, iPad and Mac frames, right in Chrome.
+  See any web page in iPhone, Pixel, Galaxy, iPad and Mac frames at true screen sizes, right in Chrome.
 </p>
 
 <p align="center">
@@ -22,12 +22,12 @@
 ## What it does
 
 Click the Device Lab icon on any page. The page opens in floating device windows, at each device's
-real screen size, so you can check your layout on many screens side by side, without leaving the
+true screen size, so you can check your layout on many screens side by side, without leaving the
 tab.
 
-- **55 real devices.** iPhones, Pixels, Galaxys, foldables, iPads, Surface, laptops, desktops and
+- **55 devices.** iPhones, Pixels, Galaxys, foldables, iPads, Surface, laptops, desktops and
   smart displays, grouped by maker, with search and a Recent row. You can add up to 20 of your own.
-- **Looks like the real thing.** Frames measured from real devices: the right corners, bezels,
+- **Looks like the device.** Frames modelled on real devices: the right corners, bezels,
   Dynamic Island, notch or punch hole, side buttons, and the matching status bar and browser bar
   (Safari, Chrome).
 - **Official colours.** Pick the device colour from the title bar, like Desert Titanium or
@@ -51,7 +51,7 @@ tab.
     <td><img src="docs/images/screenshots.png" alt="The screenshot menu with four capture modes next to an iPhone"></td>
   </tr>
   <tr>
-    <td align="center">Real device frames and official colours</td>
+    <td align="center">Device frames and official colours</td>
     <td align="center">Screenshots in one click</td>
   </tr>
   <tr>
