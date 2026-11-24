@@ -101,6 +101,8 @@
   gap: 5px;
   flex: none;
   height: 28px;
+  /* Room between the colour picker and the record button. */
+  margin-inline: 8px 4px;
   padding: 0 10px 0 7px;
   border: 0;
   border-radius: 14px;
