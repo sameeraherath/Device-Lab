@@ -15,6 +15,8 @@ export interface StoredRecording {
   durationMs: number;
   width: number;
   height: number;
+  /** The file has a sound track (older recordings have no value). */
+  hasAudio?: boolean;
 }
 
 function open(): Promise<IDBDatabase> {

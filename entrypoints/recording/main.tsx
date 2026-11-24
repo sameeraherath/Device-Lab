@@ -111,6 +111,7 @@ function App() {
       <p class="meta">
         {rec.deviceName} · {rec.width}×{rec.height} · {formatDuration(rec.durationMs)} ·{' '}
         {formatSize(rec.blob.size)} · {extensionFor(rec.mimeType).toUpperCase()}
+        {rec.hasAudio ? ' · with audio' : ''}
       </p>
       <div class="player">
         <video src={url} controls />

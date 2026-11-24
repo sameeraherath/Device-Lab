@@ -4,8 +4,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { runAutoScroll } from './autoScroll';
 import { CaptureError, assertInView, measure } from './capture';
-import { sendRecordMessage } from './messages';
-import type { RecordPrefs } from './storage';
+import { requestMic, sendRecordMessage } from './messages';
+import { getMicGranted, type RecordPrefs } from './storage';
 
 export type RecordPhase = 'idle' | 'countdown' | 'starting' | 'recording' | 'stopping';
 
@@ -61,13 +61,22 @@ export function useRecordState(): RecordState {
 export async function startRecording(
   target: HTMLElement,
   deviceName: string,
-  prefs: Pick<RecordPrefs, 'quality' | 'fps' | 'countdown' | 'autoScroll' | 'scrollSpeed'>,
+  prefs: Pick<
+    RecordPrefs,
+    'quality' | 'fps' | 'countdown' | 'autoScroll' | 'scrollSpeed' | 'mic' | 'pageAudio'
+  >,
 ): Promise<void> {
   if (state.phase !== 'idle') return;
   const windowId = Number(target.dataset.windowId);
   set({ ...IDLE, phase: 'starting', windowId });
 
   try {
+    // The microphone has to be allowed before anything starts (asked once, in a small window).
+    if (prefs.mic && !(await getMicGranted())) {
+      const mic = await requestMic();
+      if (!mic.ok) throw new CaptureError(mic.error);
+    }
+
     // Count down first. Cancel (the button) or closing the window ends it.
     for (let left = prefs.countdown; left > 0; left--) {
       set({ ...IDLE, phase: 'countdown', windowId, countdown: left });
@@ -111,6 +120,8 @@ export async function startRecording(
         trim: scaled ? 1 : 0,
         quality: prefs.quality,
         fps: prefs.fps,
+        mic: prefs.mic,
+        pageAudio: prefs.pageAudio,
       },
     });
     if (!response.ok) throw new CaptureError(response.error);

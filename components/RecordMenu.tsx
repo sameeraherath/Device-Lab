@@ -2,10 +2,12 @@
 // "Start recording". While a recording or countdown runs, the button stops or cancels it instead.
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import { canAutoScroll, SCROLL_SPEEDS } from '@/lib/autoScroll';
+import { requestMic } from '@/lib/messages';
 import { cancelCountdown, startRecording, stopRecording, useRecordState } from '@/lib/record';
 import {
   DEFAULT_RECORD_PREFS,
   MAX_COUNTDOWN,
+  getMicGranted,
   getRecordPrefs,
   setRecordPrefs,
   type RecordMode,
@@ -119,6 +121,8 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
   const menuRef = useRef<HTMLDivElement>(null);
   const [prefs, setPrefs] = useState<RecordPrefs>(DEFAULT_RECORD_PREFS);
   const record = useRecordState();
+  // Short message under the microphone switch: waiting for permission, or why it is off.
+  const [micNote, setMicNote] = useState('');
   // False when the framed page is from another site and cannot be scrolled by script.
   const [canScroll, setCanScroll] = useState(true);
   const mine = record.windowId === windowId;
@@ -135,6 +139,25 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
     const next = { ...prefs, ...patch };
     setPrefs(next);
     void setRecordPrefs(next);
+  };
+
+  const toggleMic = async (on: boolean) => {
+    setMicNote('');
+    if (!on) {
+      update({ mic: false });
+      return;
+    }
+    if (!(await getMicGranted())) {
+      setMicNote('Waiting for permission…');
+      const result = await requestMic();
+      if (!result.ok) {
+        update({ mic: false });
+        setMicNote(result.error);
+        return;
+      }
+      setMicNote('');
+    }
+    update({ mic: true });
   };
 
   const isOpen = () => !!menuRef.current?.matches(':popover-open');
@@ -272,18 +295,30 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
           </button>
         </div>
 
-        <Switch label="Microphone" checked={false} disabled title={SOON} onChange={() => {}}>
+        <Switch label="Microphone" checked={prefs.mic} onChange={(on) => void toggleMic(on)}>
           <Svg>
             <rect x="9" y="3" width="6" height="11" rx="3" />
             <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
           </Svg>
         </Switch>
-        <Switch label="Page audio" checked={false} disabled title={SOON} onChange={() => {}}>
+        {micNote && (
+          <p class="rec-note" role="status">
+            {micNote}
+          </p>
+        )}
+        <Switch
+          label="Page audio"
+          checked={prefs.pageAudio}
+          onChange={(pageAudio) => update({ pageAudio })}
+        >
           <Svg>
             <path d="M4 9v6h4l5 4V5L8 9z" />
             <path d="M16.5 9a4 4 0 0 1 0 6" />
           </Svg>
         </Switch>
+        {prefs.mic && prefs.pageAudio && (
+          <p class="rec-note">Use headphones, so your microphone does not pick up the page.</p>
+        )}
         <Switch
           label="Auto-scroll"
           checked={prefs.autoScroll && canScroll}

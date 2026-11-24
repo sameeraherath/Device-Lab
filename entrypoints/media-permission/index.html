@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Microphone – Device Lab</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+        background: Canvas;
+        color: CanvasText;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      button {
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 8px;
+        background: #1d6cf2;
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Allow the microphone</h1>
+      <p id="status">
+        Chrome is asking for permission. Choose <strong>Allow</strong> to record your voice.
+      </p>
+      <button id="retry" type="button" hidden>Try again</button>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

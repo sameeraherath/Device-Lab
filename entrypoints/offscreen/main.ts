@@ -20,12 +20,20 @@ const QUALITY = {
 } as const;
 const MIN_BITRATE = 1_500_000;
 const MAX_BITRATE = 24_000_000;
+const AUDIO_BITRATE = 128_000;
 /** In order of preference. MP4 plays everywhere; WebM is the fallback. */
-const MIME_TYPES = [
+const VIDEO_MIME_TYPES = [
   'video/mp4;codecs=avc1',
   'video/webm;codecs=vp9',
   'video/webm;codecs=vp8',
   'video/webm',
+];
+/** With a sound track the codec list names the audio codec too (AAC for MP4, Opus for WebM). */
+const AUDIO_MIME_TYPES = [
+  'video/mp4;codecs=avc1,mp4a.40.2',
+  'video/webm;codecs=vp9,opus',
+  'video/webm;codecs=vp8,opus',
+  'video/webm;codecs=opus',
 ];
 
 interface Session {
@@ -38,6 +46,9 @@ interface Session {
   startedAt: number;
   width: number;
   height: number;
+  hasAudio: boolean;
+  /** Stops the audio sources and closes the audio mixer. */
+  releaseAudio: () => void;
   options: RecordStartOptions;
 }
 
@@ -48,8 +59,10 @@ const even = (n: number) => Math.max(2, Math.floor(n / 2) * 2);
 async function start(streamId: string, options: RecordStartOptions): Promise<void> {
   if (session) throw new Error('A recording is already running.');
 
+  const tabSource = { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId } };
   const constraints = {
-    audio: false,
+    // The page's own sound, when asked for. Chrome mutes a captured tab, so it is played back below.
+    audio: options.pageAudio ? tabSource : false,
     video: {
       mandatory: {
         chromeMediaSource: 'tab',
@@ -77,6 +90,54 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     throw e;
   }
 
+  // Sound: the page's audio and/or the microphone, mixed into one track.
+  let micStream: MediaStream | null = null;
+  let audioContext: AudioContext | null = null;
+  let mixedTrack: MediaStreamTrack | null = null;
+  const releaseAudio = () => {
+    micStream?.getTracks().forEach((t) => t.stop());
+    void audioContext?.close().catch(() => {});
+    micStream = null;
+    audioContext = null;
+  };
+  try {
+    const pageTracks = stream.getAudioTracks();
+    if (options.mic) {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
+      } catch (e) {
+        // The permission page grants this once; the recorder page cannot ask by itself.
+        if (e instanceof DOMException && /NotAllowed|Security/.test(e.name)) {
+          throw new Error('MIC_DENIED', { cause: e });
+        }
+        if (e instanceof DOMException && e.name === 'NotFoundError') {
+          throw new Error('No microphone was found. Connect one or turn the microphone off.', {
+            cause: e,
+          });
+        }
+        throw e;
+      }
+    }
+    if (pageTracks.length > 0 || micStream) {
+      audioContext = new AudioContext();
+      await audioContext.resume();
+      const mix = audioContext.createMediaStreamDestination();
+      if (pageTracks.length > 0) {
+        const page = audioContext.createMediaStreamSource(new MediaStream(pageTracks));
+        page.connect(mix);
+        page.connect(audioContext.destination); // keep the page audible while it is captured
+      }
+      if (micStream) audioContext.createMediaStreamSource(micStream).connect(mix);
+      mixedTrack = mix.stream.getAudioTracks()[0] ?? null;
+    }
+  } catch (e) {
+    releaseAudio();
+    stream.getTracks().forEach((t) => t.stop());
+    throw e;
+  }
+
   // The video is in device pixels; the device's rectangle is in CSS px of the viewport.
   const scale = video.videoWidth / options.viewport.w;
   const { rect, trim } = options;
@@ -91,6 +152,7 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     Math.floor((rect.y + rect.h) * scale + 1e-6) - sy - trim,
   );
   if (sw < 16 || sh < 16) {
+    releaseAudio();
     stream.getTracks().forEach((t) => t.stop());
     throw new Error('The device is too small or off screen to record.');
   }
@@ -111,9 +173,16 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     1000 / FPS,
   );
 
-  const mimeType = MIME_TYPES.find((t) => MediaRecorder.isTypeSupported(t)) ?? '';
-  const recorder = new MediaRecorder(canvas.captureStream(FPS), {
+  const hasAudio = mixedTrack !== null;
+  const mimeType =
+    [...(hasAudio ? AUDIO_MIME_TYPES : []), ...VIDEO_MIME_TYPES].find((t) =>
+      MediaRecorder.isTypeSupported(t),
+    ) ?? '';
+  const output = canvas.captureStream(FPS);
+  if (mixedTrack) output.addTrack(mixedTrack);
+  const recorder = new MediaRecorder(output, {
     ...(mimeType ? { mimeType } : {}),
+    ...(hasAudio ? { audioBitsPerSecond: AUDIO_BITRATE } : {}),
     videoBitsPerSecond: Math.min(
       MAX_BITRATE,
       Math.max(MIN_BITRATE, Math.round(width * height * FPS * preset.bpp)),
@@ -135,6 +204,8 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     startedAt: Date.now(),
     width,
     height,
+    hasAudio,
+    releaseAudio,
     options,
   };
 }
@@ -151,6 +222,7 @@ async function stop(): Promise<string> {
   await stopped;
   window.clearInterval(s.timer);
   s.stream.getTracks().forEach((t) => t.stop());
+  s.releaseAudio();
   s.video.srcObject = null;
 
   if (s.chunks.length === 0) throw new Error('Nothing was recorded.');
@@ -164,6 +236,7 @@ async function stop(): Promise<string> {
     durationMs: Date.now() - s.startedAt,
     width: s.width,
     height: s.height,
+    hasAudio: s.hasAudio,
   });
   return id;
 }
