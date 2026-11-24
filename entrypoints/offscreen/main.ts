@@ -9,11 +9,17 @@ import type {
 } from '@/lib/messages';
 import { saveRecording } from '@/lib/recordingStore';
 
-const FPS = 30;
-/** Roughly 0.1 bit per pixel per frame: about 6 Mbps at 1080p. Quality presets replace this later. */
-const BITS_PER_PIXEL = 0.1;
-const MIN_BITRATE = 2_000_000;
-const MAX_BITRATE = 20_000_000;
+/**
+ * Quality presets. `longSide` is the most video pixels along the longer side (a smaller device is
+ * never scaled up); `bpp` is bits per pixel per frame, which sets the bitrate.
+ */
+const QUALITY = {
+  good: { longSide: 1280, bpp: 0.08 }, // HD 720p
+  better: { longSide: 1920, bpp: 0.1 }, // Full HD 1080p
+  best: { longSide: 2560, bpp: 0.12 }, // 2K 1440p
+} as const;
+const MIN_BITRATE = 1_500_000;
+const MAX_BITRATE = 24_000_000;
 /** In order of preference. MP4 plays everywhere; WebM is the fallback. */
 const MIME_TYPES = [
   'video/mp4;codecs=avc1',
@@ -88,17 +94,20 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     stream.getTracks().forEach((t) => t.stop());
     throw new Error('The device is too small or off screen to record.');
   }
-  // H.264 needs even sizes.
-  const width = even(sw);
-  const height = even(sh);
+  // Shrink to the chosen quality (never enlarge), keeping the shape. H.264 needs even sizes.
+  const preset = QUALITY[options.quality] ?? QUALITY.good;
+  const fit = Math.min(1, preset.longSide / Math.max(sw, sh));
+  const width = even(sw * fit);
+  const height = even(sh * fit);
+  const FPS = options.fps === 60 ? 60 : 30;
 
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d', { alpha: false })!;
-  ctx.drawImage(video, sx, sy, width, height, 0, 0, width, height);
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, width, height);
   const timer = window.setInterval(
-    () => ctx.drawImage(video, sx, sy, width, height, 0, 0, width, height),
+    () => ctx.drawImage(video, sx, sy, sw, sh, 0, 0, width, height),
     1000 / FPS,
   );
 
@@ -107,7 +116,7 @@ async function start(streamId: string, options: RecordStartOptions): Promise<voi
     ...(mimeType ? { mimeType } : {}),
     videoBitsPerSecond: Math.min(
       MAX_BITRATE,
-      Math.max(MIN_BITRATE, Math.round(width * height * FPS * BITS_PER_PIXEL)),
+      Math.max(MIN_BITRATE, Math.round(width * height * FPS * preset.bpp)),
     ),
   });
   const chunks: Blob[] = [];
