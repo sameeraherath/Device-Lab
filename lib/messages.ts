@@ -5,7 +5,8 @@ export type RuntimeMessage =
   | { type: 'record-start'; options: RecordStartOptions } // start recording one device's screen
   | { type: 'record-stop' } // stop the recording and open the review page
   | { type: 'request-mic' } // ask for microphone permission (opens a small window)
-  | { type: 'mic-result'; ok: boolean; error?: string }; // the answer, from that window
+  | { type: 'mic-result'; ok: boolean; error?: string } // the answer, from that window
+  | { type: 'keepalive' }; // sent while the permission window is open, so the worker stays awake
 
 export type CaptureResponse = { ok: true; dataUrl: string } | { ok: false; error: string };
 
@@ -20,8 +21,13 @@ export interface ViewRect {
 export interface RecordStartOptions {
   /** The device screen to record, in CSS px relative to the viewport. */
   rect: ViewRect;
-  /** The tab's viewport in CSS px, to turn the video's pixels back into CSS px. */
-  viewport: { w: number; h: number };
+  /**
+   * The tab's viewport in CSS px, to turn the video's pixels back into CSS px. `w` includes the
+   * page's scrollbar (innerWidth), `clientW` does not; the recorder uses whichever matches.
+   */
+  viewport: { w: number; h: number; clientW: number };
+  /** Device pixels per CSS px (includes page zoom). */
+  dpr: number;
   /** Name used in the review page and the file name. */
   deviceName: string;
   /**
@@ -94,3 +100,6 @@ export async function requestMic(): Promise<MicResponse> {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
 }
+
+/** Name of the connection the page keeps open while it records (see the background worker). */
+export const RECORDING_PORT = 'device-lab-recording';
