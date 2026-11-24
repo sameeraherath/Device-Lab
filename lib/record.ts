@@ -2,6 +2,7 @@
 // recorder do the capturing; this measures the device's screen, keeps the window on top and
 // untouched while recording, and exposes the state to the UI.
 import { useEffect, useState } from 'preact/hooks';
+import { runAutoScroll } from './autoScroll';
 import { CaptureError, assertInView, measure } from './capture';
 import { sendRecordMessage } from './messages';
 import type { RecordPrefs } from './storage';
@@ -60,7 +61,7 @@ export function useRecordState(): RecordState {
 export async function startRecording(
   target: HTMLElement,
   deviceName: string,
-  prefs: Pick<RecordPrefs, 'quality' | 'fps' | 'countdown'>,
+  prefs: Pick<RecordPrefs, 'quality' | 'fps' | 'countdown' | 'autoScroll' | 'scrollSpeed'>,
 ): Promise<void> {
   if (state.phase !== 'idle') return;
   const windowId = Number(target.dataset.windowId);
@@ -124,10 +125,18 @@ export async function startRecording(
       if (moved) void stopRecording('Recording stopped because the device was moved or resized.');
     }, 250);
     const previous = cleanup;
+    let cancelScroll: (() => void) | undefined;
     cleanup = () => {
       window.clearInterval(watch);
+      cancelScroll?.();
       previous?.();
     };
+
+    // Scroll the page down by itself, then stop the recording when it reaches the bottom.
+    const frame = target.querySelector<HTMLIFrameElement>('iframe.frame');
+    if (prefs.autoScroll && frame) {
+      cancelScroll = runAutoScroll(frame, prefs.scrollSpeed, () => void stopRecording());
+    }
   } catch (e) {
     cleanup?.();
     cleanup = undefined;
