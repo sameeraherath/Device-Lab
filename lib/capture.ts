@@ -42,7 +42,7 @@ function dataUrlToBlob(dataUrl: string): Blob {
   return new Blob([out], { type: /data:([^;]+)/.exec(head ?? '')?.[1] ?? 'image/png' });
 }
 
-interface Rect {
+export interface Rect {
   x: number;
   y: number;
   w: number;
@@ -143,12 +143,12 @@ function toCanvas(data: ImageData): HTMLCanvasElement {
   return c;
 }
 
-const measure = (el: HTMLElement): Rect => {
+export const measure = (el: HTMLElement): Rect => {
   const r = el.getBoundingClientRect();
   return { x: r.left, y: r.top, w: r.width, h: r.height };
 };
 
-function assertInView(rect: Rect) {
+export function assertInView(rect: Rect) {
   const vw = document.documentElement.clientWidth || window.innerWidth;
   const vh = window.innerHeight;
   const slack = 1.5;

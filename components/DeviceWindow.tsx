@@ -5,6 +5,13 @@ import { pageCanvas, pageTheme, type StatusTheme } from '@/lib/pageInfo';
 import { DeviceFrame } from './DeviceFrame';
 import { FinishPicker } from './FinishPicker';
 import {
+  dismissRecordError,
+  startRecording,
+  stopIfRecording,
+  stopRecording,
+  useRecordState,
+} from '@/lib/record';
+import {
   BAR_WIDTH,
   MIN_BAR_WIDTH,
   OVERLAY_SPACE,
@@ -26,12 +33,31 @@ interface Props {
   pageUrl: string;
 }
 
+/** Elapsed recording time, m:ss, ticking once a second. */
+function RecordTimer({ startedAt }: { startedAt: number | null }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const total = startedAt ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0;
+  return (
+    <>
+      Stop {Math.floor(total / 60)}:{String(total % 60).padStart(2, '0')}
+    </>
+  );
+}
+
 export function DeviceWindow({ win, pageUrl }: Props) {
   const device = getDevice(win.deviceId);
   const rootRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ offsetX: number; offsetY: number; x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const record = useRecordState();
+  const recordingHere = record.windowId === win.id && record.phase !== 'idle';
+  // Closing the window while it records keeps the video.
+  useEffect(() => () => stopIfRecording(win.id), [win.id]);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   // Colours for the device's bars come from the framed page (its own background or theme-color).
   const source = themeSource(getFrame(device));
@@ -123,7 +149,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   };
 
   const onHandlePointerDown = (e: PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || recordingHere) return; // the recording crop is fixed on the screen
     const handle = e.currentTarget as HTMLElement;
     drag.current = { offsetX: e.clientX - x, offsetY: e.clientY - y, x, y };
     handle.setPointerCapture(e.pointerId);
@@ -208,6 +234,34 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         {getFrame(device) && <FinishPicker device={device} />}
         <button
           type="button"
+          class="record-btn"
+          data-recording={recordingHere ? 'true' : undefined}
+          aria-label={recordingHere ? 'Stop recording' : `Record ${device.name}`}
+          title={recordingHere ? 'Stop recording' : 'Record this device'}
+          disabled={
+            record.phase === 'starting' ||
+            record.phase === 'stopping' ||
+            (record.phase !== 'idle' && !recordingHere)
+          }
+          onClick={() => {
+            if (recordingHere) void stopRecording();
+            else if (rootRef.current) void startRecording(rootRef.current, device.name);
+          }}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            {recordingHere ? (
+              <rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" />
+            ) : (
+              <>
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+                <circle cx="12" cy="12" r="5" fill="currentColor" />
+              </>
+            )}
+          </svg>
+          <span>{recordingHere ? <RecordTimer startedAt={record.startedAt} /> : 'Rec'}</span>
+        </button>
+        <button
+          type="button"
           class="btn"
           aria-label={win.minimized ? 'Restore' : 'Minimize'}
           title={win.minimized ? 'Restore' : 'Minimize'}
@@ -262,6 +316,14 @@ export function DeviceWindow({ win, pageUrl }: Props) {
       <div class="visually-hidden" aria-live="polite">
         {announcement}
       </div>
+      {record.error && record.windowId === win.id && (
+        <div class="record-error" role="alert">
+          <span>{record.error}</span>
+          <button type="button" aria-label="Dismiss" onClick={dismissRecordError}>
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }
