@@ -1,6 +1,7 @@
 // Record button + popover in a device's title bar. Choose what to record and how, then press
 // "Start recording". While a recording or countdown runs, the button stops or cancels it instead.
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
+import { canAutoScroll, SCROLL_SPEEDS } from '@/lib/autoScroll';
 import { cancelCountdown, startRecording, stopRecording, useRecordState } from '@/lib/record';
 import {
   DEFAULT_RECORD_PREFS,
@@ -118,6 +119,8 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
   const menuRef = useRef<HTMLDivElement>(null);
   const [prefs, setPrefs] = useState<RecordPrefs>(DEFAULT_RECORD_PREFS);
   const record = useRecordState();
+  // False when the framed page is from another site and cannot be scrolled by script.
+  const [canScroll, setCanScroll] = useState(true);
   const mine = record.windowId === windowId;
   const recording = mine && record.phase === 'recording';
   const counting = mine && record.phase === 'countdown';
@@ -144,6 +147,7 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
     const onToggle = (e: Event) => {
       const opening = (e as ToggleEvent).newState === 'open';
       trigger.setAttribute('aria-expanded', String(opening));
+      if (opening) setCanScroll(canAutoScroll(getRoot()?.querySelector('iframe.frame')));
       if (!opening || hasAnchorPositioning) return;
       const t = trigger.getBoundingClientRect();
       const m = menu.getBoundingClientRect();
@@ -280,25 +284,33 @@ export function RecordMenu({ windowId, deviceName, minimized, getRoot }: Props) 
             <path d="M16.5 9a4 4 0 0 1 0 6" />
           </Svg>
         </Switch>
-        <Switch label="Auto-scroll" checked={false} disabled title={SOON} onChange={() => {}}>
+        <Switch
+          label="Auto-scroll"
+          checked={prefs.autoScroll && canScroll}
+          disabled={!canScroll}
+          title="This page comes from another site, so it can't be scrolled automatically"
+          onChange={(autoScroll) => update({ autoScroll })}
+        >
           <Svg>
             <path d="M12 4v16M7 15l5 5 5-5M7 9l5-5 5 5" />
           </Svg>
         </Switch>
-        <div class="rec-speed" role="radiogroup" aria-label="Scroll speed" data-disabled>
-          {SPEEDS.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              role="radio"
-              aria-checked={prefs.scrollSpeed === s.id}
-              aria-disabled="true"
-              title={SOON}
-            >
-              {s.name}
-            </button>
-          ))}
-        </div>
+        {prefs.autoScroll && canScroll && (
+          <div class="rec-speed" role="radiogroup" aria-label="Scroll speed">
+            {SPEEDS.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                role="radio"
+                aria-checked={prefs.scrollSpeed === s.id}
+                title={`${SCROLL_SPEEDS[s.id]} px per second`}
+                onClick={() => update({ scrollSpeed: s.id })}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <label class="rec-row">
           <span class="rec-icon" aria-hidden="true">
