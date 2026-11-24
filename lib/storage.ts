@@ -232,3 +232,22 @@ export async function setRecordPrefs(prefs: RecordPrefs): Promise<void> {
     // Storage is a convenience only; ignore failures.
   }
 }
+
+// Whether the microphone has been allowed for this extension (set after Chrome's prompt).
+const MIC_KEY = 'micGranted';
+
+export async function getMicGranted(): Promise<boolean> {
+  try {
+    return (await browser.storage.local.get(MIC_KEY))[MIC_KEY] === true;
+  } catch {
+    return false;
+  }
+}
+
+export async function setMicGranted(granted: boolean): Promise<void> {
+  try {
+    await browser.storage.local.set({ [MIC_KEY]: granted });
+  } catch {
+    // Storage is a convenience only; ignore failures.
+  }
+}

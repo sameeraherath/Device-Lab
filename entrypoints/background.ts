@@ -1,6 +1,8 @@
 // Background service worker: toolbar icon click adds the header rule and injects the content UI.
 import type { Browser } from 'wxt/browser';
+import { setMicGranted } from '@/lib/storage';
 import type {
+  MicResponse,
   OffscreenMessage,
   OffscreenStartResponse,
   OffscreenStopResponse,
@@ -89,6 +91,41 @@ async function closeOffscreenDocument() {
 
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+// ---- Microphone permission: asked once, in a small window, because the hidden recorder page
+// cannot show Chrome's prompt itself ----
+const MIC_BLOCKED =
+  'Microphone access was blocked. Allow it for Device Lab in Chrome’s site settings, then try again.';
+let pendingMic: { windowId: number | undefined; resolve: (r: MicResponse) => void } | null = null;
+
+function requestMic(): Promise<MicResponse> {
+  if (pendingMic)
+    return Promise.resolve({ ok: false, error: 'A permission window is already open.' });
+  return new Promise<MicResponse>((resolve) => {
+    const entry = { windowId: undefined as number | undefined, resolve };
+    pendingMic = entry;
+    browser.windows
+      .create({
+        url: browser.runtime.getURL('/media-permission.html'),
+        type: 'popup',
+        width: 440,
+        height: 260,
+      })
+      .then((win) => {
+        entry.windowId = win?.id;
+      })
+      .catch((e: unknown) => finishMic({ ok: false, error: errorText(e) }));
+  });
+}
+
+function finishMic(result: MicResponse) {
+  const pending = pendingMic;
+  if (!pending) return;
+  pendingMic = null;
+  void setMicGranted(result.ok);
+  if (pending.windowId !== undefined) void browser.windows.remove(pending.windowId).catch(() => {});
+  pending.resolve(result);
+}
+
 async function startRecording(
   tabId: number,
   options: Extract<RuntimeMessage, { type: 'record-start' }>['options'],
@@ -108,6 +145,10 @@ async function startRecording(
     } satisfies OffscreenMessage)) as OffscreenStartResponse | undefined;
     if (!response?.ok) {
       await closeOffscreenDocument();
+      if (response?.error === 'MIC_DENIED') {
+        await setMicGranted(false); // ask again next time
+        return { ok: false, error: MIC_BLOCKED };
+      }
       return { ok: false, error: response?.error ?? 'The recorder did not answer.' };
     }
     recordingTabId = tabId;
@@ -163,6 +204,14 @@ export default defineBackground(() => {
       stopRecording().then(sendResponse);
       return true;
     }
+    if (message.type === 'request-mic') {
+      requestMic().then(sendResponse);
+      return true;
+    }
+    if (message.type === 'mic-result') {
+      finishMic(message.ok ? { ok: true } : { ok: false, error: message.error ?? MIC_BLOCKED });
+      return;
+    }
     if (message.type === 'capture') {
       // Needs the tab's activeTab grant (given by the toolbar click); captures what is on screen.
       const windowId = sender.tab?.windowId ?? browser.windows.WINDOW_ID_CURRENT;
@@ -173,6 +222,14 @@ export default defineBackground(() => {
           sendResponse({ ok: false, error: e instanceof Error ? e.message : String(e) }),
         );
       return true; // the answer comes asynchronously
+    }
+  });
+
+  // Closing the permission window without choosing counts as "no".
+  browser.windows.onRemoved.addListener((windowId) => {
+    if (pendingMic && pendingMic.windowId === windowId) {
+      pendingMic.windowId = undefined;
+      finishMic({ ok: false, error: 'Microphone permission was not given.' });
     }
   });
 

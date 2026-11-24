@@ -1,8 +1,8 @@
 # Device Lab privacy policy
 
-_Last updated: 22 November 2026_
+_Last updated: 24 November 2026_
 
-Device Lab is a free Chrome extension that shows the current web page inside device frames (phones, tablets, laptops and desktops) and lets you save screenshots of it.
+Device Lab is a free Chrome extension that shows the current web page inside device frames (phones, tablets, laptops and desktops) and lets you save screenshots and screen recordings of it.
 
 ## The short version
 
@@ -23,6 +23,8 @@ Device Lab saves a few settings with Chrome's own storage, on your computer only
 - the last device you used and your recent devices
 - the colour you chose for each device
 - your screenshot options (mode, format and background)
+- your recording options (quality, frame rate, countdown, auto-scroll and whether the microphone and page audio are on)
+- whether you have allowed the microphone for Device Lab
 - custom devices you added
 - whether Focus mode was on
 
@@ -31,6 +33,12 @@ You can remove all of it at any time by removing the extension from Chrome.
 ## Screenshots
 
 Screenshots are made on your computer. They are only saved where you choose, or copied to your clipboard when you click Copy. Device Lab never uploads them.
+
+## Recordings
+
+When you press Record, Device Lab records the screen of one device, and nothing else, as a video on your computer. If you turn them on, it also records your microphone and the sound the page plays. Chrome asks your permission for the microphone the first time. Nothing is recorded unless you start a recording, and the microphone is only used while you record.
+
+The finished video is kept in Chrome's storage on your computer so you can preview and download it. It is deleted when you download or discard it, and automatically after 24 hours. Device Lab never uploads recordings, and never sends them anywhere.
 
 ## Pages shown in the device frames
 
@@ -41,6 +49,8 @@ The page shown inside a device is the same page you are already on, loaded by Ch
 - **activeTab**: to work on the tab where you clicked the icon, and to take screenshots when you ask.
 - **scripting**: to add the Device Lab panel to that tab.
 - **storage**: to save the settings listed above on your computer.
+- **tabCapture**: to record the video (and the page's sound, if you turn it on) of the tab where you clicked the icon, only when you press Record.
+- **offscreen**: to run the recorder in a hidden page, because Chrome does not allow recording in the background worker.
 - **declarativeNetRequestWithHostAccess**: to let the current site show inside the device frames, as described above.
 
 ## Changes

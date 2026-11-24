@@ -3,7 +3,9 @@ export type RuntimeMessage =
   | { type: 'close' } // last window closed: drop the header rule
   | { type: 'capture' } // take a PNG screenshot of the tab's visible area
   | { type: 'record-start'; options: RecordStartOptions } // start recording one device's screen
-  | { type: 'record-stop' }; // stop the recording and open the review page
+  | { type: 'record-stop' } // stop the recording and open the review page
+  | { type: 'request-mic' } // ask for microphone permission (opens a small window)
+  | { type: 'mic-result'; ok: boolean; error?: string }; // the answer, from that window
 
 export type CaptureResponse = { ok: true; dataUrl: string } | { ok: false; error: string };
 
@@ -30,9 +32,14 @@ export interface RecordStartOptions {
   /** Output size and bitrate preset. */
   quality: 'good' | 'better' | 'best';
   fps: 30 | 60;
+  /** Record the microphone (permission must already be granted). */
+  mic: boolean;
+  /** Record the sound the page plays. */
+  pageAudio: boolean;
 }
 
 export type RecordResponse = { ok: true } | { ok: false; error: string };
+export type MicResponse = { ok: true } | { ok: false; error: string };
 
 // Messages between the background worker and the offscreen recorder. `target` keeps them from
 // being handled by any other extension page.
@@ -71,6 +78,18 @@ export async function sendRecordMessage(
   try {
     const response = (await browser.runtime.sendMessage(message)) as RecordResponse | undefined;
     return response ?? { ok: false, error: 'The recording service did not answer.' };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/** Asks for microphone permission. Opens a small window the first time; answers when decided. */
+export async function requestMic(): Promise<MicResponse> {
+  try {
+    const response = (await browser.runtime.sendMessage({
+      type: 'request-mic',
+    } satisfies RuntimeMessage)) as MicResponse | undefined;
+    return response ?? { ok: false, error: 'The permission service did not answer.' };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
