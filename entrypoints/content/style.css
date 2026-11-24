@@ -96,12 +96,44 @@
 
 /* ---- Record button in the title bar, and its error message ---- */
 .record-btn {
-  color: #ff453a;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  height: 28px;
+  padding: 0 10px 0 7px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 69, 58, 0.16);
+  color: #ff6b61;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.record-btn svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.record-btn:hover:not(:disabled) {
+  background: rgba(255, 69, 58, 0.28);
 }
 
 .record-btn[data-recording] {
-  background: rgba(255, 69, 58, 0.18);
+  background: #e5342b;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.record-btn[data-recording]:hover:not(:disabled) {
+  background: #f0453c;
+}
+
+.record-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .record-btn:disabled {
@@ -110,14 +142,14 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .record-btn[data-recording] {
+  .record-btn[data-recording] svg {
     animation: record-pulse 1.2s ease-in-out infinite;
   }
 }
 
 @keyframes record-pulse {
   50% {
-    background: rgba(255, 69, 58, 0.4);
+    opacity: 0.45;
   }
 }
 

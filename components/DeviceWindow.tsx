@@ -33,6 +33,21 @@ interface Props {
   pageUrl: string;
 }
 
+/** Elapsed recording time, m:ss, ticking once a second. */
+function RecordTimer({ startedAt }: { startedAt: number | null }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const total = startedAt ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0;
+  return (
+    <>
+      Stop {Math.floor(total / 60)}:{String(total % 60).padStart(2, '0')}
+    </>
+  );
+}
+
 export function DeviceWindow({ win, pageUrl }: Props) {
   const device = getDevice(win.deviceId);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -219,18 +234,31 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         {getFrame(device) && <FinishPicker device={device} />}
         <button
           type="button"
-          class="btn record-btn"
+          class="record-btn"
           data-recording={recordingHere ? 'true' : undefined}
           aria-label={recordingHere ? 'Stop recording' : `Record ${device.name}`}
           title={recordingHere ? 'Stop recording' : 'Record this device'}
-          aria-disabled={record.phase !== 'idle' && !recordingHere ? 'true' : undefined}
-          disabled={record.phase === 'starting' || record.phase === 'stopping'}
+          disabled={
+            record.phase === 'starting' ||
+            record.phase === 'stopping' ||
+            (record.phase !== 'idle' && !recordingHere)
+          }
           onClick={() => {
             if (recordingHere) void stopRecording();
             else if (rootRef.current) void startRecording(rootRef.current, device.name);
           }}
         >
-          {recordingHere ? '■' : '●'}
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            {recordingHere ? (
+              <rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" />
+            ) : (
+              <>
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+                <circle cx="12" cy="12" r="5" fill="currentColor" />
+              </>
+            )}
+          </svg>
+          <span>{recordingHere ? <RecordTimer startedAt={record.startedAt} /> : 'Rec'}</span>
         </button>
         <button
           type="button"
