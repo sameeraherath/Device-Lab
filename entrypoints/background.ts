@@ -1,6 +1,7 @@
 // Background service worker: toolbar icon click adds the header rule and injects the content UI.
 import type { Browser } from 'wxt/browser';
 import { setMicGranted } from '@/lib/storage';
+import { RECORDING_PORT } from '@/lib/messages';
 import type {
   MicResponse,
   OffscreenMessage,
@@ -65,8 +66,22 @@ async function activate(tab: Browser.tabs.Tab): Promise<boolean> {
 
 // ---- Screen recording: tabCapture stream id -> offscreen recorder -> review page ----
 const OFFSCREEN_URL = 'offscreen.html';
-/** The tab being recorded. Only one recording runs at a time. */
-let recordingTabId: number | undefined;
+/**
+ * The tab being recorded. Chrome stops an idle service worker after about 30 seconds and its
+ * variables are lost, so this lives in session storage. The recorder page itself (the offscreen
+ * document) is the real sign that a recording is running.
+ */
+const RECORDING_TAB_KEY = 'recordingTabId';
+
+async function getRecordingTab(): Promise<number | undefined> {
+  const value = (await browser.storage.session.get(RECORDING_TAB_KEY))[RECORDING_TAB_KEY];
+  return typeof value === 'number' ? value : undefined;
+}
+
+async function setRecordingTab(tabId: number | undefined) {
+  if (tabId === undefined) await browser.storage.session.remove(RECORDING_TAB_KEY);
+  else await browser.storage.session.set({ [RECORDING_TAB_KEY]: tabId });
+}
 
 async function hasOffscreenDocument(): Promise<boolean> {
   const contexts = await browser.runtime.getContexts({
@@ -130,7 +145,7 @@ async function startRecording(
   tabId: number,
   options: Extract<RuntimeMessage, { type: 'record-start' }>['options'],
 ): Promise<RecordResponse> {
-  if (recordingTabId !== undefined) {
+  if (await hasOffscreenDocument()) {
     return { ok: false, error: 'A recording is already running. Stop it first.' };
   }
   try {
@@ -151,7 +166,7 @@ async function startRecording(
       }
       return { ok: false, error: response?.error ?? 'The recorder did not answer.' };
     }
-    recordingTabId = tabId;
+    await setRecordingTab(tabId);
     return { ok: true };
   } catch (e) {
     await closeOffscreenDocument().catch(() => {});
@@ -165,9 +180,20 @@ async function startRecording(
   }
 }
 
-async function stopRecording(): Promise<RecordResponse> {
-  if (recordingTabId === undefined) return { ok: false, error: 'No recording is running.' };
-  recordingTabId = undefined;
+/** A stop already on its way; a second Stop waits for it instead of stopping twice. */
+let stopping: Promise<RecordResponse> | null = null;
+
+function stopRecording(): Promise<RecordResponse> {
+  stopping ??= stopOnce().finally(() => {
+    stopping = null;
+  });
+  return stopping;
+}
+
+async function stopOnce(): Promise<RecordResponse> {
+  await setRecordingTab(undefined);
+  // Ask the recorder page directly: it is still running even if this worker was restarted.
+  if (!(await hasOffscreenDocument())) return { ok: false, error: 'No recording is running.' };
   try {
     const response = (await browser.runtime.sendMessage({
       target: 'offscreen',
@@ -208,6 +234,7 @@ export default defineBackground(() => {
       requestMic().then(sendResponse);
       return true;
     }
+    if (message.type === 'keepalive') return; // only keeps this worker awake
     if (message.type === 'mic-result') {
       finishMic(message.ok ? { ok: true } : { ok: false, error: message.error ?? MIC_BLOCKED });
       return;
@@ -233,9 +260,24 @@ export default defineBackground(() => {
     }
   });
 
+  // The in-page script holds this connection open while it records. If the page reloads or
+  // navigates away, the connection closes and its Stop button is gone: stop here, keep the video.
+  // (A normal Stop clears the recording tab first, so the later disconnect does nothing.)
+  browser.runtime.onConnect.addListener((port) => {
+    if (port.name !== RECORDING_PORT) return;
+    const tabId = port.sender?.tab?.id;
+    port.onDisconnect.addListener(() => {
+      void getRecordingTab().then((recording) => {
+        if (tabId !== undefined && tabId === recording) void stopRecording();
+      });
+    });
+  });
+
   browser.tabs.onRemoved.addListener((tabId) => {
     void removeFrameRule(tabId);
     // The tab went away mid-recording: keep what was recorded and show it.
-    if (tabId === recordingTabId) void stopRecording();
+    void getRecordingTab().then((recording) => {
+      if (tabId === recording) void stopRecording();
+    });
   });
 });

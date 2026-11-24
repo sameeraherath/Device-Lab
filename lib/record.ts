@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { runAutoScroll } from './autoScroll';
 import { CaptureError, assertInView, measure } from './capture';
-import { requestMic, sendRecordMessage } from './messages';
+import { RECORDING_PORT, requestMic, sendRecordMessage } from './messages';
 import { getMicGranted, type RecordPrefs } from './storage';
 
 export type RecordPhase = 'idle' | 'countdown' | 'starting' | 'recording' | 'stopping';
@@ -31,6 +31,37 @@ const IDLE: RecordState = {
 
 let state: RecordState = IDLE;
 let cleanup: (() => void) | undefined;
+/** Held open while recording; if this page goes away, the background worker stops the recording. */
+let port: ReturnType<typeof browser.runtime.connect> | undefined;
+let pingTimer: number | undefined;
+
+/**
+ * Opens the recording connection. Chrome may still close it when it restarts the background
+ * worker, so it reopens itself while recording, and a ping every 25 seconds keeps the worker awake.
+ */
+function openPort() {
+  const p = browser.runtime.connect({ name: RECORDING_PORT });
+  port = p;
+  p.onDisconnect.addListener(() => {
+    if (port === p && state.phase === 'recording') openPort();
+  });
+  window.clearInterval(pingTimer);
+  pingTimer = window.setInterval(() => {
+    try {
+      port?.postMessage('ping');
+    } catch {
+      // Disconnected; onDisconnect reopens it.
+    }
+  }, 25_000);
+}
+
+function closePort() {
+  window.clearInterval(pingTimer);
+  pingTimer = undefined;
+  const p = port;
+  port = undefined; // first, so onDisconnect does not reopen it
+  p?.disconnect();
+}
 const listeners = new Set<() => void>();
 
 function set(next: RecordState) {
@@ -113,9 +144,11 @@ export async function startRecording(
       options: {
         rect,
         viewport: {
-          w: document.documentElement.clientWidth || window.innerWidth,
+          w: window.innerWidth,
           h: window.innerHeight,
+          clientW: document.documentElement.clientWidth || window.innerWidth,
         },
+        dpr: window.devicePixelRatio || 1,
         deviceName,
         trim: scaled ? 1 : 0,
         quality: prefs.quality,
@@ -126,6 +159,7 @@ export async function startRecording(
     });
     if (!response.ok) throw new CaptureError(response.error);
     set({ ...IDLE, phase: 'recording', windowId, startedAt: Date.now() });
+    openPort();
 
     // The crop is fixed on the screen, so a moved or resized device would record the wrong area.
     const watch = window.setInterval(() => {
@@ -163,6 +197,8 @@ export async function stopRecording(note?: string): Promise<void> {
   cleanup?.();
   cleanup = undefined;
   const response = await sendRecordMessage({ type: 'record-stop' });
+  // Only after the stop is done, so the background worker does not see it as the page leaving.
+  closePort();
   set({ ...IDLE, windowId, error: response.ok ? (note ?? null) : response.error });
 }
 
