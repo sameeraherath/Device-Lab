@@ -31,6 +31,15 @@ export default defineConfig({
         128: '/icon/128.png',
       },
     },
-    permissions: ['activeTab', 'scripting', 'storage', 'declarativeNetRequestWithHostAccess'],
+    permissions: [
+      'activeTab',
+      'scripting',
+      'storage',
+      'declarativeNetRequestWithHostAccess',
+      // Screen recording: tabCapture hands the background a stream id for the tab, and the
+      // offscreen document is the only MV3 context that can run MediaRecorder on it.
+      'tabCapture',
+      'offscreen',
+    ],
   },
 });

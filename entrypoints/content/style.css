@@ -94,6 +94,63 @@
   cursor: pointer;
 }
 
+/* ---- Record button in the title bar, and its error message ---- */
+.record-btn {
+  color: #ff453a;
+  font-size: 13px;
+}
+
+.record-btn[data-recording] {
+  background: rgba(255, 69, 58, 0.18);
+}
+
+.record-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .record-btn[data-recording] {
+    animation: record-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes record-pulse {
+  50% {
+    background: rgba(255, 69, 58, 0.4);
+  }
+}
+
+.record-error {
+  position: absolute;
+  inset: auto 0 calc(100% + 48px);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #3a1b1b;
+  color: #ffd7d3;
+  box-shadow: 0 0 0 1px rgba(255, 69, 58, 0.5);
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: auto;
+}
+
+.record-error span {
+  flex: 1;
+}
+
+.record-error button {
+  flex: none;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
 /* ---- Colour picker: swatch button in the title bar, radio menu of official colours ---- */
 .finish-trigger {
   display: grid;
@@ -255,7 +312,9 @@
 }
 
 .window:not([data-minimized]):is(:hover, :focus-within, [data-engaged], [data-dragging]) .titlebar,
-.window:not([data-minimized]) .titlebar:has(.handle.dragging) {
+.window:not([data-minimized]) .titlebar:has(.handle.dragging),
+/* While recording, the Stop button stays reachable. */
+.window:not([data-minimized]) .titlebar:has(.record-btn[data-recording]) {
   opacity: 1;
 }
 

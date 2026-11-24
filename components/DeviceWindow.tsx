@@ -5,6 +5,13 @@ import { pageCanvas, pageTheme, type StatusTheme } from '@/lib/pageInfo';
 import { DeviceFrame } from './DeviceFrame';
 import { FinishPicker } from './FinishPicker';
 import {
+  dismissRecordError,
+  startRecording,
+  stopIfRecording,
+  stopRecording,
+  useRecordState,
+} from '@/lib/record';
+import {
   BAR_WIDTH,
   MIN_BAR_WIDTH,
   OVERLAY_SPACE,
@@ -32,6 +39,10 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   const drag = useRef<{ offsetX: number; offsetY: number; x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const record = useRecordState();
+  const recordingHere = record.windowId === win.id && record.phase !== 'idle';
+  // Closing the window while it records keeps the video.
+  useEffect(() => () => stopIfRecording(win.id), [win.id]);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   // Colours for the device's bars come from the framed page (its own background or theme-color).
   const source = themeSource(getFrame(device));
@@ -123,7 +134,7 @@ export function DeviceWindow({ win, pageUrl }: Props) {
   };
 
   const onHandlePointerDown = (e: PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || recordingHere) return; // the recording crop is fixed on the screen
     const handle = e.currentTarget as HTMLElement;
     drag.current = { offsetX: e.clientX - x, offsetY: e.clientY - y, x, y };
     handle.setPointerCapture(e.pointerId);
@@ -208,6 +219,21 @@ export function DeviceWindow({ win, pageUrl }: Props) {
         {getFrame(device) && <FinishPicker device={device} />}
         <button
           type="button"
+          class="btn record-btn"
+          data-recording={recordingHere ? 'true' : undefined}
+          aria-label={recordingHere ? 'Stop recording' : `Record ${device.name}`}
+          title={recordingHere ? 'Stop recording' : 'Record this device'}
+          aria-disabled={record.phase !== 'idle' && !recordingHere ? 'true' : undefined}
+          disabled={record.phase === 'starting' || record.phase === 'stopping'}
+          onClick={() => {
+            if (recordingHere) void stopRecording();
+            else if (rootRef.current) void startRecording(rootRef.current, device.name);
+          }}
+        >
+          {recordingHere ? '■' : '●'}
+        </button>
+        <button
+          type="button"
           class="btn"
           aria-label={win.minimized ? 'Restore' : 'Minimize'}
           title={win.minimized ? 'Restore' : 'Minimize'}
@@ -262,6 +288,14 @@ export function DeviceWindow({ win, pageUrl }: Props) {
       <div class="visually-hidden" aria-live="polite">
         {announcement}
       </div>
+      {record.error && record.windowId === win.id && (
+        <div class="record-error" role="alert">
+          <span>{record.error}</span>
+          <button type="button" aria-label="Dismiss" onClick={dismissRecordError}>
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }
