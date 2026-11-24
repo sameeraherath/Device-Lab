@@ -147,3 +147,88 @@ export async function setScreenshotPrefs(prefs: ScreenshotPrefs): Promise<void> 
     // Storage is a convenience only; ignore failures.
   }
 }
+
+// ---- Recording settings (the Record menu) ----
+export type RecordMode = 'device' | 'camera';
+export type RecordQuality = 'good' | 'better' | 'best';
+export type ScrollSpeed = 'slow' | 'medium' | 'fast';
+export type CameraCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+export type CameraSize = 'small' | 'medium' | 'large';
+
+export interface RecordPrefs {
+  /** What goes in the video: the device alone, or the device with a camera bubble. */
+  mode: RecordMode;
+  mic: boolean;
+  pageAudio: boolean;
+  autoScroll: boolean;
+  scrollSpeed: ScrollSpeed;
+  quality: RecordQuality;
+  /** Seconds counted down before recording starts (0 starts at once). */
+  countdown: number;
+  transparent: boolean;
+  fps: 30 | 60;
+  cameraCorner: CameraCorner;
+  cameraSize: CameraSize;
+  /** Whether the "More settings" section is open. */
+  moreOpen: boolean;
+}
+
+export const DEFAULT_RECORD_PREFS: RecordPrefs = {
+  mode: 'device',
+  mic: false,
+  pageAudio: false,
+  autoScroll: false,
+  scrollSpeed: 'medium',
+  quality: 'good',
+  countdown: 3,
+  transparent: false,
+  fps: 30,
+  cameraCorner: 'bottom-right',
+  cameraSize: 'medium',
+  moreOpen: false,
+};
+
+export const MAX_COUNTDOWN = 10;
+const RECORD_KEY = 'recordPrefs';
+
+/** The last recording choices; anything missing or malformed falls back to the defaults. */
+export async function getRecordPrefs(): Promise<RecordPrefs> {
+  const d = DEFAULT_RECORD_PREFS;
+  try {
+    const raw = (await browser.storage.local.get(RECORD_KEY))[RECORD_KEY] as
+      Partial<Record<keyof RecordPrefs, unknown>> | undefined;
+    if (!raw || typeof raw !== 'object') return d;
+    const bool = (v: unknown, fallback: boolean) => (typeof v === 'boolean' ? v : fallback);
+    return {
+      mode: pick(raw.mode, ['device', 'camera'], d.mode),
+      mic: bool(raw.mic, d.mic),
+      pageAudio: bool(raw.pageAudio, d.pageAudio),
+      autoScroll: bool(raw.autoScroll, d.autoScroll),
+      scrollSpeed: pick(raw.scrollSpeed, ['slow', 'medium', 'fast'], d.scrollSpeed),
+      quality: pick(raw.quality, ['good', 'better', 'best'], d.quality),
+      countdown:
+        typeof raw.countdown === 'number' && Number.isFinite(raw.countdown)
+          ? Math.min(MAX_COUNTDOWN, Math.max(0, Math.round(raw.countdown)))
+          : d.countdown,
+      transparent: bool(raw.transparent, d.transparent),
+      fps: raw.fps === 60 ? 60 : 30,
+      cameraCorner: pick(
+        raw.cameraCorner,
+        ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+        d.cameraCorner,
+      ),
+      cameraSize: pick(raw.cameraSize, ['small', 'medium', 'large'], d.cameraSize),
+      moreOpen: bool(raw.moreOpen, d.moreOpen),
+    };
+  } catch {
+    return d;
+  }
+}
+
+export async function setRecordPrefs(prefs: RecordPrefs): Promise<void> {
+  try {
+    await browser.storage.local.set({ [RECORD_KEY]: prefs });
+  } catch {
+    // Storage is a convenience only; ignore failures.
+  }
+}

@@ -4,20 +4,29 @@
 import { useEffect, useState } from 'preact/hooks';
 import { CaptureError, assertInView, measure } from './capture';
 import { sendRecordMessage } from './messages';
+import type { RecordPrefs } from './storage';
 
-export type RecordPhase = 'idle' | 'starting' | 'recording' | 'stopping';
+export type RecordPhase = 'idle' | 'countdown' | 'starting' | 'recording' | 'stopping';
 
 export interface RecordState {
   phase: RecordPhase;
   /** The window being recorded. */
   windowId: number | null;
+  /** Seconds left in the countdown (only in the `countdown` phase). */
+  countdown: number;
   /** When the recording began (ms since epoch), for the timer. */
   startedAt: number | null;
   /** The last error, shown until the next attempt. */
   error: string | null;
 }
 
-const IDLE: RecordState = { phase: 'idle', windowId: null, startedAt: null, error: null };
+const IDLE: RecordState = {
+  phase: 'idle',
+  windowId: null,
+  countdown: 0,
+  startedAt: null,
+  error: null,
+};
 
 let state: RecordState = IDLE;
 let cleanup: (() => void) | undefined;
@@ -48,12 +57,24 @@ export function useRecordState(): RecordState {
  * Starts recording the screen of one device window.
  * `target` is the window's root element (`.window`).
  */
-export async function startRecording(target: HTMLElement, deviceName: string): Promise<void> {
+export async function startRecording(
+  target: HTMLElement,
+  deviceName: string,
+  prefs: Pick<RecordPrefs, 'quality' | 'fps' | 'countdown'>,
+): Promise<void> {
   if (state.phase !== 'idle') return;
   const windowId = Number(target.dataset.windowId);
-  set({ phase: 'starting', windowId, startedAt: null, error: null });
+  set({ ...IDLE, phase: 'starting', windowId });
 
   try {
+    // Count down first. Cancel (the button) or closing the window ends it.
+    for (let left = prefs.countdown; left > 0; left--) {
+      set({ ...IDLE, phase: 'countdown', windowId, countdown: left });
+      await new Promise<void>((r) => setTimeout(r, 1000));
+      if (getRecordState().phase !== 'countdown') return; // cancelled
+    }
+    set({ ...IDLE, phase: 'starting', windowId });
+
     if (target.hasAttribute('data-minimized')) {
       throw new CaptureError('Restore the window first, then start recording.');
     }
@@ -87,10 +108,12 @@ export async function startRecording(target: HTMLElement, deviceName: string): P
         },
         deviceName,
         trim: scaled ? 1 : 0,
+        quality: prefs.quality,
+        fps: prefs.fps,
       },
     });
     if (!response.ok) throw new CaptureError(response.error);
-    set({ phase: 'recording', windowId, startedAt: Date.now(), error: null });
+    set({ ...IDLE, phase: 'recording', windowId, startedAt: Date.now() });
 
     // The crop is fixed on the screen, so a moved or resized device would record the wrong area.
     const watch = window.setInterval(() => {
@@ -123,9 +146,16 @@ export async function stopRecording(note?: string): Promise<void> {
   set({ ...IDLE, windowId, error: response.ok ? (note ?? null) : response.error });
 }
 
+/** Cancels a countdown that has not started recording yet. */
+export function cancelCountdown() {
+  if (state.phase === 'countdown') set({ ...IDLE });
+}
+
 /** Stops a recording of a window that is closing, so the video is kept. */
 export function stopIfRecording(windowId: number) {
-  if (state.windowId === windowId && state.phase === 'recording') void stopRecording();
+  if (state.windowId !== windowId) return;
+  if (state.phase === 'recording') void stopRecording();
+  else cancelCountdown();
 }
 
 /** Hides the last error message. */

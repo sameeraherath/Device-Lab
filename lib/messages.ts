@@ -27,6 +27,9 @@ export interface RecordStartOptions {
    * one more pixel at its edges, so 1 keeps those blended edge pixels out of the video.
    */
   trim: number;
+  /** Output size and bitrate preset. */
+  quality: 'good' | 'better' | 'best';
+  fps: 30 | 60;
 }
 
 export type RecordResponse = { ok: true } | { ok: false; error: string };
